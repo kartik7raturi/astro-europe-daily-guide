@@ -1,0 +1,300 @@
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Stars, 
+  Sun, 
+  Moon, 
+  Heart, 
+  Briefcase, 
+  Palette, 
+  Hash,
+  AlertTriangle,
+  CheckCircle,
+  ArrowLeft,
+  Calendar,
+  Clock
+} from "lucide-react";
+
+interface UserData {
+  name: string;
+  email: string;
+  dateOfBirth: Date;
+  timeOfBirth: string;
+  placeOfBirth: string;
+  specificQuestions: string;
+}
+
+const DailyReading = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [currentDate] = useState(new Date());
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("userAstrologyData");
+    if (!storedData) {
+      navigate("/horoscope");
+      return;
+    }
+    
+    try {
+      const parsed = JSON.parse(storedData);
+      parsed.dateOfBirth = new Date(parsed.dateOfBirth);
+      setUserData(parsed);
+    } catch (error) {
+      navigate("/horoscope");
+    }
+  }, [navigate]);
+
+  if (!userData) {
+    return null;
+  }
+
+  // Calculate age and zodiac sign (simplified)
+  const age = currentDate.getFullYear() - userData.dateOfBirth.getFullYear();
+  const birthMonth = userData.dateOfBirth.getMonth() + 1;
+  const birthDay = userData.dateOfBirth.getDate();
+  
+  // Simplified zodiac calculation
+  const getZodiacSign = (month: number, day: number) => {
+    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Aries";
+    if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Taurus";
+    if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "Gemini";
+    if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "Cancer";
+    if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Leo";
+    if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Virgo";
+    if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "Libra";
+    if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "Scorpio";
+    if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "Sagittarius";
+    if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "Capricorn";
+    if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Aquarius";
+    return "Pisces";
+  };
+
+  const zodiacSign = getZodiacSign(birthMonth, birthDay);
+
+  // Generate personalized content based on European sensibilities
+  const generateReading = () => {
+    const luckyNumbers = [7, 14, 23, 31, 42].map(n => Math.floor(Math.random() * 50) + 1);
+    const powerColors = ["Deep Royal Purple", "Golden Amber", "Emerald Green"];
+    const selectedColor = powerColors[Math.floor(Math.random() * powerColors.length)];
+
+    return {
+      dailyOverview: `Good day, ${userData.name}! As a ${zodiacSign}, today brings a harmonious blend of cosmic energies. The European celestial traditions suggest this is an excellent day for personal reflection and making meaningful connections. Your natural ${zodiacSign} traits will be particularly pronounced, offering you unique insights into current life situations.`,
+      
+      love: `Venus graces your romantic sector today. For those in relationships, consider a thoughtful gesture inspired by European romance traditions - perhaps a handwritten note or sharing a meaningful conversation over coffee. Single? The universe suggests being open to unexpected encounters in cultural or artistic spaces.`,
+      
+      career: `Professional winds favor collaborative efforts today. Your European sensibility for diplomacy and thoughtful communication will serve you well. Focus on building bridges rather than making bold moves. A colleague may offer valuable insights that align with your long-term goals.`,
+      
+      health: `Your body craves balance today. Consider incorporating mindful practices rooted in European wellness traditions - a gentle walk in nature, herbal tea meditation, or simply ensuring you have proper nutrition. Listen to your body's wisdom.`,
+      
+      challenge: `A minor communication misunderstanding may arise today, particularly in professional settings. This reflects the current Mercury position affecting ${zodiacSign} individuals.`,
+      
+      solution: `Practice the European virtue of patience and diplomatic clarity. Before responding to any concerning message, take a moment to breathe and consider the other person's perspective. A calm, thoughtful response will transform potential conflict into understanding.`,
+      
+      luckyNumbers,
+      powerColor: selectedColor,
+      
+      advice: `Today's cosmic energy encourages you to embrace the European values of culture, thoughtfulness, and community. Share your wisdom, appreciate beauty around you, and remember that true success comes from meaningful connections rather than rushing toward goals.`
+    };
+  };
+
+  const reading = generateReading();
+
+  return (
+    <div className="min-h-screen bg-gradient-starlight py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Link to="/horoscope">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              New Reading
+            </Button>
+          </Link>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>{currentDate.toLocaleDateString('en-EU', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</span>
+            </div>
+          </div>
+          <div className="w-24"></div>
+        </div>
+
+        {/* User Info */}
+        <Card className="bg-gradient-cosmic p-6 mb-8 border-none">
+          <div className="text-center text-primary-foreground">
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome, {userData.name}
+            </h1>
+            <div className="flex justify-center items-center gap-4 text-primary-foreground/90">
+              <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground">
+                {zodiacSign}
+              </Badge>
+              <span>•</span>
+              <span>{userData.placeOfBirth}</span>
+              {userData.timeOfBirth && (
+                <>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {userData.timeOfBirth}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </Card>
+
+        {/* Daily Overview */}
+        <Card className="mb-6 bg-card/80 backdrop-blur-sm border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sun className="h-6 w-6 text-accent" />
+              Today's Cosmic Overview
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-foreground leading-relaxed">{reading.dailyOverview}</p>
+          </CardContent>
+        </Card>
+
+        {/* Lucky Numbers & Power Color */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Hash className="h-5 w-5 text-primary" />
+                Lucky Numbers
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2 flex-wrap">
+                {reading.luckyNumbers.map((number, index) => (
+                  <Badge key={index} variant="outline" className="text-lg px-3 py-1 border-primary/40">
+                    {number}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-accent" />
+                Power Color
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Badge variant="secondary" className="text-lg px-4 py-2 bg-gradient-gold text-accent-foreground">
+                {reading.powerColor}
+              </Badge>
+              <p className="text-sm text-muted-foreground mt-2">
+                Incorporate this color into your day for enhanced positive energy.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Life Areas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-pink-400" />
+                Love & Relationships
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground">{reading.love}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-blue-400" />
+                Career & Finance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground">{reading.career}</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Health */}
+        <Card className="mb-6 bg-card/80 backdrop-blur-sm border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Moon className="h-5 w-5 text-purple-400" />
+              Health & Wellbeing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-foreground">{reading.health}</p>
+          </CardContent>
+        </Card>
+
+        {/* Challenge & Solution */}
+        <Card className="mb-6 bg-card/80 backdrop-blur-sm border-destructive/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Today's Challenge
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-foreground">{reading.challenge}</p>
+            
+            <Separator />
+            
+            <div>
+              <h4 className="flex items-center gap-2 font-semibold text-green-400 mb-2">
+                <CheckCircle className="h-5 w-5" />
+                Cosmic Solution
+              </h4>
+              <p className="text-foreground">{reading.solution}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Daily Advice */}
+        <Card className="mb-8 bg-gradient-gold/10 border-accent/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Stars className="h-5 w-5 text-accent" />
+              Cosmic Wisdom for Today
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-foreground font-medium leading-relaxed">{reading.advice}</p>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <div className="text-center space-y-4">
+          <Link to="/horoscope">
+            <Button variant="cosmic" size="lg">
+              Get Another Reading
+            </Button>
+          </Link>
+          <p className="text-muted-foreground text-sm">
+            Remember: The stars guide, but you create your destiny. Use this wisdom to enhance your European heritage of thoughtfulness and cultural appreciation.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DailyReading;
