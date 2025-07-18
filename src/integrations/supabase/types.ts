@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      ashtakoot_analysis: {
+        Row: {
+          bhakoot_points: number | null
+          compatibility_reading_id: string
+          created_at: string
+          gana_points: number | null
+          graha_maitri_points: number | null
+          id: string
+          nadi_points: number | null
+          tara_points: number | null
+          total_points: number | null
+          varna_points: number | null
+          vashya_points: number | null
+          yoni_points: number | null
+        }
+        Insert: {
+          bhakoot_points?: number | null
+          compatibility_reading_id: string
+          created_at?: string
+          gana_points?: number | null
+          graha_maitri_points?: number | null
+          id?: string
+          nadi_points?: number | null
+          tara_points?: number | null
+          total_points?: number | null
+          varna_points?: number | null
+          vashya_points?: number | null
+          yoni_points?: number | null
+        }
+        Update: {
+          bhakoot_points?: number | null
+          compatibility_reading_id?: string
+          created_at?: string
+          gana_points?: number | null
+          graha_maitri_points?: number | null
+          id?: string
+          nadi_points?: number | null
+          tara_points?: number | null
+          total_points?: number | null
+          varna_points?: number | null
+          vashya_points?: number | null
+          yoni_points?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ashtakoot_analysis_compatibility_reading_id_fkey"
+            columns: ["compatibility_reading_id"]
+            isOneToOne: false
+            referencedRelation: "compatibility_readings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       astology: {
         Row: {
           created_at: string
@@ -26,6 +79,150 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      compatibility_readings: {
+        Row: {
+          advice: string | null
+          challenges: string[] | null
+          compatibility_score: number
+          created_at: string
+          detailed_analysis: string | null
+          id: string
+          matching_qualities: number
+          partner_dob: string
+          partner_name: string
+          partner_place_of_birth: string
+          partner_time_of_birth: string | null
+          soulmate_sketch: string | null
+          strengths: string[] | null
+          total_qualities: number
+          user_id: string
+        }
+        Insert: {
+          advice?: string | null
+          challenges?: string[] | null
+          compatibility_score?: number
+          created_at?: string
+          detailed_analysis?: string | null
+          id?: string
+          matching_qualities?: number
+          partner_dob: string
+          partner_name: string
+          partner_place_of_birth: string
+          partner_time_of_birth?: string | null
+          soulmate_sketch?: string | null
+          strengths?: string[] | null
+          total_qualities?: number
+          user_id: string
+        }
+        Update: {
+          advice?: string | null
+          challenges?: string[] | null
+          compatibility_score?: number
+          created_at?: string
+          detailed_analysis?: string | null
+          id?: string
+          matching_qualities?: number
+          partner_dob?: string
+          partner_name?: string
+          partner_place_of_birth?: string
+          partner_time_of_birth?: string | null
+          soulmate_sketch?: string | null
+          strengths?: string[] | null
+          total_qualities?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_readings: {
+        Row: {
+          advice: string | null
+          career_guidance: string | null
+          challenges: string | null
+          created_at: string
+          health_guidance: string | null
+          id: string
+          love_guidance: string | null
+          lucky_numbers: number[]
+          overview: string
+          power_colors: string[]
+          reading_date: string
+          solutions: string | null
+          user_id: string
+        }
+        Insert: {
+          advice?: string | null
+          career_guidance?: string | null
+          challenges?: string | null
+          created_at?: string
+          health_guidance?: string | null
+          id?: string
+          love_guidance?: string | null
+          lucky_numbers?: number[]
+          overview: string
+          power_colors?: string[]
+          reading_date?: string
+          solutions?: string | null
+          user_id: string
+        }
+        Update: {
+          advice?: string | null
+          career_guidance?: string | null
+          challenges?: string | null
+          created_at?: string
+          health_guidance?: string | null
+          id?: string
+          love_guidance?: string | null
+          lucky_numbers?: number[]
+          overview?: string
+          power_colors?: string[]
+          reading_date?: string
+          solutions?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          date_of_birth: string
+          full_name: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          place_of_birth: string
+          questions: string | null
+          time_of_birth: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth: string
+          full_name: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          place_of_birth: string
+          questions?: string | null
+          time_of_birth?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string
+          full_name?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          place_of_birth?: string
+          questions?: string | null
+          time_of_birth?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

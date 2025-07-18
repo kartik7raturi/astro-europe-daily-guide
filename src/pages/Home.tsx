@@ -68,15 +68,15 @@ const Home = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/horoscope">
+              <Link to="/auth">
                 <Button variant="cosmic" size="lg" className="w-full sm:w-auto">
-                  Get Your Reading
+                  Get Started
                   <Stars className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/about">
+              <Link to="/horoscope">
                 <Button variant="mystical" size="lg" className="w-full sm:w-auto">
-                  Learn More
+                  Try Demo
                 </Button>
               </Link>
             </div>

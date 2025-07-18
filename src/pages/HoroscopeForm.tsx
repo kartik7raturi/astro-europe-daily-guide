@@ -10,6 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, MapPin, Clock, Stars, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserData {
   name: string;
@@ -22,6 +24,7 @@ interface UserData {
 
 const HoroscopeForm = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [userData, setUserData] = useState<UserData>({
     name: "",
     email: "",
@@ -31,19 +34,60 @@ const HoroscopeForm = () => {
     specificQuestions: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!userData.name || !userData.dateOfBirth || !userData.placeOfBirth) {
-      alert("Please fill in all required fields");
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
       return;
     }
 
-    // Store user data in localStorage for the demo
-    localStorage.setItem("userAstrologyData", JSON.stringify(userData));
-    
-    // Navigate to the daily horoscope page
-    navigate("/daily-reading");
+    try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        // Store in localStorage for now and redirect to auth
+        localStorage.setItem('astrologyData', JSON.stringify(userData));
+        toast({
+          title: "Please sign in",
+          description: "Create an account to save your cosmic profile.",
+        });
+        navigate('/auth');
+        return;
+      }
+
+      // Save to database
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: user.id,
+          full_name: userData.name,
+          date_of_birth: userData.dateOfBirth.toISOString().split('T')[0],
+          time_of_birth: userData.timeOfBirth || null,
+          place_of_birth: userData.placeOfBirth,
+          questions: userData.specificQuestions || null
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile saved!",
+        description: "Your cosmic profile has been created successfully.",
+      });
+
+      navigate('/dashboard');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (

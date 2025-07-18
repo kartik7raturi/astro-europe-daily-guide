@@ -47,9 +47,11 @@ const Navigation = () => {
                 {item.name}
               </Link>
             ))}
-            <Button variant="cosmic" size="sm">
-              Get Reading
-            </Button>
+            <Link to="/auth">
+              <Button variant="cosmic" size="sm">
+                Sign In
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -83,9 +85,11 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="pt-2">
-                <Button variant="cosmic" size="sm" className="w-full">
-                  Get Reading
-                </Button>
+                <Link to="/auth">
+                  <Button variant="cosmic" size="sm" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
