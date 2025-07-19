@@ -16,6 +16,12 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
+import BirthChart from "./pages/BirthChart";
+import Numerology from "./pages/Numerology";
+import AstroCalendar from "./pages/AstroCalendar";
+import LuckyElements from "./pages/LuckyElements";
+import Consultations from "./pages/Consultations";
+import Blog from "./pages/Blog";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +38,12 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/horoscope" element={<HoroscopeForm />} />
               <Route path="/daily-reading" element={<DailyReading />} />
+              <Route path="/birth-chart" element={<BirthChart />} />
+              <Route path="/numerology" element={<Numerology />} />
+              <Route path="/astro-calendar" element={<AstroCalendar />} />
+              <Route path="/lucky-elements" element={<LuckyElements />} />
+              <Route path="/consultations" element={<Consultations />} />
+              <Route path="/blog" element={<Blog />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
