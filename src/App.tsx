@@ -22,6 +22,11 @@ import AstroCalendar from "./pages/AstroCalendar";
 import LuckyElements from "./pages/LuckyElements";
 import Consultations from "./pages/Consultations";
 import Blog from "./pages/Blog";
+import DailyAffirmations from "./pages/DailyAffirmations";
+import LoveForecasts from "./pages/LoveForecasts";
+import CrushAnalyzer from "./pages/CrushAnalyzer";
+import AstroJournal from "./pages/AstroJournal";
+import AstroQuizzes from "./pages/AstroQuizzes";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +49,11 @@ const App = () => (
               <Route path="/lucky-elements" element={<LuckyElements />} />
               <Route path="/consultations" element={<Consultations />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/daily-affirmations" element={<DailyAffirmations />} />
+              <Route path="/love-forecasts" element={<LoveForecasts />} />
+              <Route path="/crush-analyzer" element={<CrushAnalyzer />} />
+              <Route path="/astro-journal" element={<AstroJournal />} />
+              <Route path="/astro-quizzes" element={<AstroQuizzes />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />

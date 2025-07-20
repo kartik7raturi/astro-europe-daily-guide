@@ -115,6 +115,75 @@ export type Database = {
         }
         Relationships: []
       }
+      astro_journal: {
+        Row: {
+          created_at: string
+          daily_events: string | null
+          entry_date: string
+          id: string
+          mood_rating: number | null
+          moon_phase: string | null
+          personal_notes: string | null
+          planetary_influences: string | null
+          prediction_accuracy: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_events?: string | null
+          entry_date?: string
+          id?: string
+          mood_rating?: number | null
+          moon_phase?: string | null
+          personal_notes?: string | null
+          planetary_influences?: string | null
+          prediction_accuracy?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_events?: string | null
+          entry_date?: string
+          id?: string
+          mood_rating?: number | null
+          moon_phase?: string | null
+          personal_notes?: string | null
+          planetary_influences?: string | null
+          prediction_accuracy?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      astrology_quizzes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          questions: Json
+          quiz_type: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          questions: Json
+          quiz_type?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          questions?: Json
+          quiz_type?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       birth_charts: {
         Row: {
           aspects: Json | null
@@ -283,6 +352,78 @@ export type Database = {
         }
         Relationships: []
       }
+      crush_analysis: {
+        Row: {
+          analysis_text: string | null
+          compatibility_score: number | null
+          created_at: string
+          crush_birthdate: string | null
+          crush_name: string
+          daily_insight: string | null
+          id: string
+          thinking_about_you_percentage: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_text?: string | null
+          compatibility_score?: number | null
+          created_at?: string
+          crush_birthdate?: string | null
+          crush_name: string
+          daily_insight?: string | null
+          id?: string
+          thinking_about_you_percentage?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_text?: string | null
+          compatibility_score?: number | null
+          created_at?: string
+          crush_birthdate?: string | null
+          crush_name?: string
+          daily_insight?: string | null
+          id?: string
+          thinking_about_you_percentage?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_affirmations: {
+        Row: {
+          affirmation_text: string
+          created_at: string
+          date: string
+          id: string
+          is_favorite: boolean | null
+          numerology_number: number | null
+          user_id: string
+          zodiac_sign: string | null
+        }
+        Insert: {
+          affirmation_text: string
+          created_at?: string
+          date?: string
+          id?: string
+          is_favorite?: boolean | null
+          numerology_number?: number | null
+          user_id: string
+          zodiac_sign?: string | null
+        }
+        Update: {
+          affirmation_text?: string
+          created_at?: string
+          date?: string
+          id?: string
+          is_favorite?: boolean | null
+          numerology_number?: number | null
+          user_id?: string
+          zodiac_sign?: string | null
+        }
+        Relationships: []
+      }
       daily_readings: {
         Row: {
           advice: string | null
@@ -327,6 +468,48 @@ export type Database = {
           power_colors?: string[]
           reading_date?: string
           solutions?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      love_forecasts: {
+        Row: {
+          career_advice: string | null
+          career_score: number | null
+          created_at: string
+          date: string
+          finance_advice: string | null
+          finance_score: number | null
+          id: string
+          love_advice: string | null
+          love_score: number | null
+          lucky_love_time: string | null
+          user_id: string
+        }
+        Insert: {
+          career_advice?: string | null
+          career_score?: number | null
+          created_at?: string
+          date?: string
+          finance_advice?: string | null
+          finance_score?: number | null
+          id?: string
+          love_advice?: string | null
+          love_score?: number | null
+          lucky_love_time?: string | null
+          user_id: string
+        }
+        Update: {
+          career_advice?: string | null
+          career_score?: number | null
+          created_at?: string
+          date?: string
+          finance_advice?: string | null
+          finance_score?: number | null
+          id?: string
+          love_advice?: string | null
+          love_score?: number | null
+          lucky_love_time?: string | null
           user_id?: string
         }
         Relationships: []
@@ -487,6 +670,39 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_results: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          quiz_id: string
+          result_text: string | null
+          score: number | null
+          shareable_result: string | null
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          created_at?: string
+          id?: string
+          quiz_id: string
+          result_text?: string | null
+          score?: number | null
+          shareable_result?: string | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          quiz_id?: string
+          result_text?: string | null
+          score?: number | null
+          shareable_result?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_items: {
         Row: {
           created_at: string
@@ -510,6 +726,48 @@ export type Database = {
           item_id?: string
           item_type?: string
           title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      soulmate_readings: {
+        Row: {
+          created_at: string
+          id: string
+          karmic_bond_reading: string | null
+          love_percentage: number | null
+          meeting_place_prediction: string | null
+          meeting_time_prediction: string | null
+          soulmate_description: string | null
+          soulmate_sketch_url: string | null
+          twin_flame_analysis: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          karmic_bond_reading?: string | null
+          love_percentage?: number | null
+          meeting_place_prediction?: string | null
+          meeting_time_prediction?: string | null
+          soulmate_description?: string | null
+          soulmate_sketch_url?: string | null
+          twin_flame_analysis?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          karmic_bond_reading?: string | null
+          love_percentage?: number | null
+          meeting_place_prediction?: string | null
+          meeting_time_prediction?: string | null
+          soulmate_description?: string | null
+          soulmate_sketch_url?: string | null
+          twin_flame_analysis?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -556,6 +814,42 @@ export type Database = {
           updated_at?: string
           user_id?: string
           weekly_notifications?: boolean | null
+        }
+        Relationships: []
+      }
+      user_streaks: {
+        Row: {
+          created_at: string
+          current_streak: number | null
+          id: string
+          last_visit_date: string | null
+          longest_streak: number | null
+          reward_points: number | null
+          streak_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number | null
+          id?: string
+          last_visit_date?: string | null
+          longest_streak?: number | null
+          reward_points?: number | null
+          streak_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number | null
+          id?: string
+          last_visit_date?: string | null
+          longest_streak?: number | null
+          reward_points?: number | null
+          streak_type?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

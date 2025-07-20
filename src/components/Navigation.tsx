@@ -10,8 +10,13 @@ const Navigation = () => {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
+    { name: "Birth Chart", href: "/birth-chart" },
+    { name: "Numerology", href: "/numerology" },
+    { name: "Love Forecasts", href: "/love-forecasts" },
+    { name: "Affirmations", href: "/daily-affirmations" },
+    { name: "Quizzes", href: "/astro-quizzes" },
+    { name: "Journal", href: "/astro-journal" },
     { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
   ];
 
   const isActive = (href: string) => location.pathname === href;
