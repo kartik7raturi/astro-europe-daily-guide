@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, TrendingUp, DollarSign, Clock, RefreshCw } from "lucide-react";
+import { Heart, TrendingUp, DollarSign, Clock, RefreshCw, Crown, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Link } from "react-router-dom";
 
 interface LoveForecast {
   love_score: number;
@@ -14,12 +17,15 @@ interface LoveForecast {
   career_advice: string;
   finance_advice: string;
   lucky_love_time: string;
+  soulmate_sketch: string | null;
 }
 
 const LoveForecasts = () => {
   const [forecast, setForecast] = useState<LoveForecast | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { hasAccess, subscribed, trial_end, loading: subscriptionLoading } = useSubscription();
 
   useEffect(() => {
     loadTodayForecast();
@@ -27,7 +33,6 @@ const LoveForecasts = () => {
 
   const loadTodayForecast = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const today = new Date().toISOString().split('T')[0];
@@ -37,7 +42,7 @@ const LoveForecasts = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('date', today)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading forecast:', error);
@@ -58,7 +63,6 @@ const LoveForecasts = () => {
 
   const generateNewForecast = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const loveScore = Math.floor(Math.random() * 10) + 1;
@@ -71,6 +75,9 @@ const LoveForecasts = () => {
       
       const luckyTimes = ['08:00', '11:30', '14:20', '17:45', '20:15'];
       const luckyTime = luckyTimes[Math.floor(Math.random() * luckyTimes.length)];
+
+      // Generate soulmate sketch description for subscribed users
+      const soulmateSketch = hasAccess('love_forecasts') ? generateSoulmateSketch() : null;
 
       const today = new Date().toISOString().split('T')[0];
 
@@ -85,7 +92,8 @@ const LoveForecasts = () => {
           love_advice: loveAdvice,
           career_advice: careerAdvice,
           finance_advice: financeAdvice,
-          lucky_love_time: luckyTime
+          lucky_love_time: luckyTime,
+          soulmate_sketch: soulmateSketch
         })
         .select()
         .single();
@@ -100,6 +108,32 @@ const LoveForecasts = () => {
     } catch (error) {
       console.error('Error generating forecast:', error);
     }
+  };
+
+  const generateSoulmateSketch = () => {
+    const features = [
+      "warm, expressive eyes that sparkle with kindness",
+      "a gentle smile that lights up their face",
+      "an aura of creativity and intelligence",
+      "stylish yet comfortable appearance",
+      "confident but approachable demeanor",
+      "an artistic or intellectual vibe",
+      "natural charisma and charm"
+    ];
+    
+    const locations = [
+      "a cozy bookstore or library",
+      "an art gallery or creative space",
+      "a peaceful park or garden",
+      "a coffee shop with good music",
+      "a cultural event or workshop",
+      "while traveling or exploring"
+    ];
+
+    const selectedFeatures = features.slice(0, 3 + Math.floor(Math.random() * 3));
+    const location = locations[Math.floor(Math.random() * locations.length)];
+    
+    return `Your soulmate has ${selectedFeatures.join(', ')}. The cosmic energies suggest you'll meet them in ${location}. They bring balance to your energy and share your deeper values.`;
   };
 
   const getLoveAdvice = (score: number) => {
@@ -130,11 +164,59 @@ const LoveForecasts = () => {
     return "text-red-600";
   };
 
-  if (loading) {
+  if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">Loading your cosmic forecasts...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
+        <div className="container mx-auto max-w-4xl text-center space-y-6">
+          <h1 className="text-4xl font-bold">Love Forecasts</h1>
+          <p className="text-muted-foreground">Please sign in to access your personalized love forecasts.</p>
+          <Link to="/auth">
+            <Button variant="cosmic">Sign In</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasAccess('love_forecasts')) {
+    const trialDaysLeft = trial_end ? Math.ceil((new Date(trial_end).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
+        <div className="container mx-auto max-w-4xl text-center space-y-6">
+          <div className="flex items-center justify-center gap-2 text-amber-600">
+            <Crown className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Premium Feature</h1>
+          </div>
+          
+          {trialDaysLeft > 0 ? (
+            <div className="space-y-4">
+              <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue accessing Love Forecasts with Soulmate Sketches.</p>
+              <Button variant="cosmic" size="lg" className="gap-2">
+                <Crown className="h-5 w-5" />
+                Upgrade to Premium
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-muted-foreground">Love Forecasts with AI Soulmate Sketches are a Premium feature.</p>
+              <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
+              <Button variant="cosmic" size="lg" className="gap-2">
+                <Sparkles className="h-5 w-5" />
+                Start Free Trial
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -176,6 +258,17 @@ const LoveForecasts = () => {
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-pink-600" />
                     Lucky time for love: {forecast.lucky_love_time}
+                  </div>
+                )}
+                
+                {forecast.soulmate_sketch && (
+                  <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-lg border">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Sparkles className="h-5 w-5 text-pink-600" />
+                      <h4 className="font-semibold text-pink-700 dark:text-pink-300">Your Soulmate Sketch</h4>
+                      <Crown className="h-4 w-4 text-amber-500" />
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{forecast.soulmate_sketch}</p>
                   </div>
                 )}
               </CardContent>

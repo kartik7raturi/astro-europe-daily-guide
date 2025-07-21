@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Stars, Sparkles } from "lucide-react";
+import { Menu, X, Stars, Sparkles, LogOut, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -14,7 +16,6 @@ const Navigation = () => {
     { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
     { name: "Affirmations", href: "/daily-affirmations" },
-    { name: "Quizzes", href: "/astro-quizzes" },
     { name: "Journal", href: "/astro-journal" },
     { name: "About", href: "/about" },
   ];
@@ -52,11 +53,25 @@ const Navigation = () => {
                 {item.name}
               </Link>
             ))}
-            <Link to="/auth">
-              <Button variant="cosmic" size="sm">
-                Sign In
-              </Button>
-            </Link>
+            
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <User className="h-4 w-4" />
+                  {user.email?.split('@')[0]}
+                </Button>
+                <Button variant="outline" size="sm" onClick={signOut} className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Link to="/auth">
+                <Button variant="cosmic" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -90,11 +105,23 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="pt-2">
-                <Link to="/auth">
-                  <Button variant="cosmic" size="sm" className="w-full">
-                    Sign In
-                  </Button>
-                </Link>
+                {user ? (
+                  <div className="space-y-2">
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
+                    <Button variant="outline" size="sm" onClick={signOut} className="w-full gap-2">
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/auth">
+                    <Button variant="cosmic" size="sm" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

@@ -484,6 +484,7 @@ export type Database = {
           love_advice: string | null
           love_score: number | null
           lucky_love_time: string | null
+          soulmate_sketch: string | null
           user_id: string
         }
         Insert: {
@@ -497,6 +498,7 @@ export type Database = {
           love_advice?: string | null
           love_score?: number | null
           lucky_love_time?: string | null
+          soulmate_sketch?: string | null
           user_id: string
         }
         Update: {
@@ -510,6 +512,7 @@ export type Database = {
           love_advice?: string | null
           love_score?: number | null
           lucky_love_time?: string | null
+          soulmate_sketch?: string | null
           user_id?: string
         }
         Relationships: []
@@ -769,6 +772,45 @@ export type Database = {
           twin_flame_analysis?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          trial_end: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          trial_end?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          trial_end?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

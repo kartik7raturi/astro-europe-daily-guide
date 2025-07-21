@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, RefreshCw, Save, Star } from "lucide-react";
+import { Heart, RefreshCw, Save, Star, Crown, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Link } from "react-router-dom";
 
 interface Affirmation {
   id: string;
@@ -17,6 +20,8 @@ const DailyAffirmations = () => {
   const [favorites, setFavorites] = useState<Affirmation[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { hasAccess, subscribed, trial_end, loading: subscriptionLoading } = useSubscription();
 
   const affirmations = [
     "The universe conspires to bring me love and joy today",
@@ -36,7 +41,6 @@ const DailyAffirmations = () => {
 
   const loadTodayAffirmation = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const today = new Date().toISOString().split('T')[0];
@@ -46,7 +50,7 @@ const DailyAffirmations = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('date', today)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading affirmation:', error);
@@ -67,7 +71,6 @@ const DailyAffirmations = () => {
 
   const generateNewAffirmation = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const randomAffirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
@@ -126,7 +129,6 @@ const DailyAffirmations = () => {
 
   const loadFavorites = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data, error } = await supabase
@@ -143,11 +145,59 @@ const DailyAffirmations = () => {
     }
   };
 
-  if (loading) {
+  if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">Loading your cosmic message...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
+        <div className="container mx-auto max-w-4xl text-center space-y-6">
+          <h1 className="text-4xl font-bold">Daily Affirmations</h1>
+          <p className="text-muted-foreground">Please sign in to access your personalized daily affirmations.</p>
+          <Link to="/auth">
+            <Button variant="cosmic">Sign In</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasAccess('affirmations')) {
+    const trialDaysLeft = trial_end ? Math.ceil((new Date(trial_end).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
+        <div className="container mx-auto max-w-4xl text-center space-y-6">
+          <div className="flex items-center justify-center gap-2 text-amber-600">
+            <Crown className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Premium Feature</h1>
+          </div>
+          
+          {trialDaysLeft > 0 ? (
+            <div className="space-y-4">
+              <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue accessing Daily Affirmations.</p>
+              <Button variant="cosmic" size="lg" className="gap-2">
+                <Crown className="h-5 w-5" />
+                Upgrade to Premium
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-muted-foreground">Daily Affirmations are a Premium feature.</p>
+              <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
+              <Button variant="cosmic" size="lg" className="gap-2">
+                <Sparkles className="h-5 w-5" />
+                Start Free Trial
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
