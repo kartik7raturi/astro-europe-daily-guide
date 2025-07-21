@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, MapPin, Clock, Stars, User } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -168,16 +169,70 @@ const HoroscopeForm = () => {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={userData.dateOfBirth}
-                      onSelect={(date) => setUserData({...userData, dateOfBirth: date})}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
+                    <div className="p-3 space-y-3">
+                      {/* Year and Month Selectors */}
+                      <div className="flex gap-2">
+                        <Select
+                          value={userData.dateOfBirth?.getFullYear().toString() || ""}
+                          onValueChange={(year) => {
+                            const currentDate = userData.dateOfBirth || new Date();
+                            const newDate = new Date(parseInt(year), currentDate.getMonth(), currentDate.getDate());
+                            setUserData({...userData, dateOfBirth: newDate});
+                          }}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px]">
+                            {Array.from({ length: new Date().getFullYear() - 1920 + 1 }, (_, i) => {
+                              const year = new Date().getFullYear() - i;
+                              return (
+                                <SelectItem key={year} value={year.toString()}>
+                                  {year}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                        
+                        <Select
+                          value={userData.dateOfBirth?.getMonth().toString() || ""}
+                          onValueChange={(month) => {
+                            const currentDate = userData.dateOfBirth || new Date();
+                            const newDate = new Date(currentDate.getFullYear(), parseInt(month), currentDate.getDate());
+                            setUserData({...userData, dateOfBirth: newDate});
+                          }}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => (
+                              <SelectItem key={i} value={i.toString()}>
+                                {format(new Date(2000, i, 1), "MMMM")}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <Calendar
+                        mode="single"
+                        selected={userData.dateOfBirth}
+                        onSelect={(date) => setUserData({...userData, dateOfBirth: date})}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1920-01-01")
+                        }
+                        month={userData.dateOfBirth}
+                        onMonthChange={(date) => {
+                          if (userData.dateOfBirth) {
+                            const newDate = new Date(date.getFullYear(), date.getMonth(), userData.dateOfBirth.getDate());
+                            setUserData({...userData, dateOfBirth: newDate});
+                          }
+                        }}
+                        className="pointer-events-auto"
+                      />
+                    </div>
                   </PopoverContent>
                 </Popover>
               </div>
