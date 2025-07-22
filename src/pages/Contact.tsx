@@ -38,7 +38,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email Us",
-      details: "info@cosmicinsights.eu",
+      details: "sankhobusiness@gmail.com",
       description: "We respond to all inquiries within 24 hours"
     },
     {

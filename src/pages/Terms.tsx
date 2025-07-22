@@ -109,7 +109,7 @@ const Terms = () => {
                   <strong>Questions about these terms?</strong>
                 </p>
                 <p className="text-muted-foreground">
-                  Contact us at info@cosmicinsights.eu for clarification on any aspect of our terms of service.
+                  Contact us at sankhobusiness@gmail.com for clarification on any aspect of our terms of service.
                 </p>
               </div>
             </CardContent>
