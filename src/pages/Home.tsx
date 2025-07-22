@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash } from "lucide-react";
+import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Smartphone, Download } from "lucide-react";
 import cosmicHero from "@/assets/cosmic-hero.jpg";
 
 const Home = () => {
@@ -115,6 +115,106 @@ const Home = () => {
                 </Card>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile App Download Section */}
+      <section className="py-20 bg-card/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <Smartphone className="h-16 w-16 text-primary animate-float" />
+            </div>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Take Your Cosmic Journey Mobile
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Download our mobile app and access your daily readings, horoscopes, and cosmic guidance anywhere, anytime.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* iOS Download */}
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+              <CardContent className="p-8 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gradient-cosmic rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Download className="h-8 w-8 text-primary-foreground" />
+                    </div>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold mb-4">iOS App</h3>
+                <p className="text-muted-foreground mb-6">
+                  Download for iPhone and iPad. Full-featured app with offline capabilities and push notifications for daily readings.
+                </p>
+                <Button variant="cosmic" size="lg" className="w-full" onClick={() => window.open('#', '_blank')}>
+                  Download for iOS
+                  <Download className="ml-2 h-5 w-5" />
+                </Button>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Requires iOS 12.0 or later
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Android Download */}
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+              <CardContent className="p-8 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gradient-gold rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Download className="h-8 w-8 text-accent-foreground" />
+                    </div>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Android App</h3>
+                <p className="text-muted-foreground mb-6">
+                  Download APK file or get it from Google Play. Optimized for all Android devices with dark mode support.
+                </p>
+                <div className="space-y-3">
+                  <Button variant="gold" size="lg" className="w-full" onClick={() => window.open('#', '_blank')}>
+                    Download APK
+                    <Download className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button variant="outline" size="lg" className="w-full" onClick={() => window.open('#', '_blank')}>
+                    Google Play Store
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Requires Android 7.0 or later
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* App Features */}
+          <div className="mt-16">
+            <h3 className="text-2xl font-bold text-center mb-8">Mobile App Features</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Moon className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">Offline Access</h4>
+                <p className="text-sm text-muted-foreground">Read your horoscopes even without internet connection</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">Push Notifications</h4>
+                <p className="text-sm text-muted-foreground">Get daily reminders for your cosmic guidance</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">Personalized</h4>
+                <p className="text-sm text-muted-foreground">Tailored readings based on your profile and preferences</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
