@@ -17,7 +17,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
-import BirthChart from "./pages/BirthChart";
+
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
 import LuckyElements from "./pages/LuckyElements";
@@ -44,7 +44,7 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/horoscope" element={<HoroscopeForm />} />
                 <Route path="/daily-reading" element={<DailyReading />} />
-                <Route path="/birth-chart" element={<BirthChart />} />
+                
                 <Route path="/numerology" element={<Numerology />} />
                 <Route path="/astro-calendar" element={<AstroCalendar />} />
                 <Route path="/lucky-elements" element={<LuckyElements />} />

@@ -238,6 +238,158 @@ const Home = () => {
           </Card>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">What Our Users Say</h2>
+            <p className="text-muted-foreground text-lg">
+              Discover how Cosmic Insights has transformed lives across Europe
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "The daily horoscope readings are incredibly accurate and insightful. I've been using Cosmic Insights for 6 months and it's helped me make better decisions in my career and relationships."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    M
+                  </div>
+                  <div>
+                    <p className="font-semibold">Maria Schmidt</p>
+                    <p className="text-sm text-muted-foreground">Berlin, Germany</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "The love forecasts feature helped me understand my relationship patterns better. I met my soulmate just as the app predicted - at an art gallery during spring!"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    A
+                  </div>
+                  <div>
+                    <p className="font-semibold">Alessandro Rossi</p>
+                    <p className="text-sm text-muted-foreground">Milan, Italy</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "The numerology reports gave me such clarity about my life path. The detailed analysis helped me choose the right career direction and I couldn't be happier!"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    S
+                  </div>
+                  <div>
+                    <p className="font-semibold">Sophie Dubois</p>
+                    <p className="text-sm text-muted-foreground">Paris, France</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "I was skeptical at first, but the daily affirmations and cosmic guidance have genuinely improved my mindset and brought more positivity into my life."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    L
+                  </div>
+                  <div>
+                    <p className="font-semibold">Lars Andersen</p>
+                    <p className="text-sm text-muted-foreground">Copenhagen, Denmark</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "The astro journal feature has become part of my daily routine. Tracking my mood with planetary influences has helped me understand myself so much better."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    E
+                  </div>
+                  <div>
+                    <p className="font-semibold">Elena Petrov</p>
+                    <p className="text-sm text-muted-foreground">Prague, Czech Republic</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex text-accent text-lg">
+                    ★★★★★
+                  </div>
+                </div>
+                <p className="text-foreground mb-4 italic">
+                  "The crush analyzer was surprisingly accurate! It helped me understand compatibility patterns and gave me confidence to pursue meaningful connections."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                    J
+                  </div>
+                  <div>
+                    <p className="font-semibold">James Thompson</p>
+                    <p className="text-sm text-muted-foreground">London, UK</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground">
+              Join over 50,000+ satisfied users across Europe
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

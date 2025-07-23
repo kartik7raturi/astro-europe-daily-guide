@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -30,24 +32,69 @@ interface UserData {
 
 const DailyReading = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [currentDate] = useState(new Date());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("userAstrologyData");
-    if (!storedData) {
-      navigate("/horoscope");
+    loadUserData();
+  }, [user]);
+
+  const loadUserData = async () => {
+    if (!user) {
+      navigate("/auth");
       return;
     }
-    
+
     try {
-      const parsed = JSON.parse(storedData);
-      parsed.dateOfBirth = new Date(parsed.dateOfBirth);
-      setUserData(parsed);
+      // First check for saved profile data
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile && !error) {
+        const userData = {
+          name: profile.full_name,
+          email: user.email || '',
+          dateOfBirth: new Date(profile.date_of_birth),
+          timeOfBirth: profile.time_of_birth || '',
+          placeOfBirth: profile.place_of_birth,
+          specificQuestions: profile.questions || ''
+        };
+        setUserData(userData);
+      } else {
+        // Fallback to localStorage if no profile exists
+        const storedData = localStorage.getItem("userAstrologyData");
+        if (storedData) {
+          const parsed = JSON.parse(storedData);
+          parsed.dateOfBirth = new Date(parsed.dateOfBirth);
+          setUserData(parsed);
+        } else {
+          navigate("/horoscope");
+          return;
+        }
+      }
     } catch (error) {
+      console.error('Error loading user data:', error);
       navigate("/horoscope");
+    } finally {
+      setLoading(false);
     }
-  }, [navigate]);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-starlight flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading your cosmic reading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!userData) {
     return null;

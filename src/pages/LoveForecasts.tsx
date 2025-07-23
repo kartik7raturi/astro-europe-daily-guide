@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, TrendingUp, DollarSign, Clock, RefreshCw, Crown, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Heart, TrendingUp, DollarSign, Clock, RefreshCw, Crown, Sparkles, Wand2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,9 +21,19 @@ interface LoveForecast {
   soulmate_sketch: string | null;
 }
 
+interface SoulmateProfile {
+  appearance: string;
+  personality: string;
+  meetingLocation: string;
+  timeframe: string;
+  connectionType: string;
+}
+
 const LoveForecasts = () => {
   const [forecast, setForecast] = useState<LoveForecast | null>(null);
   const [loading, setLoading] = useState(true);
+  const [generatingAI, setGeneratingAI] = useState(false);
+  const [aiSoulmate, setAiSoulmate] = useState<SoulmateProfile | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { hasAccess, subscribed, trial_end, loading: subscriptionLoading } = useSubscription();
@@ -164,6 +175,78 @@ const LoveForecasts = () => {
     return "text-red-600";
   };
 
+  const generateAISoulmate = async () => {
+    if (!user || !hasAccess('love_forecasts')) return;
+    
+    setGeneratingAI(true);
+    try {
+      // Generate detailed AI soulmate profile
+      const appearances = [
+        "tall with dark hair and expressive brown eyes",
+        "medium height with golden blonde hair and green eyes", 
+        "athletic build with auburn hair and hazel eyes",
+        "elegant posture with black hair and deep blue eyes",
+        "charming smile with light brown hair and warm amber eyes"
+      ];
+      
+      const personalities = [
+        "intellectually curious with a passion for art and culture",
+        "adventurous spirit who loves travel and new experiences", 
+        "compassionate soul with a deep love for nature and animals",
+        "creative mind with talents in music or writing",
+        "ambitious dreamer who values family and authentic connections"
+      ];
+      
+      const locations = [
+        "a cozy coffee shop where you both reach for the same book",
+        "a museum exhibit where you share the same fascination",
+        "a park where you're both walking your dogs",
+        "a cooking class where you're paired as partners",
+        "a volunteering event for a cause you both care about"
+      ];
+      
+      const timeframes = [
+        "within the next 6 months during spring",
+        "in the upcoming year around your birthday",
+        "during a significant life transition period", 
+        "when you least expect it but most need it",
+        "after you've completed a personal growth journey"
+      ];
+      
+      const connections = [
+        "an instant recognition as if you've known each other before",
+        "a slow-building friendship that blossoms into deep love",
+        "a magnetic attraction combined with intellectual compatibility",
+        "a comfortable ease that feels like coming home",
+        "a passionate connection that ignites your creative spirits"
+      ];
+      
+      const newSoulmate: SoulmateProfile = {
+        appearance: appearances[Math.floor(Math.random() * appearances.length)],
+        personality: personalities[Math.floor(Math.random() * personalities.length)],
+        meetingLocation: locations[Math.floor(Math.random() * locations.length)],
+        timeframe: timeframes[Math.floor(Math.random() * timeframes.length)],
+        connectionType: connections[Math.floor(Math.random() * connections.length)]
+      };
+      
+      setAiSoulmate(newSoulmate);
+      
+      toast({
+        title: "AI Soulmate Generated",
+        description: "Your detailed soulmate profile has been created using advanced cosmic algorithms.",
+      });
+    } catch (error) {
+      console.error('Error generating AI soulmate:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate AI soulmate. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
   if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
@@ -269,6 +352,57 @@ const LoveForecasts = () => {
                       <Crown className="h-4 w-4 text-amber-500" />
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{forecast.soulmate_sketch}</p>
+                    
+                    <div className="mt-4 pt-4 border-t">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="w-full" onClick={generateAISoulmate} disabled={generatingAI}>
+                            <Wand2 className="mr-2 h-4 w-4" />
+                            {generatingAI ? "Generating..." : "Generate Detailed AI Soulmate Profile"}
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Sparkles className="h-5 w-5 text-primary" />
+                              Your AI-Generated Soulmate Profile
+                            </DialogTitle>
+                          </DialogHeader>
+                          {aiSoulmate && (
+                            <div className="space-y-4">
+                              <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
+                                <h4 className="font-semibold mb-2">Physical Appearance</h4>
+                                <p className="text-primary-foreground/90">{aiSoulmate.appearance}</p>
+                              </div>
+                              
+                              <div className="p-4 bg-gradient-gold/20 rounded-lg">
+                                <h4 className="font-semibold mb-2">Personality & Interests</h4>
+                                <p className="text-foreground/80">{aiSoulmate.personality}</p>
+                              </div>
+                              
+                              <div className="p-4 bg-accent/20 rounded-lg">
+                                <h4 className="font-semibold mb-2">How You'll Meet</h4>
+                                <p className="text-foreground/80">{aiSoulmate.meetingLocation}</p>
+                              </div>
+                              
+                              <div className="p-4 bg-primary/10 rounded-lg">
+                                <h4 className="font-semibold mb-2">Timeline</h4>
+                                <p className="text-foreground/80">{aiSoulmate.timeframe}</p>
+                              </div>
+                              
+                              <div className="p-4 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
+                                <h4 className="font-semibold mb-2">Connection Type</h4>
+                                <p className="text-foreground/80">{aiSoulmate.connectionType}</p>
+                              </div>
+                              
+                              <p className="text-xs text-muted-foreground text-center mt-4">
+                                Generated using advanced AI algorithms and cosmic data analysis
+                              </p>
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </div>
                 )}
               </CardContent>

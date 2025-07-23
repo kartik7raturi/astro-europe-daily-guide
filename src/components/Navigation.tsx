@@ -12,7 +12,7 @@ const Navigation = () => {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
-    { name: "Birth Chart", href: "/birth-chart" },
+    
     { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
     { name: "Affirmations", href: "/daily-affirmations" },
