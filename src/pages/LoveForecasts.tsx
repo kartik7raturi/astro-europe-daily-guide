@@ -344,67 +344,71 @@ const LoveForecasts = () => {
                   </div>
                 )}
                 
-                {forecast.soulmate_sketch && (
-                  <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-lg border">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="h-5 w-5 text-pink-600" />
-                      <h4 className="font-semibold text-pink-700 dark:text-pink-300">Your Soulmate Sketch</h4>
-                      <Crown className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{forecast.soulmate_sketch}</p>
-                    
-                    <div className="mt-4 pt-4 border-t">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" className="w-full" onClick={generateAISoulmate} disabled={generatingAI}>
-                            <Wand2 className="mr-2 h-4 w-4" />
-                            {generatingAI ? "Generating..." : "Generate Detailed AI Soulmate Profile"}
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2">
-                              <Sparkles className="h-5 w-5 text-primary" />
-                              Your AI-Generated Soulmate Profile
-                            </DialogTitle>
-                          </DialogHeader>
-                          {aiSoulmate && (
-                            <div className="space-y-4">
-                              <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
-                                <h4 className="font-semibold mb-2">Physical Appearance</h4>
-                                <p className="text-primary-foreground/90">{aiSoulmate.appearance}</p>
-                              </div>
-                              
-                              <div className="p-4 bg-gradient-gold/20 rounded-lg">
-                                <h4 className="font-semibold mb-2">Personality & Interests</h4>
-                                <p className="text-foreground/80">{aiSoulmate.personality}</p>
-                              </div>
-                              
-                              <div className="p-4 bg-accent/20 rounded-lg">
-                                <h4 className="font-semibold mb-2">How You'll Meet</h4>
-                                <p className="text-foreground/80">{aiSoulmate.meetingLocation}</p>
-                              </div>
-                              
-                              <div className="p-4 bg-primary/10 rounded-lg">
-                                <h4 className="font-semibold mb-2">Timeline</h4>
-                                <p className="text-foreground/80">{aiSoulmate.timeframe}</p>
-                              </div>
-                              
-                              <div className="p-4 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
-                                <h4 className="font-semibold mb-2">Connection Type</h4>
-                                <p className="text-foreground/80">{aiSoulmate.connectionType}</p>
-                              </div>
-                              
-                              <p className="text-xs text-muted-foreground text-center mt-4">
-                                Generated using advanced AI algorithms and cosmic data analysis
-                              </p>
-                            </div>
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                    </div>
+                <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-lg border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="h-5 w-5 text-pink-600" />
+                    <h4 className="font-semibold text-pink-700 dark:text-pink-300">Soulmate Features</h4>
+                    <Crown className="h-4 w-4 text-amber-500" />
                   </div>
-                )}
+                  
+                  {forecast.soulmate_sketch && (
+                    <div className="mb-4">
+                      <h5 className="font-medium mb-2">Your Soulmate Sketch</h5>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{forecast.soulmate_sketch}</p>
+                    </div>
+                  )}
+                  
+                  <div className="space-y-3">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full" onClick={generateAISoulmate} disabled={generatingAI}>
+                          <Wand2 className="mr-2 h-4 w-4" />
+                          {generatingAI ? "Generating..." : "Generate Detailed AI Soulmate Profile"}
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <Sparkles className="h-5 w-5 text-primary" />
+                            Your AI-Generated Soulmate Profile
+                          </DialogTitle>
+                        </DialogHeader>
+                        {aiSoulmate && (
+                          <div className="space-y-4">
+                            <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
+                              <h4 className="font-semibold mb-2">Physical Appearance</h4>
+                              <p className="text-primary-foreground/90">{aiSoulmate.appearance}</p>
+                            </div>
+                            
+                            <div className="p-4 bg-gradient-gold/20 rounded-lg">
+                              <h4 className="font-semibold mb-2">Personality & Interests</h4>
+                              <p className="text-foreground/80">{aiSoulmate.personality}</p>
+                            </div>
+                            
+                            <div className="p-4 bg-accent/20 rounded-lg">
+                              <h4 className="font-semibold mb-2">How You'll Meet</h4>
+                              <p className="text-foreground/80">{aiSoulmate.meetingLocation}</p>
+                            </div>
+                            
+                            <div className="p-4 bg-primary/10 rounded-lg">
+                              <h4 className="font-semibold mb-2">Timeline</h4>
+                              <p className="text-foreground/80">{aiSoulmate.timeframe}</p>
+                            </div>
+                            
+                            <div className="p-4 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
+                              <h4 className="font-semibold mb-2">Connection Type</h4>
+                              <p className="text-foreground/80">{aiSoulmate.connectionType}</p>
+                            </div>
+                            
+                            <p className="text-xs text-muted-foreground text-center mt-4">
+                              Generated using advanced AI algorithms and cosmic data analysis
+                            </p>
+                          </div>
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
