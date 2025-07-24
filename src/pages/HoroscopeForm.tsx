@@ -62,7 +62,7 @@ const HoroscopeForm = () => {
         return;
       }
 
-      // Save to database
+      // Save to database - use upsert with onConflict to handle existing profiles
       const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -72,6 +72,8 @@ const HoroscopeForm = () => {
           time_of_birth: userData.timeOfBirth || null,
           place_of_birth: userData.placeOfBirth,
           questions: userData.specificQuestions || null
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
