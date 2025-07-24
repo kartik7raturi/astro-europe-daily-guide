@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Link } from "react-router-dom";
+import soulmateTemplate from "@/assets/soulmate-sketch-template.jpg";
 
 interface LoveForecast {
   love_score: number;
@@ -27,6 +28,7 @@ interface SoulmateProfile {
   meetingLocation: string;
   timeframe: string;
   connectionType: string;
+  sketchUrl?: string;
 }
 
 const LoveForecasts = () => {
@@ -226,7 +228,8 @@ const LoveForecasts = () => {
         personality: personalities[Math.floor(Math.random() * personalities.length)],
         meetingLocation: locations[Math.floor(Math.random() * locations.length)],
         timeframe: timeframes[Math.floor(Math.random() * timeframes.length)],
-        connectionType: connections[Math.floor(Math.random() * connections.length)]
+        connectionType: connections[Math.floor(Math.random() * connections.length)],
+        sketchUrl: soulmateTemplate
       };
       
       setAiSoulmate(newSoulmate);
@@ -384,6 +387,27 @@ const LoveForecasts = () => {
                           </div>
                         ) : aiSoulmate ? (
                           <div className="space-y-4">
+                            {/* Soulmate Sketch */}
+                            {aiSoulmate.sketchUrl && (
+                              <div className="text-center mb-6">
+                                <h4 className="font-semibold mb-4 flex items-center justify-center gap-2">
+                                  <Heart className="h-4 w-4 text-primary" />
+                                  Your Soulmate Sketch
+                                </h4>
+                                <div className="relative w-48 h-64 mx-auto rounded-lg overflow-hidden border-2 border-primary/20 shadow-lg">
+                                  <img 
+                                    src={aiSoulmate.sketchUrl} 
+                                    alt="AI Generated Soulmate Sketch" 
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-2">
+                                  AI-generated artistic interpretation
+                                </p>
+                              </div>
+                            )}
+                            
                             <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
                               <h4 className="font-semibold mb-2">Physical Appearance</h4>
                               <p className="text-primary-foreground/90">{aiSoulmate.appearance}</p>

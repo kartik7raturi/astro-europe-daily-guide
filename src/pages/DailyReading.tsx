@@ -18,7 +18,11 @@ import {
   CheckCircle,
   ArrowLeft,
   Calendar,
-  Clock
+  Clock,
+  Share2,
+  Twitter,
+  Facebook,
+  Download
 } from "lucide-react";
 
 interface UserData {
@@ -150,6 +154,60 @@ const DailyReading = () => {
   };
 
   const reading = generateReading();
+
+  // Save reading to database
+  const saveReading = async () => {
+    if (!user) return;
+    
+    try {
+      await supabase.from('daily_readings').upsert({
+        user_id: user.id,
+        reading_date: currentDate.toISOString().split('T')[0],
+        overview: reading.dailyOverview,
+        love_guidance: reading.love,
+        career_guidance: reading.career,
+        health_guidance: reading.health,
+        challenges: reading.challenge,
+        solutions: reading.solution,
+        advice: reading.advice,
+        lucky_numbers: reading.luckyNumbers,
+        power_colors: [reading.powerColor]
+      }, {
+        onConflict: 'user_id,reading_date'
+      });
+    } catch (error) {
+      console.error('Error saving reading:', error);
+    }
+  };
+
+  // Save reading when component loads
+  useEffect(() => {
+    if (userData) {
+      saveReading();
+    }
+  }, [userData]);
+
+  const shareReading = () => {
+    const text = `My daily cosmic reading: ${reading.dailyOverview.substring(0, 100)}... Get yours at ${window.location.origin}`;
+    if (navigator.share) {
+      navigator.share({
+        title: 'My Daily Cosmic Reading',
+        text: text,
+        url: window.location.href
+      });
+    } else {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  const shareOnTwitter = () => {
+    const text = `My daily cosmic reading reveals amazing insights! ✨ ${reading.dailyOverview.substring(0, 100)}... #CosmicInsights #Astrology`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.origin)}`, '_blank');
+  };
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}`, '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-starlight py-8">
@@ -325,6 +383,36 @@ const DailyReading = () => {
           </CardHeader>
           <CardContent>
             <p className="text-foreground font-medium leading-relaxed">{reading.advice}</p>
+          </CardContent>
+        </Card>
+
+        {/* Social Sharing */}
+        <Card className="mb-6 bg-card/80 backdrop-blur-sm border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5 text-primary" />
+              Share Your Reading
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button variant="outline" onClick={shareReading} className="flex items-center gap-2">
+                <Share2 className="h-4 w-4" />
+                Share
+              </Button>
+              <Button variant="outline" onClick={shareOnTwitter} className="flex items-center gap-2">
+                <Twitter className="h-4 w-4" />
+                Twitter
+              </Button>
+              <Button variant="outline" onClick={shareOnFacebook} className="flex items-center gap-2">
+                <Facebook className="h-4 w-4" />
+                Facebook
+              </Button>
+              <Button variant="outline" onClick={() => window.print()} className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Save PDF
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

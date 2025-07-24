@@ -1,10 +1,99 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Smartphone, Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Smartphone, Download, Mail, BookOpen, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import cosmicHero from "@/assets/cosmic-hero.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const { toast } = useToast();
+
+  const blogPosts = [
+    {
+      title: "Understanding Your Zodiac Sign in Modern Times",
+      excerpt: "Discover how ancient wisdom applies to contemporary European life and relationships.",
+      date: "2024-01-15",
+      readTime: "5 min read",
+      category: "Astrology"
+    },
+    {
+      title: "The Power of Daily Affirmations in Cosmic Practice",
+      excerpt: "Learn how to harness cosmic energy through mindful affirmation practices.",
+      date: "2024-01-10",
+      readTime: "3 min read",
+      category: "Wellness"
+    },
+    {
+      title: "Numerology: Decoding Your Life Path Number",
+      excerpt: "A comprehensive guide to understanding your personal numerology chart.",
+      date: "2024-01-05",
+      readTime: "7 min read",
+      category: "Numerology"
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "How accurate are the daily horoscope readings?",
+      answer: "Our readings combine traditional European astrological wisdom with modern interpretation techniques. While astrology provides guidance and insights, remember that you have the power to shape your destiny through your choices and actions."
+    },
+    {
+      question: "Can I get readings for multiple zodiac signs?",
+      answer: "Yes! You can create multiple profiles or check readings for friends and family members. Our system allows you to save different birth data for various people you care about."
+    },
+    {
+      question: "What makes your approach specifically European?",
+      answer: "Our readings incorporate European astrological traditions, cultural sensibilities, and wisdom that resonates with European values of thoughtfulness, cultural appreciation, and balanced living."
+    },
+    {
+      question: "How often should I check my cosmic insights?",
+      answer: "Daily readings are updated every day at midnight CET. Many users find checking their reading each morning helps set a positive intention for the day, but use them as often as feels right for you."
+    },
+    {
+      question: "Do you offer personalized consultations?",
+      answer: "Yes! We provide one-on-one consultations with experienced astrologers who specialize in European astrological traditions. You can book consultations through your dashboard."
+    },
+    {
+      question: "Is my personal data secure?",
+      answer: "Absolutely. We use enterprise-grade security and never share your personal information. Your birth data and readings are encrypted and stored securely according to European data protection standards."
+    }
+  ];
+
+  const handleNewsletterSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setSubscribing(true);
+    try {
+      const { error } = await supabase.from('subscribers').insert({
+        email: email,
+        subscribed: true
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Welcome to our cosmic community! ✨",
+        description: "You'll receive weekly insights and exclusive content.",
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   const features = [
     {
       icon: Sun,
@@ -236,6 +325,165 @@ const Home = () => {
               </Button>
             </Link>
           </Card>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-20 bg-background/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="flex justify-center mb-6">
+              <BookOpen className="h-16 w-16 text-primary animate-float" />
+            </div>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Cosmic Wisdom Blog
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explore in-depth articles about astrology, numerology, and cosmic insights crafted for the modern European mindset.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogPosts.map((post, index) => (
+              <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">
+                      {post.category}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{post.readTime}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(post.date).toLocaleDateString('en-EU', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </span>
+                    <Link to="/blog">
+                      <Button variant="outline" size="sm">
+                        Read More
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/blog">
+              <Button variant="cosmic" size="lg">
+                View All Articles
+                <BookOpen className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20 bg-gradient-cosmic">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="text-primary-foreground">
+            <div className="flex justify-center mb-6">
+              <Mail className="h-16 w-16 animate-float" />
+            </div>
+            <h2 className="text-3xl font-bold mb-4">
+              Weekly Cosmic Newsletter
+            </h2>
+            <p className="text-primary-foreground/90 mb-8 text-lg max-w-2xl mx-auto">
+              Get exclusive weekly insights, cosmic forecasts, and premium astrological content delivered directly to your inbox. Join our community of cosmic seekers across Europe.
+            </p>
+            
+            <form onSubmit={handleNewsletterSignup} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                required
+              />
+              <Button 
+                type="submit" 
+                variant="gold" 
+                disabled={subscribing}
+                className="whitespace-nowrap"
+              >
+                {subscribing ? "Subscribing..." : "Subscribe"}
+                <Mail className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
+            
+            <p className="text-sm text-primary-foreground/70 mt-4">
+              No spam, unsubscribe anytime. We respect your privacy.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-background">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="flex justify-center mb-6">
+              <HelpCircle className="h-16 w-16 text-primary animate-float" />
+            </div>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to know about our cosmic insights and astrological services.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20">
+                <CardContent className="p-0">
+                  <button
+                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-primary/5 transition-colors"
+                  >
+                    <h3 className="font-semibold text-foreground pr-4">
+                      {faq.question}
+                    </h3>
+                    {expandedFaq === index ? (
+                      <ChevronUp className="h-5 w-5 text-primary flex-shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-primary flex-shrink-0" />
+                    )}
+                  </button>
+                  {expandedFaq === index && (
+                    <div className="px-6 pb-6">
+                      <p className="text-muted-foreground leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-4">
+              Still have questions?
+            </p>
+            <Link to="/contact">
+              <Button variant="outline">
+                Contact Our Support Team
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
