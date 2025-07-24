@@ -359,11 +359,15 @@ const LoveForecasts = () => {
                   )}
                   
                   <div className="space-y-3">
-                    <Dialog>
+                    <Dialog onOpenChange={(open) => {
+                      if (open && !aiSoulmate) {
+                        generateAISoulmate();
+                      }
+                    }}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full" onClick={generateAISoulmate} disabled={generatingAI}>
+                        <Button variant="outline" className="w-full">
                           <Wand2 className="mr-2 h-4 w-4" />
-                          {generatingAI ? "Generating..." : "Generate Detailed AI Soulmate Profile"}
+                          Generate Detailed AI Soulmate Profile
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl">
@@ -373,7 +377,12 @@ const LoveForecasts = () => {
                             Your AI-Generated Soulmate Profile
                           </DialogTitle>
                         </DialogHeader>
-                        {aiSoulmate && (
+                        {generatingAI ? (
+                          <div className="text-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                            <p className="text-muted-foreground">Creating your perfect soulmate profile...</p>
+                          </div>
+                        ) : aiSoulmate ? (
                           <div className="space-y-4">
                             <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
                               <h4 className="font-semibold mb-2">Physical Appearance</h4>
@@ -403,6 +412,10 @@ const LoveForecasts = () => {
                             <p className="text-xs text-muted-foreground text-center mt-4">
                               Generated using advanced AI algorithms and cosmic data analysis
                             </p>
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <p className="text-muted-foreground">Click "Generate" to create your soulmate profile</p>
                           </div>
                         )}
                       </DialogContent>
