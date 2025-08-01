@@ -245,13 +245,75 @@ const HoroscopeForm = () => {
                   <Clock className="h-4 w-4" />
                   Time of Birth (if known)
                 </Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={userData.timeOfBirth}
-                  onChange={(e) => setUserData({...userData, timeOfBirth: e.target.value})}
-                  className="bg-background/50"
-                />
+                <div className="flex gap-2">
+                  <Select
+                    value={userData.timeOfBirth ? userData.timeOfBirth.split(':')[0] : ""}
+                    onValueChange={(hour) => {
+                      const currentMinute = userData.timeOfBirth ? userData.timeOfBirth.split(':')[1] : "00";
+                      setUserData({...userData, timeOfBirth: `${hour}:${currentMinute}`});
+                    }}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue placeholder="Hour" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const hour = i === 0 ? 12 : i;
+                        return (
+                          <SelectItem key={hour.toString().padStart(2, '0')} value={hour.toString().padStart(2, '0')}>
+                            {hour}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select
+                    value={userData.timeOfBirth ? userData.timeOfBirth.split(':')[1] : ""}
+                    onValueChange={(minute) => {
+                      const currentHour = userData.timeOfBirth ? userData.timeOfBirth.split(':')[0] : "12";
+                      setUserData({...userData, timeOfBirth: `${currentHour}:${minute}`});
+                    }}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue placeholder="Min" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 60 }, (_, i) => (
+                        <SelectItem key={i.toString().padStart(2, '0')} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select
+                    value={userData.timeOfBirth ? (parseInt(userData.timeOfBirth.split(':')[0]) >= 12 ? 'PM' : 'AM') : ""}
+                    onValueChange={(period) => {
+                      if (!userData.timeOfBirth) return;
+                      let [hour, minute] = userData.timeOfBirth.split(':');
+                      let hour24 = parseInt(hour);
+                      
+                      if (period === 'PM' && hour24 < 12) {
+                        hour24 += 12;
+                      } else if (period === 'AM' && hour24 === 12) {
+                        hour24 = 0;
+                      } else if (period === 'AM' && hour24 > 12) {
+                        hour24 -= 12;
+                      }
+                      
+                      setUserData({...userData, timeOfBirth: `${hour24.toString().padStart(2, '0')}:${minute}`});
+                    }}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue placeholder="AM/PM" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AM">AM</SelectItem>
+                      <SelectItem value="PM">PM</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Time helps create more accurate readings. Leave empty if unknown.
                 </p>

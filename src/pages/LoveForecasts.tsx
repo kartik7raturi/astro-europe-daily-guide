@@ -182,46 +182,23 @@ const LoveForecasts = () => {
     
     setGeneratingAI(true);
     try {
-      // Generate detailed AI soulmate profile
-      const appearances = [
-        "tall with dark hair and expressive brown eyes",
-        "medium height with golden blonde hair and green eyes", 
-        "athletic build with auburn hair and hazel eyes",
-        "elegant posture with black hair and deep blue eyes",
-        "charming smile with light brown hair and warm amber eyes"
-      ];
+      // Get user's astrological data for personalized generation
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('date_of_birth, time_of_birth, place_of_birth')
+        .eq('user_id', user.id)
+        .single();
+
+      // Calculate user's zodiac sign for personalized matching
+      const birthDate = profileData?.date_of_birth ? new Date(profileData.date_of_birth) : new Date();
+      const zodiacSign = getZodiacSign(birthDate);
       
-      const personalities = [
-        "intellectually curious with a passion for art and culture",
-        "adventurous spirit who loves travel and new experiences", 
-        "compassionate soul with a deep love for nature and animals",
-        "creative mind with talents in music or writing",
-        "ambitious dreamer who values family and authentic connections"
-      ];
-      
-      const locations = [
-        "a cozy coffee shop where you both reach for the same book",
-        "a museum exhibit where you share the same fascination",
-        "a park where you're both walking your dogs",
-        "a cooking class where you're paired as partners",
-        "a volunteering event for a cause you both care about"
-      ];
-      
-      const timeframes = [
-        "within the next 6 months during spring",
-        "in the upcoming year around your birthday",
-        "during a significant life transition period", 
-        "when you least expect it but most need it",
-        "after you've completed a personal growth journey"
-      ];
-      
-      const connections = [
-        "an instant recognition as if you've known each other before",
-        "a slow-building friendship that blossoms into deep love",
-        "a magnetic attraction combined with intellectual compatibility",
-        "a comfortable ease that feels like coming home",
-        "a passionate connection that ignites your creative spirits"
-      ];
+      // Generate astrologically compatible appearance based on user's sign
+      const appearances = getCompatibleAppearances(zodiacSign);
+      const personalities = getCompatiblePersonalities(zodiacSign);
+      const locations = getCompatibleMeetingPlaces(zodiacSign);
+      const timeframes = getCompatibleTimeframes(zodiacSign);
+      const connections = getCompatibleConnections(zodiacSign);
       
       const newSoulmate: SoulmateProfile = {
         appearance: appearances[Math.floor(Math.random() * appearances.length)],
@@ -236,7 +213,7 @@ const LoveForecasts = () => {
       
       toast({
         title: "AI Soulmate Generated",
-        description: "Your detailed soulmate profile has been created using advanced cosmic algorithms.",
+        description: `Your ${zodiacSign} soulmate profile has been created using astrological compatibility.`,
       });
     } catch (error) {
       console.error('Error generating AI soulmate:', error);
@@ -248,6 +225,114 @@ const LoveForecasts = () => {
     } finally {
       setGeneratingAI(false);
     }
+  };
+
+  const getZodiacSign = (birthDate: Date): string => {
+    const month = birthDate.getMonth() + 1;
+    const day = birthDate.getDate();
+    
+    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "Aries";
+    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "Taurus";
+    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "Gemini";
+    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "Cancer";
+    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Leo";
+    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Virgo";
+    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Libra";
+    if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Scorpio";
+    if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "Sagittarius";
+    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "Capricorn";
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Aquarius";
+    return "Pisces";
+  };
+
+  const getCompatibleAppearances = (zodiacSign: string): string[] => {
+    const appearances: Record<string, string[]> = {
+      "Aries": ["athletic build with fiery red hair and determined green eyes", "strong jawline with dark hair and passionate brown eyes"],
+      "Taurus": ["sturdy build with warm brown hair and gentle earth-toned eyes", "elegant posture with rich auburn hair and stable brown eyes"],
+      "Gemini": ["slender build with playful blonde hair and curious blue eyes", "expressive features with light brown hair and sparkling hazel eyes"],
+      "Cancer": ["soft features with silver-blonde hair and emotional blue eyes", "nurturing appearance with dark hair and caring brown eyes"],
+      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with dark mane and proud golden eyes"],
+      "Virgo": ["refined features with neat brown hair and intelligent green eyes", "graceful build with organized blonde hair and analytical blue eyes"],
+      "Libra": ["harmonious features with balanced blonde hair and charming blue eyes", "elegant build with flowing hair and diplomatic brown eyes"],
+      "Scorpio": ["intense features with mysterious dark hair and penetrating dark eyes", "magnetic presence with black hair and hypnotic hazel eyes"],
+      "Sagittarius": ["adventurous build with wild brown hair and optimistic blue eyes", "free-spirited appearance with auburn hair and wanderlust green eyes"],
+      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with salt-and-pepper hair and determined grey eyes"],
+      "Aquarius": ["unique features with unconventional hair colors and electric blue eyes", "progressive appearance with silver hair and innovative grey eyes"],
+      "Pisces": ["dreamy features with flowing sea-green hair and mystical blue eyes", "ethereal build with silver-blonde hair and compassionate violet eyes"]
+    };
+    return appearances[zodiacSign] || appearances["Aries"];
+  };
+
+  const getCompatiblePersonalities = (zodiacSign: string): string[] => {
+    const personalities: Record<string, string[]> = {
+      "Aries": ["bold leader with passionate energy for new adventures", "competitive spirit with a heart full of courage and determination"],
+      "Taurus": ["reliable soul with deep appreciation for beauty and comfort", "patient nature with strong values and love for simple pleasures"],
+      "Gemini": ["curious mind with witty conversation and adaptable nature", "social butterfly with intellectual interests and communication skills"],
+      "Cancer": ["nurturing heart with deep emotional intelligence and intuition", "family-oriented soul with protective instincts and empathy"],
+      "Leo": ["confident performer with generous heart and creative spirit", "charismatic leader with warm personality and dramatic flair"],
+      "Virgo": ["analytical mind with helpful nature and attention to detail", "practical soul with organizational skills and desire to serve"],
+      "Libra": ["diplomatic peacemaker with artistic eye and social grace", "harmonious spirit with desire for balance and beautiful partnerships"],
+      "Scorpio": ["intense soul with transformative power and mysterious depth", "passionate nature with investigative mind and emotional intensity"],
+      "Sagittarius": ["adventurous philosopher with optimistic worldview and freedom-loving spirit", "truth-seeking wanderer with philosophical mind and humor"],
+      "Capricorn": ["ambitious achiever with disciplined approach and traditional values", "responsible leader with practical wisdom and long-term vision"],
+      "Aquarius": ["innovative humanitarian with unique perspective and progressive ideals", "independent thinker with eccentric interests and social consciousness"],
+      "Pisces": ["compassionate dreamer with artistic soul and spiritual depth", "intuitive empath with imaginative mind and selfless nature"]
+    };
+    return personalities[zodiacSign] || personalities["Aries"];
+  };
+
+  const getCompatibleMeetingPlaces = (zodiacSign: string): string[] => {
+    const locations: Record<string, string[]> = {
+      "Aries": ["at a sports competition where you're both cheering for the same team", "during an adventure race or hiking trail"],
+      "Taurus": ["at a farmers market where you both reach for the same fresh flowers", "in a cozy restaurant with amazing food"],
+      "Gemini": ["at a bookstore café during a literary discussion", "at a networking event with interesting conversations"],
+      "Cancer": ["at a family gathering or community event", "volunteering at a local charity or animal shelter"],
+      "Leo": ["at a theater performance or art gallery opening", "at a luxury resort or upscale social event"],
+      "Virgo": ["at a health food store or wellness workshop", "during a volunteer project for environmental causes"],
+      "Libra": ["at an art museum or classical music concert", "at a wedding or elegant social gathering"],
+      "Scorpio": ["at a mystery book club or psychology seminar", "during a deep spiritual retreat or transformation workshop"],
+      "Sagittarius": ["at an international travel expo or cultural festival", "during a philosophy class or adventure travel"],
+      "Capricorn": ["at a professional conference or business networking event", "at a historical museum or traditional cultural site"],
+      "Aquarius": ["at a technology conference or humanitarian cause", "during a progressive political rally or innovation meetup"],
+      "Pisces": ["at a spiritual retreat or meditation center", "near water - beach, lake, or aquarium with mystical atmosphere"]
+    };
+    return locations[zodiacSign] || locations["Aries"];
+  };
+
+  const getCompatibleTimeframes = (zodiacSign: string): string[] => {
+    const timeframes: Record<string, string[]> = {
+      "Aries": ["during spring when your energy is at its peak", "when you're starting a new ambitious project"],
+      "Taurus": ["during late spring when nature is in full bloom", "when you're feeling most grounded and stable"],
+      "Gemini": ["during early summer when social activity peaks", "when you're exploring new learning opportunities"],
+      "Cancer": ["during summer when family connections are strong", "around a full moon when emotions run deep"],
+      "Leo": ["during peak summer when you're radiating confidence", "during a celebration where you're being honored"],
+      "Virgo": ["during late summer when you're organizing your life", "when you're focused on health and self-improvement"],
+      "Libra": ["during autumn when balance and harmony are emphasized", "when you're attending cultural or social events"],
+      "Scorpio": ["during late autumn when transformation energy is strong", "when you're going through a period of personal growth"],
+      "Sagittarius": ["during your birthday season when adventure calls", "when you're planning or taking a significant journey"],
+      "Capricorn": ["during winter when you're focused on goals", "when you're achieving a major career milestone"],
+      "Aquarius": ["during late winter when innovation energy peaks", "when you're involved in humanitarian or progressive causes"],
+      "Pisces": ["during early spring when intuition is heightened", "when you're in a period of spiritual or artistic awakening"]
+    };
+    return timeframes[zodiacSign] || timeframes["Aries"];
+  };
+
+  const getCompatibleConnections = (zodiacSign: string): string[] => {
+    const connections: Record<string, string[]> = {
+      "Aries": ["an instant spark of competitive chemistry and mutual respect", "a bold attraction that challenges you both to grow"],
+      "Taurus": ["a slow-building, steady connection that feels like home", "a sensual chemistry combined with emotional security"],
+      "Gemini": ["an intellectual connection through witty conversation and shared curiosity", "a playful friendship that evolves into deeper understanding"],
+      "Cancer": ["an emotional bond that feels like you've known each other forever", "a nurturing connection with deep family-like comfort"],
+      "Leo": ["a dramatic, passionate romance with mutual admiration", "a creative partnership where you inspire each other's talents"],
+      "Virgo": ["a practical connection built on shared values and goals", "a supportive relationship where you help each other improve"],
+      "Libra": ["a harmonious balance where you complement each other perfectly", "an aesthetic and romantic connection with natural partnership energy"],
+      "Scorpio": ["an intense, transformative bond with magnetic attraction", "a deep psychological connection with unspoken understanding"],
+      "Sagittarius": ["an adventurous partnership with shared philosophical ideals", "a free-spirited connection that encourages mutual growth"],
+      "Capricorn": ["a mature, stable connection with shared ambitions", "a traditional courtship that builds into lasting commitment"],
+      "Aquarius": ["an unconventional friendship that breaks all the rules", "an innovative partnership where you create positive change together"],
+      "Pisces": ["a mystical, spiritual connection that transcends the physical", "an empathetic bond where you understand each other's deepest feelings"]
+    };
+    return connections[zodiacSign] || connections["Aries"];
   };
 
   if (loading || subscriptionLoading) {
