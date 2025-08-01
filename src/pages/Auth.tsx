@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Stars, Mail, Lock, User } from "lucide-react";
+import { Stars, Mail, Lock, User, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ const Auth = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const fullName = formData.get("fullName") as string;
+    const language = formData.get("language") as string;
 
     try {
       const { error } = await supabase.auth.signUp({
@@ -31,6 +33,7 @@ const Auth = () => {
           emailRedirectTo: `${window.location.origin}/dashboard`,
           data: {
             full_name: fullName,
+            preferred_language: language,
           }
         }
       });
@@ -180,6 +183,29 @@ const Auth = () => {
                         className="pl-10"
                         required
                       />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-language">Preferred Language</Label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                      <Select name="language" defaultValue="en" required>
+                        <SelectTrigger className="pl-10">
+                          <SelectValue placeholder="Select your language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="en">English</SelectItem>
+                          <SelectItem value="es">Español</SelectItem>
+                          <SelectItem value="fr">Français</SelectItem>
+                          <SelectItem value="de">Deutsch</SelectItem>
+                          <SelectItem value="it">Italiano</SelectItem>
+                          <SelectItem value="pt">Português</SelectItem>
+                          <SelectItem value="hi">हिंदी</SelectItem>
+                          <SelectItem value="zh">中文</SelectItem>
+                          <SelectItem value="ja">日本語</SelectItem>
+                          <SelectItem value="ar">العربية</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   <div className="space-y-2">

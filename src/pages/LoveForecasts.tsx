@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Link } from "react-router-dom";
-import soulmateTemplate from "@/assets/soulmate-sketch-template.jpg";
+import soulmateTemplate from "@/assets/soulmate-sketch-realistic.jpg";
 
 interface LoveForecast {
   love_score: number;
