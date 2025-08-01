@@ -26,7 +26,7 @@ const Auth = () => {
     const language = formData.get("language") as string;
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -37,6 +37,13 @@ const Auth = () => {
           }
         }
       });
+
+      if (error) {
+        if (error.message.includes("already registered")) {
+          throw new Error("This email is already registered. Please sign in instead.");
+        }
+        throw error;
+      }
 
       if (error) throw error;
 
