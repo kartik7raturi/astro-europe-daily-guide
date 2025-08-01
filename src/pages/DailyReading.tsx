@@ -77,13 +77,42 @@ const DailyReading = () => {
           parsed.dateOfBirth = new Date(parsed.dateOfBirth);
           setUserData(parsed);
         } else {
-          navigate("/horoscope");
-          return;
+          // Create default user data if none exists - no need to redirect to form
+          const defaultUserData = {
+            name: user.email?.split('@')[0] || 'User',
+            email: user.email || '',
+            dateOfBirth: new Date('1990-01-01'), // Default birth date
+            timeOfBirth: '12:00',
+            placeOfBirth: 'Unknown',
+            specificQuestions: ''
+          };
+          setUserData(defaultUserData);
+          
+          // Save default profile to database for future use
+          await supabase.from('profiles').upsert({
+            user_id: user.id,
+            full_name: defaultUserData.name,
+            date_of_birth: defaultUserData.dateOfBirth.toISOString().split('T')[0],
+            time_of_birth: defaultUserData.timeOfBirth,
+            place_of_birth: defaultUserData.placeOfBirth,
+            questions: defaultUserData.specificQuestions
+          }, {
+            onConflict: 'user_id'
+          });
         }
       }
     } catch (error) {
       console.error('Error loading user data:', error);
-      navigate("/horoscope");
+      // Even on error, provide default data instead of redirecting
+      const defaultUserData = {
+        name: user.email?.split('@')[0] || 'User',
+        email: user.email || '',
+        dateOfBirth: new Date('1990-01-01'),
+        timeOfBirth: '12:00',
+        placeOfBirth: 'Unknown',
+        specificQuestions: ''
+      };
+      setUserData(defaultUserData);
     } finally {
       setLoading(false);
     }
