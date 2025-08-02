@@ -25,7 +25,17 @@ serve(async (req) => {
 
     console.log('Generating soulmate image with prompt:', prompt)
 
-    const hf = new HfInference(Deno.env.get('HUGGING_FACE_ACCESS_TOKEN'))
+    const hfToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
+    if (!hfToken) {
+      console.error('HUGGING_FACE_ACCESS_TOKEN is not set')
+      return new Response(
+        JSON.stringify({ error: 'Hugging Face token not configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
+    }
+
+    console.log('Hugging Face token is configured, proceeding with image generation')
+    const hf = new HfInference(hfToken)
 
     const image = await hf.textToImage({
       inputs: `Portrait of ${prompt}, photorealistic, high quality, beautiful face, detailed features, professional lighting, studio photography`,
