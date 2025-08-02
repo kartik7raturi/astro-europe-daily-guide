@@ -900,7 +900,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      request_http: {
+        Args: { url: string; method?: string; headers?: Json; body?: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

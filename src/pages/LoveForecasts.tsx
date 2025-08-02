@@ -185,12 +185,22 @@ const LoveForecasts = () => {
       // Get user's astrological data for personalized generation
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('date_of_birth, time_of_birth, place_of_birth')
+        .select('full_name, date_of_birth, time_of_birth, place_of_birth')
         .eq('user_id', user.id)
         .single();
 
+      if (!profileData || !profileData.full_name || !profileData.date_of_birth) {
+        toast({
+          title: "Profile Incomplete",
+          description: "Please complete your profile first to generate a personalized soulmate.",
+          variant: "destructive"
+        });
+        setGeneratingAI(false);
+        return;
+      }
+
       // Calculate user's zodiac sign for personalized matching
-      const birthDate = profileData?.date_of_birth ? new Date(profileData.date_of_birth) : new Date();
+      const birthDate = new Date(profileData.date_of_birth);
       const zodiacSign = getZodiacSign(birthDate);
       
       // Generate astrologically compatible appearance based on user's sign
@@ -200,20 +210,37 @@ const LoveForecasts = () => {
       const timeframes = getCompatibleTimeframes(zodiacSign);
       const connections = getCompatibleConnections(zodiacSign);
       
+      // Create personalized appearance description based on user's name and birth data
+      const selectedAppearance = appearances[Math.floor(Math.random() * appearances.length)];
+      
+      // Generate unique AI image based on user's profile
+      const imagePrompt = `${selectedAppearance}, ${zodiacSign} energy, soulmate for ${profileData.full_name}, born ${birthDate.toDateString()}`;
+      
+      console.log('Generating AI soulmate image with prompt:', imagePrompt);
+      
+      const { data: imageData, error: imageError } = await supabase.functions.invoke('generate-soulmate-image', {
+        body: { prompt: imagePrompt }
+      });
+
+      if (imageError) {
+        console.error('Error generating image:', imageError);
+        throw new Error('Failed to generate unique soulmate image');
+      }
+
       const newSoulmate: SoulmateProfile = {
-        appearance: appearances[Math.floor(Math.random() * appearances.length)],
+        appearance: selectedAppearance,
         personality: personalities[Math.floor(Math.random() * personalities.length)],
         meetingLocation: locations[Math.floor(Math.random() * locations.length)],
         timeframe: timeframes[Math.floor(Math.random() * timeframes.length)],
         connectionType: connections[Math.floor(Math.random() * connections.length)],
-        sketchUrl: soulmateTemplate
+        sketchUrl: imageData?.image || soulmateTemplate
       };
       
       setAiSoulmate(newSoulmate);
       
       toast({
         title: "AI Soulmate Generated",
-        description: `Your ${zodiacSign} soulmate profile has been created using astrological compatibility.`,
+        description: `Your personalized ${zodiacSign} soulmate profile has been created using your birth data.`,
       });
     } catch (error) {
       console.error('Error generating AI soulmate:', error);
@@ -479,17 +506,20 @@ const LoveForecasts = () => {
                                   <Heart className="h-4 w-4 text-primary" />
                                   Your Soulmate Sketch
                                 </h4>
-                                <div className="relative w-48 h-64 mx-auto rounded-lg overflow-hidden border-2 border-primary/20 shadow-lg">
-                                  <img 
-                                    src={aiSoulmate.sketchUrl} 
-                                    alt="AI Generated Soulmate Sketch" 
-                                    className="w-full h-full object-cover"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                  AI-generated artistic interpretation
-                                </p>
+                                 <div className="relative w-48 h-64 mx-auto rounded-lg overflow-hidden border-2 border-primary/20 shadow-lg">
+                                   <img 
+                                     src={aiSoulmate.sketchUrl} 
+                                     alt="AI Generated Soulmate Portrait" 
+                                     className="w-full h-full object-cover"
+                                   />
+                                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                                 </div>
+                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mt-3">
+                                   <p className="text-xs text-amber-800 dark:text-amber-200 text-center flex items-center justify-center gap-1">
+                                     <span className="text-amber-600">⚠️</span>
+                                     This AI-generated portrait is created using your name and birth date for personalized astrological compatibility. For entertainment purposes only.
+                                   </p>
+                                 </div>
                               </div>
                             )}
                             
