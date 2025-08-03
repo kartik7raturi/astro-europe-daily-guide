@@ -38,6 +38,14 @@ const Auth = () => {
         }
       });
 
+      if (data.user && !data.session) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account before signing in.",
+        });
+        return;
+      }
+
       if (error) {
         if (error.message.includes("already registered")) {
           throw new Error("This email is already registered. Please sign in instead.");
