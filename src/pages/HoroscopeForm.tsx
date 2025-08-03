@@ -273,7 +273,8 @@ const HoroscopeForm = () => {
                     value={userData.timeOfBirth ? userData.timeOfBirth.split(':')[0] : ""}
                     onValueChange={(hour) => {
                       const currentMinute = userData.timeOfBirth ? userData.timeOfBirth.split(':')[1] : "00";
-                      setUserData({...userData, timeOfBirth: `${hour}:${currentMinute}`});
+                      const hourPadded = hour.padStart(2, '0');
+                      setUserData({...userData, timeOfBirth: `${hourPadded}:${currentMinute}`});
                     }}
                   >
                     <SelectTrigger className="w-20">
@@ -295,7 +296,9 @@ const HoroscopeForm = () => {
                     value={userData.timeOfBirth ? userData.timeOfBirth.split(':')[1] : ""}
                     onValueChange={(minute) => {
                       const currentHour = userData.timeOfBirth ? userData.timeOfBirth.split(':')[0] : "12";
-                      setUserData({...userData, timeOfBirth: `${currentHour}:${minute}`});
+                      const hourPadded = currentHour.padStart(2, '0');
+                      const minutePadded = minute.padStart(2, '0');
+                      setUserData({...userData, timeOfBirth: `${hourPadded}:${minutePadded}`});
                     }}
                   >
                     <SelectTrigger className="w-20">
