@@ -1,13 +1,50 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Stars, Sparkles, LogOut, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    checkUserProfile();
+  }, [user]);
+
+  const checkUserProfile = async () => {
+    if (!user) {
+      setHasProfile(false);
+      return;
+    }
+
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+      
+      setHasProfile(!!data);
+    } catch (error) {
+      setHasProfile(false);
+    }
+  };
+
+  const handleDailyHoroscopeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      navigate("/auth");
+    } else if (hasProfile) {
+      navigate("/dashboard");
+    } else {
+      navigate("/horoscope");
+    }
+  };
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -41,17 +78,31 @@ const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                }`}
-              >
-                {item.name}
-              </Link>
+              item.name === "Daily Horoscope" ? (
+                <button
+                  key={item.name}
+                  onClick={handleDailyHoroscopeClick}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/dashboard") || isActive("/horoscope")
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  }`}
+                >
+                  {item.name}
+                </button>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
             
             {user ? (
@@ -91,18 +142,35 @@ const Navigation = () => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-card/50 backdrop-blur-sm rounded-lg mt-2">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isActive(item.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                item.name === "Daily Horoscope" ? (
+                  <button
+                    key={item.name}
+                    onClick={(e) => {
+                      handleDailyHoroscopeClick(e);
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isActive("/dashboard") || isActive("/horoscope")
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               <div className="pt-2">
                 {user ? (
