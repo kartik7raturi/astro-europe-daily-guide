@@ -20,6 +20,7 @@ interface UserData {
   dateOfBirth: Date | undefined;
   timeOfBirth: string;
   placeOfBirth: string;
+  gender: string;
   specificQuestions: string;
 }
 
@@ -32,13 +33,14 @@ const HoroscopeForm = () => {
     dateOfBirth: undefined,
     timeOfBirth: "",
     placeOfBirth: "",
+    gender: "",
     specificQuestions: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userData.name || !userData.dateOfBirth || !userData.placeOfBirth) {
+    if (!userData.name || !userData.dateOfBirth || !userData.placeOfBirth || !userData.gender) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
@@ -71,6 +73,7 @@ const HoroscopeForm = () => {
           date_of_birth: userData.dateOfBirth.toISOString().split('T')[0],
           time_of_birth: userData.timeOfBirth || null,
           place_of_birth: userData.placeOfBirth,
+          gender: userData.gender,
           questions: userData.specificQuestions || null
         }, {
           onConflict: 'user_id'
@@ -146,6 +149,26 @@ const HoroscopeForm = () => {
                   placeholder="your.email@example.com"
                   className="bg-background/50"
                 />
+              </div>
+
+              {/* Gender */}
+              <div className="space-y-2">
+                <Label htmlFor="gender" className="text-foreground">
+                  Gender *
+                </Label>
+                <Select
+                  value={userData.gender}
+                  onValueChange={(value) => setUserData({...userData, gender: value})}
+                >
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Date of Birth */}

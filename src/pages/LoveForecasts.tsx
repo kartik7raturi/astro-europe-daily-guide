@@ -185,14 +185,14 @@ const LoveForecasts = () => {
       // Get user's astrological data for personalized generation
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('full_name, date_of_birth, time_of_birth, place_of_birth')
+        .select('full_name, date_of_birth, time_of_birth, place_of_birth, gender')
         .eq('user_id', user.id)
         .single();
 
-      if (!profileData || !profileData.full_name || !profileData.date_of_birth) {
+      if (!profileData || !profileData.full_name || !profileData.date_of_birth || !profileData.gender) {
         toast({
           title: "Profile Incomplete",
-          description: "Please complete your profile first to generate a personalized soulmate.",
+          description: "Please complete your profile with gender information first to generate a personalized soulmate.",
           variant: "destructive"
         });
         setGeneratingAI(false);
@@ -203,8 +203,10 @@ const LoveForecasts = () => {
       const birthDate = new Date(profileData.date_of_birth);
       const zodiacSign = getZodiacSign(birthDate);
       
-      // Generate astrologically compatible appearance based on user's sign
-      const appearances = getCompatibleAppearances(zodiacSign);
+      // Generate astrologically compatible appearance based on user's sign and opposite gender
+      const userGender = profileData.gender;
+      const soulmateGender = userGender === 'male' ? 'female' : 'male';
+      const appearances = getCompatibleAppearances(zodiacSign, soulmateGender);
       const personalities = getCompatiblePersonalities(zodiacSign);
       const locations = getCompatibleMeetingPlaces(zodiacSign);
       const timeframes = getCompatibleTimeframes(zodiacSign);
@@ -213,8 +215,9 @@ const LoveForecasts = () => {
       // Create personalized appearance description based on user's name and birth data
       const selectedAppearance = appearances[Math.floor(Math.random() * appearances.length)];
       
-      // Generate unique AI image based on user's profile
-      const imagePrompt = `${selectedAppearance}, ${zodiacSign} energy, soulmate for ${profileData.full_name}, born ${birthDate.toDateString()}`;
+      // Generate unique AI image based on user's profile with opposite gender
+      const genderPrompt = soulmateGender === 'female' ? 'beautiful woman' : 'handsome man';
+      const imagePrompt = `${genderPrompt}, ${selectedAppearance}, ${zodiacSign} energy, soulmate for ${profileData.full_name}, born ${birthDate.toDateString()}`;
       
       console.log('Generating AI soulmate image with prompt:', imagePrompt);
       
@@ -240,7 +243,7 @@ const LoveForecasts = () => {
       
       toast({
         title: "AI Soulmate Generated",
-        description: `Your personalized ${zodiacSign} soulmate profile has been created using your birth data.`,
+        description: `Your personalized ${soulmateGender} ${zodiacSign} soulmate profile has been created using your birth data.`,
       });
     } catch (error) {
       console.error('Error generating AI soulmate:', error);
@@ -272,21 +275,38 @@ const LoveForecasts = () => {
     return "Pisces";
   };
 
-  const getCompatibleAppearances = (zodiacSign: string): string[] => {
-    const appearances: Record<string, string[]> = {
-      "Aries": ["athletic build with fiery red hair and determined green eyes", "strong jawline with dark hair and passionate brown eyes"],
-      "Taurus": ["sturdy build with warm brown hair and gentle earth-toned eyes", "elegant posture with rich auburn hair and stable brown eyes"],
+  const getCompatibleAppearances = (zodiacSign: string, gender: string): string[] => {
+    const femaleAppearances: Record<string, string[]> = {
+      "Aries": ["athletic build with fiery red hair and determined green eyes", "strong facial features with dark hair and passionate brown eyes"],
+      "Taurus": ["curvaceous build with warm brown hair and gentle earth-toned eyes", "elegant posture with rich auburn hair and stable brown eyes"],
       "Gemini": ["slender build with playful blonde hair and curious blue eyes", "expressive features with light brown hair and sparkling hazel eyes"],
-      "Cancer": ["soft features with silver-blonde hair and emotional blue eyes", "nurturing appearance with dark hair and caring brown eyes"],
-      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with dark mane and proud golden eyes"],
+      "Cancer": ["soft feminine features with silver-blonde hair and emotional blue eyes", "nurturing appearance with dark hair and caring brown eyes"],
+      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with flowing mane and proud golden eyes"],
       "Virgo": ["refined features with neat brown hair and intelligent green eyes", "graceful build with organized blonde hair and analytical blue eyes"],
       "Libra": ["harmonious features with balanced blonde hair and charming blue eyes", "elegant build with flowing hair and diplomatic brown eyes"],
       "Scorpio": ["intense features with mysterious dark hair and penetrating dark eyes", "magnetic presence with black hair and hypnotic hazel eyes"],
       "Sagittarius": ["adventurous build with wild brown hair and optimistic blue eyes", "free-spirited appearance with auburn hair and wanderlust green eyes"],
-      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with salt-and-pepper hair and determined grey eyes"],
+      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with sophisticated hair and determined grey eyes"],
       "Aquarius": ["unique features with unconventional hair colors and electric blue eyes", "progressive appearance with silver hair and innovative grey eyes"],
       "Pisces": ["dreamy features with flowing sea-green hair and mystical blue eyes", "ethereal build with silver-blonde hair and compassionate violet eyes"]
     };
+
+    const maleAppearances: Record<string, string[]> = {
+      "Aries": ["muscular build with fiery red hair and determined green eyes", "strong jawline with dark hair and passionate brown eyes"],
+      "Taurus": ["sturdy build with warm brown hair and gentle earth-toned eyes", "broad shoulders with rich auburn hair and stable brown eyes"],
+      "Gemini": ["lean build with sandy blonde hair and curious blue eyes", "expressive features with light brown hair and sparkling hazel eyes"],
+      "Cancer": ["soft masculine features with silver hair and emotional blue eyes", "protective appearance with dark hair and caring brown eyes"],
+      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with thick mane and proud golden eyes"],
+      "Virgo": ["refined features with neat brown hair and intelligent green eyes", "athletic build with organized appearance and analytical blue eyes"],
+      "Libra": ["harmonious features with balanced hair and charming blue eyes", "elegant build with flowing hair and diplomatic brown eyes"],
+      "Scorpio": ["intense features with mysterious dark hair and penetrating dark eyes", "magnetic presence with black hair and hypnotic hazel eyes"],
+      "Sagittarius": ["adventurous build with wild brown hair and optimistic blue eyes", "rugged appearance with auburn hair and wanderlust green eyes"],
+      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with grey-streaked hair and determined grey eyes"],
+      "Aquarius": ["unique features with unconventional hair colors and electric blue eyes", "progressive appearance with silver hair and innovative grey eyes"],
+      "Pisces": ["dreamy features with flowing hair and mystical blue eyes", "ethereal build with silver-blonde hair and compassionate violet eyes"]
+    };
+
+    const appearances = gender === 'female' ? femaleAppearances : maleAppearances;
     return appearances[zodiacSign] || appearances["Aries"];
   };
 
@@ -517,7 +537,7 @@ const LoveForecasts = () => {
                                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mt-3">
                                    <p className="text-xs text-amber-800 dark:text-amber-200 text-center flex items-center justify-center gap-1">
                                      <span className="text-amber-600">⚠️</span>
-                                     This AI-generated portrait is created using your name and birth date for personalized astrological compatibility. For entertainment purposes only.
+                                     This AI-generated portrait is created using your name, gender, and birth date for personalized astrological compatibility. For entertainment purposes only.
                                    </p>
                                  </div>
                               </div>
