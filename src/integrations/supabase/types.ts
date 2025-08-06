@@ -259,6 +259,42 @@ export type Database = {
         }
         Relationships: []
       }
+      color_therapy: {
+        Row: {
+          avoid_colors: string[]
+          color_meanings: Json
+          created_at: string
+          date: string
+          id: string
+          primary_color: string
+          secondary_colors: string[]
+          usage_suggestions: string[]
+          user_id: string
+        }
+        Insert: {
+          avoid_colors: string[]
+          color_meanings: Json
+          created_at?: string
+          date?: string
+          id?: string
+          primary_color: string
+          secondary_colors: string[]
+          usage_suggestions: string[]
+          user_id: string
+        }
+        Update: {
+          avoid_colors?: string[]
+          color_meanings?: Json
+          created_at?: string
+          date?: string
+          id?: string
+          primary_color?: string
+          secondary_colors?: string[]
+          usage_suggestions?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       compatibility_readings: {
         Row: {
           advice: string | null
@@ -424,6 +460,36 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_guidance: {
+        Row: {
+          created_at: string
+          date: string
+          focus_areas: string[]
+          guidance_text: string
+          id: string
+          lucky_activities: string[]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          focus_areas: string[]
+          guidance_text: string
+          id?: string
+          lucky_activities: string[]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          focus_areas?: string[]
+          guidance_text?: string
+          id?: string
+          lucky_activities?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_readings: {
         Row: {
           advice: string | null
@@ -553,6 +619,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lucky_numbers: {
+        Row: {
+          created_at: string
+          daily_numbers: number[]
+          date: string
+          id: string
+          lottery_numbers: number[]
+          monthly_numbers: number[]
+          user_id: string
+          weekly_numbers: number[]
+        }
+        Insert: {
+          created_at?: string
+          daily_numbers: number[]
+          date?: string
+          id?: string
+          lottery_numbers: number[]
+          monthly_numbers: number[]
+          user_id: string
+          weekly_numbers: number[]
+        }
+        Update: {
+          created_at?: string
+          daily_numbers?: number[]
+          date?: string
+          id?: string
+          lottery_numbers?: number[]
+          monthly_numbers?: number[]
+          user_id?: string
+          weekly_numbers?: number[]
+        }
+        Relationships: []
+      }
       numerology_reports: {
         Row: {
           created_at: string
@@ -592,6 +691,42 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_readings: {
+        Row: {
+          created_at: string
+          id: string
+          priority: string
+          questions: string[]
+          reading_type: string
+          responses: string[]
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          priority?: string
+          questions: string[]
+          reading_type: string
+          responses: string[]
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          priority?: string
+          questions?: string[]
+          reading_type?: string
+          responses?: string[]
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       predictions: {
         Row: {
           content: string
@@ -624,6 +759,48 @@ export type Database = {
           period_end?: string
           period_start?: string
           prediction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      problem_solutions: {
+        Row: {
+          astrological_solution: string
+          created_at: string
+          id: string
+          problem_category: string
+          problem_description: string
+          recommended_actions: string[]
+          status: string
+          timeline: string
+          updated_at: string
+          urgency_level: string
+          user_id: string
+        }
+        Insert: {
+          astrological_solution: string
+          created_at?: string
+          id?: string
+          problem_category: string
+          problem_description: string
+          recommended_actions: string[]
+          status?: string
+          timeline: string
+          updated_at?: string
+          urgency_level?: string
+          user_id: string
+        }
+        Update: {
+          astrological_solution?: string
+          created_at?: string
+          id?: string
+          problem_category?: string
+          problem_description?: string
+          recommended_actions?: string[]
+          status?: string
+          timeline?: string
+          updated_at?: string
+          urgency_level?: string
           user_id?: string
         }
         Relationships: []
