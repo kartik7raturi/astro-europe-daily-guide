@@ -49,7 +49,7 @@ const Navigation = () => {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
-    
+    { name: "Pricing", href: "/pricing" },
     { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
     { name: "Affirmations", href: "/daily-affirmations" },
