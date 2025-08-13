@@ -6,7 +6,7 @@ const Pricing = () => {
   const plans = [
     {
       name: "Starter",
-      price: "₹99",
+      price: "₹45",
       period: "one-time",
       description: "Perfect for first-time cosmic explorers",
       features: [
@@ -23,7 +23,7 @@ const Pricing = () => {
     },
     {
       name: "Explorer",
-      price: "₹399",
+      price: "₹199",
       period: "6 months",
       description: "Dive deeper into your cosmic journey",
       features: [
@@ -43,7 +43,7 @@ const Pricing = () => {
     },
     {
       name: "Master",
-      price: "₹499",
+      price: "₹299",
       period: "lifetime",
       description: "Unlock the full cosmic experience",
       features: [
