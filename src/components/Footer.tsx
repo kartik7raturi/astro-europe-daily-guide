@@ -11,7 +11,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <Stars className="h-8 w-8 text-primary animate-glow" />
               <span className="text-xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
-                Cosmic Insights
+                astrovibe.online
               </span>
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
@@ -57,24 +57,29 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Policies */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Services</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Policies</h3>
             <ul className="space-y-2">
               <li>
-                <span className="text-muted-foreground">Personal Readings</span>
+                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <span className="text-muted-foreground">Daily Guidance</span>
+                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
               </li>
               <li>
-                <span className="text-muted-foreground">Lucky Numbers</span>
+                <Link to="/cancellation-refund" className="text-muted-foreground hover:text-primary transition-colors">
+                  Cancellation & Refund
+                </Link>
               </li>
               <li>
-                <span className="text-muted-foreground">Color Therapy</span>
-              </li>
-              <li>
-                <span className="text-muted-foreground">Problem Solutions</span>
+                <Link to="/shipping-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Shipping Policy
+                </Link>
               </li>
             </ul>
           </div>
@@ -83,14 +88,20 @@ const Footer = () => {
         <div className="border-t border-border mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} Cosmic Insights. All rights reserved.
+              © {new Date().getFullYear()} astrovibe.online. All rights reserved.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="flex flex-wrap gap-4 mt-4 md:mt-0 text-center md:text-right">
               <Link to="/privacy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Privacy Policy
+                Privacy
               </Link>
               <Link to="/terms" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Terms of Service
+                Terms
+              </Link>
+              <Link to="/cancellation-refund" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+                Refunds
+              </Link>
+              <Link to="/shipping-policy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+                Shipping
               </Link>
             </div>
           </div>

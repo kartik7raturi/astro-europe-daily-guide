@@ -36,7 +36,7 @@ const About = () => {
             <Stars className="h-16 w-16 text-primary animate-glow" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-6">
-            About Cosmic Insights
+            About astrovibe.online
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             We are dedicated to providing authentic astrological guidance that honors European traditions while addressing the unique needs and sensibilities of modern European life.
@@ -54,7 +54,7 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  At Cosmic Insights, we believe that astrology should be more than entertainment—it should be a meaningful tool for personal growth, understanding, and connection with the cosmic rhythms that have guided European cultures for millennia.
+                  At astrovibe.online, we believe that astrology should be more than entertainment—it should be a meaningful tool for personal growth, understanding, and connection with the cosmic rhythms that have guided European cultures for millennia.
                 </p>
                 <p>
                   Our approach combines the depth of traditional European astrological practices with contemporary psychological insights, creating personalized guidance that resonates with modern European values of sophistication, cultural awareness, and thoughtful living.

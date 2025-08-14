@@ -70,7 +70,7 @@ const Navigation = () => {
                 <Sparkles className="h-4 w-4 text-accent absolute -top-1 -right-1 animate-sparkle" />
               </div>
               <span className="text-xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
-                Cosmic Insights
+                astrovibe.online
               </span>
             </Link>
           </div>

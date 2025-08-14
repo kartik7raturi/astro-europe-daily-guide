@@ -52,7 +52,7 @@ const Home = () => {
       answer: "Our readings incorporate European astrological traditions, cultural sensibilities, and wisdom that resonates with European values of thoughtfulness, cultural appreciation, and balanced living."
     },
     {
-      question: "How often should I check my cosmic insights?",
+      question: "How often should I check my astro insights?",
       answer: "Daily readings are updated every day at midnight CET. Many users find checking their reading each morning helps set a positive intention for the day, but use them as often as feels right for you."
     },
     {
@@ -339,7 +339,7 @@ const Home = () => {
               Cosmic Wisdom Blog
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore in-depth articles about astrology, numerology, and cosmic insights crafted for the modern European mindset.
+              Explore in-depth articles about astrology, numerology, and astro insights crafted for the modern European mindset.
             </p>
           </div>
 
@@ -441,7 +441,7 @@ const Home = () => {
               Frequently Asked Questions
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to know about our cosmic insights and astrological services.
+              Everything you need to know about our astro insights and astrological services.
             </p>
           </div>
 
@@ -493,7 +493,7 @@ const Home = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">What Our Users Say</h2>
             <p className="text-muted-foreground text-lg">
-              Discover how Cosmic Insights has transformed lives across Europe
+              Discover how astrovibe.online has transformed lives across Europe
             </p>
           </div>
 
@@ -506,7 +506,7 @@ const Home = () => {
                   </div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The daily horoscope readings are incredibly accurate and insightful. I've been using Cosmic Insights for 6 months and it's helped me make better decisions in my career and relationships."
+                  "The daily horoscope readings are incredibly accurate and insightful. I've been using astrovibe.online for 6 months and it's helped me make better decisions in my career and relationships."
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">

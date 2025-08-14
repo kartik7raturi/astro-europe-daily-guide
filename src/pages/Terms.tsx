@@ -27,7 +27,7 @@ const Terms = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Cosmic Insights provides astrological readings and guidance based on traditional European 
+                astrovibe.online provides astrological readings and guidance based on traditional European 
                 astrological practices. Our services are intended for entertainment, personal insight, 
                 and spiritual guidance purposes.
               </p>
@@ -96,7 +96,7 @@ const Terms = () => {
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
                 The content, design, and methodologies used in our readings are proprietary 
-                to Cosmic Insights. While we draw from traditional European astrological practices, 
+                to astrovibe.online. While we draw from traditional European astrological practices, 
                 our specific interpretations and presentation are our intellectual property.
               </p>
             </CardContent>

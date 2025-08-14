@@ -171,7 +171,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-starlight flex items-center justify-center">
         <div className="text-center">
           <Stars className="h-12 w-12 text-primary animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading your cosmic insights...</p>
+          <p className="text-muted-foreground">Loading your astro insights...</p>
         </div>
       </div>
     );

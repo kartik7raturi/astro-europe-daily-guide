@@ -24,7 +24,7 @@ const Index = () => {
 
       if (error) throw error;
       
-      toast.success("Thank you for subscribing to our cosmic insights!");
+      toast.success("Thank you for subscribing to our astro insights!");
       setEmail("");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
@@ -129,7 +129,7 @@ const Index = () => {
       <section className="px-4 py-16">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Cosmic Insights?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose astrovibe.online?</h2>
             <p className="text-xl text-muted-foreground">Experience the power of ancient wisdom with modern technology</p>
           </div>
           

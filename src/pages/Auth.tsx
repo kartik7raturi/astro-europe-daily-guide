@@ -109,7 +109,7 @@ const Auth = () => {
             <Stars className="h-12 w-12 text-primary animate-float" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
-            Cosmic Insights
+            astrovibe.online
           </h1>
           <p className="text-muted-foreground mt-2">
             Your journey to cosmic wisdom begins here
