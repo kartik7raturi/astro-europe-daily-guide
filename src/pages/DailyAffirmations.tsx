@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, RefreshCw, Save, Star, Crown, Sparkles } from "lucide-react";
+import { Heart, RefreshCw, Save, Star, Crown, Sparkles, Share2, Twitter, Facebook, Copy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -145,6 +145,33 @@ const DailyAffirmations = () => {
     }
   };
 
+  const shareAffirmation = (text: string) => {
+    const shareText = `Today's cosmic affirmation: "${text}" ✨ Get your daily affirmations at astrovibe.online`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Daily Cosmic Affirmation',
+        text: shareText,
+        url: window.location.origin
+      });
+    } else {
+      navigator.clipboard.writeText(shareText);
+      toast({
+        title: "Copied to clipboard",
+        description: "Share your affirmation on social media!"
+      });
+    }
+  };
+
+  const shareOnTwitter = (text: string) => {
+    const shareText = `Today's cosmic affirmation: "${text}" ✨ #DailyAffirmation #CosmicWisdom`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(window.location.origin)}`, '_blank');
+  };
+
+  const shareOnFacebook = (text: string) => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(`"${text}" - My daily cosmic affirmation from astrovibe.online`)}`, '_blank');
+  };
+
   if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
@@ -183,19 +210,23 @@ const DailyAffirmations = () => {
           {trialDaysLeft > 0 ? (
             <div className="space-y-4">
               <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue accessing Daily Affirmations.</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Crown className="h-5 w-5" />
-                Upgrade to Premium
-              </Button>
+              <Link to="/pricing">
+                <Button variant="cosmic" size="lg" className="gap-2">
+                  <Crown className="h-5 w-5" />
+                  Upgrade to Premium
+                </Button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-muted-foreground">Daily Affirmations are a Premium feature.</p>
               <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Sparkles className="h-5 w-5" />
-                Start Free Trial
-              </Button>
+              <Link to="/pricing">
+                <Button variant="cosmic" size="lg" className="gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  Start Free Trial
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -244,6 +275,15 @@ const DailyAffirmations = () => {
                   <Button onClick={generateNewAffirmation} variant="outline" className="gap-2">
                     <RefreshCw className="h-4 w-4" />
                     New Affirmation
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => shareAffirmation(todayAffirmation.affirmation_text)} 
+                    variant="outline" 
+                    className="gap-2"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Share
                   </Button>
                 </div>
               </>

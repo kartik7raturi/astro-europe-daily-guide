@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Users, Star, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SocialShare from "@/components/SocialShare";
 
 interface AshtakootResult {
   varna: number;
@@ -273,6 +274,13 @@ const SoulmateAnalysis = () => {
                 <p>{result.advice}</p>
               </CardContent>
             </Card>
+
+            {/* Social Sharing */}
+            <SocialShare 
+              title="My Soulmate Compatibility Analysis"
+              text={`I just discovered my cosmic compatibility score is ${result.score}%! ${result.analysis.substring(0, 100)}...`}
+              hashtags={['SoulmateAnalysis', 'Compatibility', 'CosmicLove']}
+            />
 
             <div className="text-center">
               <Button 

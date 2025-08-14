@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Link } from "react-router-dom";
 import soulmateTemplate from "@/assets/soulmate-sketch-realistic.jpg";
+import SocialShare from "@/components/SocialShare";
 
 interface LoveForecast {
   love_score: number;
@@ -420,19 +421,23 @@ const LoveForecasts = () => {
           {trialDaysLeft > 0 ? (
             <div className="space-y-4">
               <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue accessing Love Forecasts with Soulmate Sketches.</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Crown className="h-5 w-5" />
-                Upgrade to Premium
-              </Button>
+              <Link to="/pricing">
+                <Button variant="cosmic" size="lg" className="gap-2">
+                  <Crown className="h-5 w-5" />
+                  Upgrade to Premium
+                </Button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-muted-foreground">Love Forecasts with AI Soulmate Sketches are a Premium feature.</p>
               <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Sparkles className="h-5 w-5" />
-                Start Free Trial
-              </Button>
+              <Link to="/pricing">
+                <Button variant="cosmic" size="lg" className="gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  Start Free Trial
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -625,6 +630,13 @@ const LoveForecasts = () => {
                 <p className="text-muted-foreground">{forecast.finance_advice}</p>
               </CardContent>
             </Card>
+
+            {/* Social Sharing */}
+            <SocialShare 
+              title="My Daily Love Forecast"
+              text={`Today's love forecast: ${forecast.love_advice} Love score: ${forecast.love_score}/10 ✨`}
+              hashtags={['LoveForecast', 'DailyHoroscope', 'CosmicLove']}
+            />
 
             <div className="text-center">
               <Button onClick={generateNewForecast} variant="outline" className="gap-2">
