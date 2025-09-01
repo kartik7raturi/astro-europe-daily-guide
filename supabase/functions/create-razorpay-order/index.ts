@@ -13,18 +13,21 @@ serve(async (req) => {
 
   try {
     const { amount, currency = 'INR', planName } = await req.json();
+    console.log('Received payment request:', { amount, currency, planName });
 
     const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
 
-    console.log('Checking Razorpay credentials...', { 
-      keyIdExists: !!razorpayKeyId, 
-      keySecretExists: !!razorpayKeySecret 
+    console.log('Environment check:', { 
+      razorpayKeyId: razorpayKeyId ? `${razorpayKeyId.substring(0, 8)}...` : 'MISSING',
+      razorpayKeySecret: razorpayKeySecret ? 'Present' : 'MISSING',
+      allEnvVars: Object.keys(Deno.env.toObject())
     });
 
     if (!razorpayKeyId || !razorpayKeySecret) {
-      console.error('Missing Razorpay credentials', { razorpayKeyId: !!razorpayKeyId, razorpayKeySecret: !!razorpayKeySecret });
-      throw new Error('Razorpay credentials not configured');
+      const errorMsg = `Razorpay credentials missing - KeyID: ${!!razorpayKeyId}, KeySecret: ${!!razorpayKeySecret}`;
+      console.error(errorMsg);
+      throw new Error(errorMsg);
     }
 
     // Create Razorpay order
