@@ -1,8 +1,90 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Star, Heart, Sparkles, Crown } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const Pricing = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handlePayment = async (plan: any) => {
+    setLoading(plan.name);
+    
+    try {
+      // Create Razorpay order
+      const { data, error } = await supabase.functions.invoke('create-razorpay-order', {
+        body: {
+          amount: parseInt(plan.price.replace('₹', '')),
+          planName: plan.name
+        }
+      });
+
+      if (error) throw error;
+
+      const options = {
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'astrovibe.online',
+        description: `${plan.name} Plan`,
+        order_id: data.orderId,
+        handler: (response: any) => {
+          toast({
+            title: "Payment Successful!",
+            description: `Welcome to ${plan.name} plan! Payment ID: ${response.razorpay_payment_id}`,
+          });
+          // Here you can redirect to dashboard or handle success
+          window.location.href = '/dashboard';
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
+        theme: {
+          color: '#6366f1'
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(null);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      
+    } catch (error: any) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(null);
+    }
+  };
   const plans = [
     {
       name: "Starter",
@@ -126,17 +208,19 @@ const Pricing = () => {
                     ))}
                   </ul>
 
-                  <Button 
-                    className={`w-full h-12 text-lg font-semibold ${
-                      plan.popular 
-                        ? 'cosmic shadow-cosmic' 
-                        : 'gold'
-                    }`}
-                    variant={plan.popular ? 'cosmic' : 'gold'}
-                  >
-                    Get Started
-                    <Star className="w-5 h-5 ml-2" />
-                  </Button>
+                   <Button 
+                     className={`w-full h-12 text-lg font-semibold ${
+                       plan.popular 
+                         ? 'cosmic shadow-cosmic' 
+                         : 'gold'
+                     }`}
+                     variant={plan.popular ? 'cosmic' : 'gold'}
+                     onClick={() => handlePayment(plan)}
+                     disabled={loading === plan.name}
+                   >
+                     {loading === plan.name ? 'Processing...' : 'Get Started'}
+                     <Star className="w-5 h-5 ml-2" />
+                   </Button>
                 </CardContent>
               </Card>
             );
