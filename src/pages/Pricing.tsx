@@ -87,66 +87,77 @@ const Pricing = () => {
   };
   const plans = [
     {
-      name: "Starter",
-      price: "₹45",
-      period: "one-time",
-      description: "Perfect for first-time cosmic explorers",
+      name: "Freemium",
+      price: "Free",
+      period: "forever",
+      description: "Start your cosmic journey for free",
       features: [
-        "1 Soulmate Sketch",
-        "30 Days Reading Access",
-        "Basic Compatibility Analysis",
-        "Daily Horoscope",
-        "Love Percentage Calculator",
-        "Basic Numerology Report"
+        "Basic Daily Horoscope",
+        "Love Percentage Calculator", 
+        "Basic Numerology Report",
+        "Limited Compatibility Analysis",
+        "Community Access"
+      ],
+      icon: Star,
+      gradient: "bg-gradient-cosmic",
+      popular: false,
+      isFree: true
+    },
+    {
+      name: "1 Soulmate Sketch",
+      price: "₹49",
+      period: "one-time",
+      description: "Get your first soulmate sketch",
+      features: [
+        "1 AI-Generated Soulmate Sketch",
+        "Basic Soulmate Reading",
+        "Love Compatibility Score",
+        "Meeting Place Prediction",
+        "30-Day Access"
       ],
       icon: Heart,
-      gradient: "bg-gradient-cosmic",
-      popular: false
+      gradient: "bg-gradient-gold",
+      popular: false,
+      sketches: 1
     },
     {
-      name: "Explorer",
+      name: "6 Soulmate Sketches",
       price: "₹199",
-      period: "6 months",
-      description: "Dive deeper into your cosmic journey",
+      period: "package deal",
+      description: "Multiple sketches for deeper insights",
       features: [
-        "25 Soulmate Sketches",
-        "6 Months Full Access",
-        "Advanced Compatibility Readings",
-        "Love Forecasts & Predictions",
-        "Daily Affirmations",
-        "Astro Journal Access",
-        "Priority Support",
-        "Crush Analysis Tool",
-        "Lucky Elements Daily"
+        "6 AI-Generated Soulmate Sketches",
+        "Detailed Soulmate Analysis",
+        "Advanced Love Readings",
+        "Twin Flame Analysis",
+        "Karmic Bond Reading",
+        "Meeting Time Predictions",
+        "90-Day Access"
       ],
       icon: Sparkles,
-      gradient: "bg-gradient-gold",
-      popular: true
+      gradient: "bg-gradient-cosmic",
+      popular: true,
+      sketches: 6
     },
     {
-      name: "Master",
+      name: "12 Soulmate Sketches",
       price: "₹299",
-      period: "lifetime",
-      description: "Unlock the full cosmic experience",
+      period: "premium package",
+      description: "Ultimate soulmate discovery experience",
       features: [
-        "50 Soulmate Sketches",
-        "Lifetime Access",
-        "All Premium Features",
-        "Advanced Numerology Reports",
-        "Birth Chart Analysis",
-        "Astro Calendar Access",
-        "VIP Support",
-        "Custom Predictions",
-        "Exclusive Content",
-        "Personal Readings",
-        "Daily Guidance", 
-        "Lucky Numbers",
-        "Color Therapy",
-        "Problem Solutions"
+        "12 AI-Generated Soulmate Sketches",
+        "Complete Soulmate Profile",
+        "Premium Love Forecasts",
+        "Advanced Compatibility Reports",
+        "Twin Flame & Karmic Analysis",
+        "Lifetime Predictions",
+        "Priority Support",
+        "180-Day Access"
       ],
       icon: Crown,
-      gradient: "bg-gradient-cosmic",
-      popular: false
+      gradient: "bg-gradient-gold",
+      popular: false,
+      sketches: 12
     }
   ];
 
@@ -164,7 +175,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {plans.map((plan, index) => {
             const IconComponent = plan.icon;
             return (
@@ -184,42 +195,42 @@ const Pricing = () => {
                   </div>
                 )}
 
-                <CardHeader className="text-center pb-8 pt-8">
-                  <div className={`w-16 h-16 mx-auto rounded-full ${plan.gradient} flex items-center justify-center mb-4`}>
-                    <IconComponent className="w-8 h-8 text-primary-foreground" />
+                <CardHeader className="text-center pb-6 pt-6">
+                  <div className={`w-14 h-14 mx-auto rounded-full ${plan.gradient} flex items-center justify-center mb-3`}>
+                    <IconComponent className="w-7 h-7 text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground">
+                  <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription className="text-muted-foreground text-sm">
                     {plan.description}
                   </CardDescription>
-                  <div className="pt-4">
-                    <span className="text-4xl font-bold text-primary">{plan.price}</span>
-                    <span className="text-muted-foreground ml-2">/ {plan.period}</span>
+                  <div className="pt-3">
+                    <span className="text-3xl font-bold text-primary">{plan.price}</span>
+                    <span className="text-muted-foreground ml-2 text-sm">/ {plan.period}</span>
                   </div>
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-2 mb-6">
                     {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                        <span className="text-card-foreground">{feature}</span>
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                        <span className="text-card-foreground text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                    <Button 
-                     className={`w-full h-12 text-lg font-semibold ${
+                     className={`w-full h-10 text-sm font-semibold ${
                        plan.popular 
                          ? 'cosmic shadow-cosmic' 
                          : 'gold'
                      }`}
                      variant={plan.popular ? 'cosmic' : 'gold'}
-                     onClick={() => handlePayment(plan)}
+                     onClick={() => plan.isFree ? window.location.href = '/dashboard' : handlePayment(plan)}
                      disabled={loading === plan.name}
                    >
-                     {loading === plan.name ? 'Processing...' : 'Get Started'}
-                     <Star className="w-5 h-5 ml-2" />
+                     {loading === plan.name ? 'Processing...' : plan.isFree ? 'Start Free' : 'Purchase Now'}
+                     <Star className="w-4 h-4 ml-2" />
                    </Button>
                 </CardContent>
               </Card>
@@ -261,7 +272,7 @@ const Pricing = () => {
         <div className="mt-20 text-center bg-card rounded-2xl p-8 border border-border">
           <h2 className="text-2xl font-bold mb-4">Not sure which plan is right for you?</h2>
           <p className="text-muted-foreground mb-6">
-            Start with our Starter plan and upgrade anytime as you explore your cosmic journey
+            Start with our Freemium plan and upgrade to soulmate sketches as you explore your cosmic journey
           </p>
           <Button variant="mystical" size="lg">
             Contact Our Cosmic Advisors
