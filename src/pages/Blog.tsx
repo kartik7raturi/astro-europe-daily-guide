@@ -4,7 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Calendar, User, Tag } from 'lucide-react';
+import { Calendar, User, Tag } from 'lucide-react';
+import ZodiacWheelIcon from '@/components/icons/ZodiacWheelIcon';
 import { format } from 'date-fns';
 
 interface BlogPost {
@@ -177,7 +178,7 @@ const Blog = () => {
 
       <div className="mb-8 flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <ZodiacWheelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
           <Input
             placeholder="Search articles..."
             value={searchTerm}
