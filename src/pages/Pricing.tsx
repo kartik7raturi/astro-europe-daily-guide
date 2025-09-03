@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { Check, Star, Heart, Sparkles, Crown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Check, Star, Heart, Sparkles, Crown, Tag, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
@@ -16,6 +18,12 @@ const Pricing = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
   const [selectedSketches, setSelectedSketches] = useState([1]); // Slider state for sketches
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+  } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   // Load Razorpay script
   useEffect(() => {
@@ -29,15 +37,91 @@ const Pricing = () => {
     };
   }, []);
 
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a coupon code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCouponLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-coupon', {
+        body: { code: couponCode.trim() }
+      });
+
+      if (error) throw error;
+
+      if (data.valid) {
+        setAppliedCoupon({
+          code: data.code,
+          discount: data.discount_percentage
+        });
+        toast({
+          title: "Coupon Applied!",
+          description: `${data.discount_percentage}% discount applied successfully`,
+        });
+      } else {
+        toast({
+          title: "Invalid Coupon",
+          description: data.error || "This coupon code is not valid",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error('Coupon validation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to validate coupon code",
+        variant: "destructive",
+      });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    toast({
+      title: "Coupon Removed",
+      description: "Coupon discount has been removed",
+    });
+  };
+
   const handlePayment = async (plan: any) => {
     setLoading(plan.name);
     
     try {
+      let finalPrice = parseInt(plan.price.replace('₹', ''));
+      
+      // Apply coupon discount if available
+      if (appliedCoupon) {
+        if (appliedCoupon.discount === 100) {
+          // Free coupon - no payment needed
+          toast({
+            title: "Free Access Granted!",
+            description: `You've got free access to ${plan.name}! Redirecting to dashboard...`,
+          });
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+          return;
+        } else {
+          finalPrice = Math.round(finalPrice * (1 - appliedCoupon.discount / 100));
+        }
+      }
+
       // Create Razorpay order
       const { data, error } = await supabase.functions.invoke('create-razorpay-order', {
         body: {
-          amount: parseInt(plan.price.replace('₹', '')),
-          planName: plan.name
+          amount: finalPrice,
+          planName: plan.name,
+          couponCode: appliedCoupon?.code
         }
       });
 
@@ -48,14 +132,27 @@ const Pricing = () => {
         amount: data.amount,
         currency: data.currency,
         name: 'astrovibe.online',
-        description: `${plan.name} Plan`,
+        description: `${plan.name} Plan${appliedCoupon ? ` (${appliedCoupon.discount}% off)` : ''}`,
         order_id: data.orderId,
-        handler: (response: any) => {
+        handler: async (response: any) => {
+          // Apply coupon if used
+          if (appliedCoupon) {
+            try {
+              await supabase.functions.invoke('apply-coupon', {
+                body: { 
+                  code: appliedCoupon.code, 
+                  orderId: response.razorpay_order_id 
+                }
+              });
+            } catch (couponError) {
+              console.error('Error applying coupon:', couponError);
+            }
+          }
+          
           toast({
             title: "Payment Successful!",
             description: `Welcome to ${plan.name} plan! Payment ID: ${response.razorpay_payment_id}`,
           });
-          // Here you can redirect to dashboard or handle success
           window.location.href = '/dashboard';
         },
         prefill: {
@@ -170,6 +267,61 @@ const Pricing = () => {
           </p>
         </div>
 
+        {/* Coupon Code Section */}
+        <div className="max-w-md mx-auto mb-12">
+          <Card className="border-2 border-dashed border-primary/50 bg-primary/5">
+            <CardHeader className="text-center pb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Tag className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg">Have a Coupon Code?</CardTitle>
+              </div>
+              <CardDescription>
+                Apply your coupon code to get discount on your purchase
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {!appliedCoupon ? (
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter coupon code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => e.key === 'Enter' && validateCoupon()}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={validateCoupon}
+                    disabled={couponLoading || !couponCode.trim()}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {couponLoading ? 'Checking...' : 'Apply'}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="border-green-500 text-green-700 dark:text-green-400">
+                      {appliedCoupon.code}
+                    </Badge>
+                    <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                      {appliedCoupon.discount}% OFF Applied
+                    </span>
+                  </div>
+                  <Button
+                    onClick={removeCoupon}
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-700 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Freemium Plan */}
@@ -258,18 +410,45 @@ const Pricing = () => {
               </div>
 
               <div className="pt-3">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-3xl font-bold text-primary">{soulmateSketchPlan.price}</span>
-                  {savingsPercentage > 0 && (
-                    <div className="text-xs">
-                      <div className="line-through text-muted-foreground">₹{currentOption.regularPrice}</div>
-                      <div className="text-green-500 font-semibold">{savingsPercentage}% OFF</div>
-                    </div>
-                  )}
-                </div>
-                <span className="text-muted-foreground ml-2 text-sm">/ {soulmateSketchPlan.period}</span>
-                <div className="text-xs text-muted-foreground mt-1">
-                  ₹{Math.round(currentOption.price / actualSketchCount)} per sketch
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
+                    {appliedCoupon && appliedCoupon.discount > 0 ? (
+                      <>
+                        <div className="flex flex-col items-center">
+                          <span className="text-lg line-through text-muted-foreground">
+                            {soulmateSketchPlan.price}
+                          </span>
+                          <span className="text-3xl font-bold text-primary">
+                            ₹{appliedCoupon.discount === 100 
+                              ? '0' 
+                              : Math.round(currentOption.price * (1 - appliedCoupon.discount / 100))
+                            }
+                          </span>
+                        </div>
+                        <Badge variant="outline" className="border-green-500 text-green-700 dark:text-green-400 ml-2">
+                          {appliedCoupon.discount}% OFF
+                        </Badge>
+                      </>
+                    ) : (
+                      <span className="text-3xl font-bold text-primary">{soulmateSketchPlan.price}</span>
+                    )}
+                    {savingsPercentage > 0 && !appliedCoupon && (
+                      <div className="text-xs">
+                        <div className="line-through text-muted-foreground">₹{currentOption.regularPrice}</div>
+                        <div className="text-green-500 font-semibold">{savingsPercentage}% OFF</div>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-muted-foreground text-sm">/ {soulmateSketchPlan.period}</span>
+                  <div className="text-xs text-muted-foreground">
+                    {appliedCoupon && appliedCoupon.discount > 0 
+                      ? `₹${appliedCoupon.discount === 100 
+                          ? '0' 
+                          : Math.round((currentOption.price * (1 - appliedCoupon.discount / 100)) / actualSketchCount)
+                        } per sketch`
+                      : `₹${Math.round(currentOption.price / actualSketchCount)} per sketch`
+                    }
+                  </div>
                 </div>
               </div>
             </CardHeader>

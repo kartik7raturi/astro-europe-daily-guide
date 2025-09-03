@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -388,6 +388,42 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_codes: {
+        Row: {
+          code: string
+          created_at: string
+          current_uses: number
+          discount_percentage: number
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crush_analysis: {
         Row: {
           analysis_text: string | null
@@ -534,6 +570,51 @@ export type Database = {
           power_colors?: string[]
           reading_date?: string
           solutions?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      life_career_analysis: {
+        Row: {
+          analysis_date: string
+          career_predictions: string
+          challenges: Json
+          created_at: string
+          financial_outlook: string
+          id: string
+          life_path_insights: string
+          opportunities: Json
+          recommendations: Json
+          timing_predictions: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_date?: string
+          career_predictions: string
+          challenges?: Json
+          created_at?: string
+          financial_outlook: string
+          id?: string
+          life_path_insights: string
+          opportunities?: Json
+          recommendations?: Json
+          timing_predictions?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_date?: string
+          career_predictions?: string
+          challenges?: Json
+          created_at?: string
+          financial_outlook?: string
+          id?: string
+          life_path_insights?: string
+          opportunities?: Json
+          recommendations?: Json
+          timing_predictions?: Json
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -709,6 +790,54 @@ export type Database = {
           soul_urge_number?: number | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json | null
+          order_id: string | null
+          order_type: string
+          payment_id: string | null
+          payment_provider: string
+          quantity: number
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string | null
+          order_type: string
+          payment_id?: string | null
+          payment_provider?: string
+          quantity?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string | null
+          order_type?: string
+          payment_id?: string | null
+          payment_provider?: string
+          quantity?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1060,6 +1189,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_streaks: {
         Row: {
           created_at: string
@@ -1101,13 +1251,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       request_http: {
-        Args: { url: string; method?: string; headers?: Json; body?: string }
+        Args: { body?: string; headers?: Json; method?: string; url: string }
         Returns: Json
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1234,6 +1391,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
