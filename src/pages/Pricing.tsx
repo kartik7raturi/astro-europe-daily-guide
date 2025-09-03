@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 import { Check, Star, Heart, Sparkles, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ declare global {
 const Pricing = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedSketches, setSelectedSketches] = useState([1]); // Slider state for sketches
 
   // Load Razorpay script
   useEffect(() => {
@@ -85,81 +87,75 @@ const Pricing = () => {
       setLoading(null);
     }
   };
-  const plans = [
-    {
-      name: "Freemium",
-      price: "Free",
-      period: "forever",
-      description: "Start your cosmic journey for free",
-      features: [
-        "Basic Daily Horoscope",
-        "Love Percentage Calculator", 
-        "Basic Numerology Report",
-        "Limited Compatibility Analysis",
-        "Community Access"
-      ],
-      icon: Star,
-      gradient: "bg-gradient-cosmic",
-      popular: false,
-      isFree: true
-    },
-    {
-      name: "1 Soulmate Sketch",
-      price: "₹49",
-      period: "one-time",
-      description: "Get your first soulmate sketch",
-      features: [
-        "1 AI-Generated Soulmate Sketch",
-        "Basic Soulmate Reading",
-        "Love Compatibility Score",
-        "Meeting Place Prediction",
-        "30-Day Access"
-      ],
-      icon: Heart,
-      gradient: "bg-gradient-gold",
-      popular: false,
-      sketches: 1
-    },
-    {
-      name: "6 Soulmate Sketches",
-      price: "₹199",
-      period: "package deal",
-      description: "Multiple sketches for deeper insights",
-      features: [
-        "6 AI-Generated Soulmate Sketches",
-        "Detailed Soulmate Analysis",
-        "Advanced Love Readings",
-        "Twin Flame Analysis",
-        "Karmic Bond Reading",
-        "Meeting Time Predictions",
-        "90-Day Access"
-      ],
-      icon: Sparkles,
-      gradient: "bg-gradient-cosmic",
-      popular: true,
-      sketches: 6
-    },
-    {
-      name: "12 Soulmate Sketches",
-      price: "₹299",
-      period: "premium package",
-      description: "Ultimate soulmate discovery experience",
-      features: [
-        "12 AI-Generated Soulmate Sketches",
-        "Complete Soulmate Profile",
-        "Premium Love Forecasts",
-        "Advanced Compatibility Reports",
-        "Twin Flame & Karmic Analysis",
-        "Lifetime Predictions",
-        "Priority Support",
-        "180-Day Access"
-      ],
-      icon: Crown,
-      gradient: "bg-gradient-gold",
-      popular: false,
-      sketches: 12
-    }
+
+  // Freemium plan
+  const freemiumPlan = {
+    name: "Freemium",
+    price: "Free",
+    period: "forever",
+    description: "Start your cosmic journey for free",
+    features: [
+      "Basic Daily Horoscope",
+      "Love Percentage Calculator", 
+      "Basic Numerology Report",
+      "Limited Compatibility Analysis",
+      "Community Access"
+    ],
+    icon: Star,
+    gradient: "bg-gradient-cosmic",
+    popular: false,
+    isFree: true
+  };
+
+  // Soulmate sketch options
+  const sketchOptions = [
+    { sketches: 1, price: 49, period: "one-time", regularPrice: 49 },
+    { sketches: 6, price: 199, period: "package deal", regularPrice: 294 },
+    { sketches: 12, price: 299, period: "premium package", regularPrice: 588 }
   ];
+
+  const currentSketchCount = selectedSketches[0];
+  let currentOption;
+  
+  // Map slider value to closest sketch option
+  if (currentSketchCount <= 3) {
+    currentOption = sketchOptions[0]; // 1 sketch
+  } else if (currentSketchCount <= 9) {
+    currentOption = sketchOptions[1]; // 6 sketches  
+  } else {
+    currentOption = sketchOptions[2]; // 12 sketches
+  }
+  
+  // Update selected sketches to match the actual option
+  const actualSketchCount = currentOption.sketches;
+  
+  // Calculate savings percentage
+  const savingsPercentage = currentOption.regularPrice > currentOption.price 
+    ? Math.round(((currentOption.regularPrice - currentOption.price) / currentOption.regularPrice) * 100)
+    : 0;
+
+  const soulmateSketchPlan = {
+    name: `${actualSketchCount} Soulmate Sketch${actualSketchCount > 1 ? 'es' : ''}`,
+    price: `₹${currentOption.price}`,
+    period: currentOption.period,
+    description: actualSketchCount === 1 ? "Get your first soulmate sketch" : 
+                actualSketchCount === 6 ? "Multiple sketches for deeper insights" : 
+                "Ultimate soulmate discovery experience",
+    features: [
+      `${actualSketchCount} AI-Generated Soulmate Sketch${actualSketchCount > 1 ? 'es' : ''}`,
+      actualSketchCount === 1 ? "Basic Soulmate Reading" : "Detailed Soulmate Analysis",
+      actualSketchCount === 1 ? "Love Compatibility Score" : "Advanced Love Readings",
+      actualSketchCount === 1 ? "Meeting Place Prediction" : "Twin Flame Analysis",
+      actualSketchCount >= 6 ? "Karmic Bond Reading" : `${30 * actualSketchCount}-Day Access`,
+      ...(actualSketchCount >= 6 ? ["Meeting Time Predictions"] : []),
+      ...(actualSketchCount >= 12 ? ["Lifetime Predictions", "Priority Support"] : []),
+      `${actualSketchCount === 1 ? 30 : actualSketchCount === 6 ? 90 : 180}-Day Access`
+    ].filter(Boolean),
+    icon: actualSketchCount === 1 ? Heart : actualSketchCount === 6 ? Sparkles : Crown,
+    gradient: actualSketchCount === 6 ? "bg-gradient-cosmic" : "bg-gradient-gold",
+    popular: actualSketchCount === 6,
+    sketches: actualSketchCount
+  };
 
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
@@ -175,67 +171,134 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {plans.map((plan, index) => {
-            const IconComponent = plan.icon;
-            return (
-              <Card 
-                key={plan.name}
-                className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 ${
-                  plan.popular 
-                    ? 'border-primary shadow-cosmic' 
-                    : 'border-border hover:border-primary/50'
-                }`}
+        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Freemium Plan */}
+          <Card 
+            className="relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 border-border hover:border-primary/50"
+          >
+            <CardHeader className="text-center pb-6 pt-6">
+              <div className={`w-14 h-14 mx-auto rounded-full ${freemiumPlan.gradient} flex items-center justify-center mb-3`}>
+                <Star className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-xl font-bold">{freemiumPlan.name}</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">
+                {freemiumPlan.description}
+              </CardDescription>
+              <div className="pt-3">
+                <span className="text-3xl font-bold text-primary">{freemiumPlan.price}</span>
+                <span className="text-muted-foreground ml-2 text-sm">/ {freemiumPlan.period}</span>
+              </div>
+            </CardHeader>
+
+            <CardContent className="pt-0">
+              <ul className="space-y-2 mb-6">
+                {freemiumPlan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-card-foreground text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button 
+                className="w-full h-10 text-sm font-semibold"
+                variant="cosmic"
+                onClick={() => window.location.href = '/dashboard'}
               >
-                {plan.popular && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="bg-gradient-gold text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                      Most Popular
+                Start Free
+                <Star className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Soulmate Sketch Plan with Slider */}
+          <Card 
+            className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 ${
+              soulmateSketchPlan.popular 
+                ? 'border-primary shadow-cosmic' 
+                : 'border-border hover:border-primary/50'
+            }`}
+          >
+            {soulmateSketchPlan.popular && (
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="bg-gradient-gold text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold">
+                  Most Popular
+                </div>
+              </div>
+            )}
+
+            <CardHeader className="text-center pb-6 pt-6">
+              <div className={`w-14 h-14 mx-auto rounded-full ${soulmateSketchPlan.gradient} flex items-center justify-center mb-3`}>
+                <soulmateSketchPlan.icon className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-xl font-bold">{soulmateSketchPlan.name}</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">
+                {soulmateSketchPlan.description}
+              </CardDescription>
+              
+              {/* Sketch Count Slider */}
+              <div className="pt-4 px-4">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm text-muted-foreground">Number of sketches:</span>
+                  <span className="font-semibold text-primary">{actualSketchCount}</span>
+                </div>
+                <Slider
+                  value={selectedSketches}
+                  onValueChange={setSelectedSketches}
+                  max={12}
+                  min={1}
+                  step={1}
+                  className="mb-4"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>1</span>
+                  <span>6</span>
+                  <span>12</span>
+                </div>
+              </div>
+
+              <div className="pt-3">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-3xl font-bold text-primary">{soulmateSketchPlan.price}</span>
+                  {savingsPercentage > 0 && (
+                    <div className="text-xs">
+                      <div className="line-through text-muted-foreground">₹{currentOption.regularPrice}</div>
+                      <div className="text-green-500 font-semibold">{savingsPercentage}% OFF</div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+                <span className="text-muted-foreground ml-2 text-sm">/ {soulmateSketchPlan.period}</span>
+                <div className="text-xs text-muted-foreground mt-1">
+                  ₹{Math.round(currentOption.price / actualSketchCount)} per sketch
+                </div>
+              </div>
+            </CardHeader>
 
-                <CardHeader className="text-center pb-6 pt-6">
-                  <div className={`w-14 h-14 mx-auto rounded-full ${plan.gradient} flex items-center justify-center mb-3`}>
-                    <IconComponent className="w-7 h-7 text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground text-sm">
-                    {plan.description}
-                  </CardDescription>
-                  <div className="pt-3">
-                    <span className="text-3xl font-bold text-primary">{plan.price}</span>
-                    <span className="text-muted-foreground ml-2 text-sm">/ {plan.period}</span>
-                  </div>
-                </CardHeader>
+            <CardContent className="pt-0">
+              <ul className="space-y-2 mb-6">
+                {soulmateSketchPlan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-card-foreground text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                <CardContent className="pt-0">
-                  <ul className="space-y-2 mb-6">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="text-card-foreground text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                   <Button 
-                     className={`w-full h-10 text-sm font-semibold ${
-                       plan.popular 
-                         ? 'cosmic shadow-cosmic' 
-                         : 'gold'
-                     }`}
-                     variant={plan.popular ? 'cosmic' : 'gold'}
-                     onClick={() => plan.isFree ? window.location.href = '/dashboard' : handlePayment(plan)}
-                     disabled={loading === plan.name}
-                   >
-                     {loading === plan.name ? 'Processing...' : plan.isFree ? 'Start Free' : 'Purchase Now'}
-                     <Star className="w-4 h-4 ml-2" />
-                   </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+              <Button 
+                className={`w-full h-10 text-sm font-semibold ${
+                  soulmateSketchPlan.popular 
+                    ? 'cosmic shadow-cosmic' 
+                    : 'gold'
+                }`}
+                variant={soulmateSketchPlan.popular ? 'cosmic' : 'gold'}
+                onClick={() => handlePayment(soulmateSketchPlan)}
+                disabled={loading === soulmateSketchPlan.name}
+              >
+                {loading === soulmateSketchPlan.name ? 'Processing...' : 'Purchase Now'}
+                <Star className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Features Section */}
