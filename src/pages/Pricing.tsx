@@ -50,11 +50,16 @@ const Pricing = () => {
     setCouponLoading(true);
     
     try {
-      const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponCode.trim() }
+      const response = await fetch(`https://xoslysosyomsteckufvn.supabase.co/functions/v1/validate-coupon`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvc2x5c29zeW9tc3RlY2t1ZnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4NjAxMzEsImV4cCI6MjA2ODQzNjEzMX0.BC4VCL46ZsA8omCrzvvCxTOhOYXwU63l-oMvJRlcAkQ',
+        },
+        body: JSON.stringify({ code: couponCode.trim() })
       });
 
-      if (error) throw error;
+      const data = await response.json();
 
       if (data.valid) {
         setAppliedCoupon({
