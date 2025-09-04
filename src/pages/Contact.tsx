@@ -44,8 +44,8 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "Our Reach",
-      details: "Serving All of Europe",
-      description: "Culturally-aware readings for all European countries"
+      details: "Serving All of India",
+      description: "Culturally-aware readings for all Indian states and regions"
     },
     {
       icon: Clock,
@@ -172,7 +172,7 @@ const Contact = () => {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="font-medium text-foreground mb-1">How accurate are the readings?</h4>
-                  <p className="text-muted-foreground text-sm">Our readings combine traditional European astrological methods with personalized birth data to provide the most relevant insights for your unique cosmic profile.</p>
+                  <p className="text-muted-foreground text-sm">Our readings combine traditional Indian astrological methods with personalized birth data to provide the most relevant insights for your unique cosmic profile.</p>
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-1">Is my personal information safe?</h4>
@@ -180,7 +180,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-1">Can I get readings in other languages?</h4>
-                  <p className="text-muted-foreground text-sm">Currently, we provide readings in English, but our cultural insights are tailored for all European backgrounds and traditions.</p>
+                  <p className="text-muted-foreground text-sm">Currently, we provide readings in English, but our cultural insights are tailored for all Indian backgrounds and traditions.</p>
                 </div>
               </CardContent>
             </Card>

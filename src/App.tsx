@@ -15,6 +15,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import CancellationRefund from "./pages/CancellationRefund";
 import ShippingPolicy from "./pages/ShippingPolicy";
+import LifeCareerAnalysis from "./pages/LifeCareerAnalysis";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -52,6 +53,7 @@ const App = () => (
                 <Route path="/astro-calendar" element={<AstroCalendar />} />
                 <Route path="/lucky-elements" element={<LuckyElements />} />
                 <Route path="/consultations" element={<Consultations />} />
+                <Route path="/life-career" element={<LifeCareerAnalysis />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/daily-affirmations" element={<DailyAffirmations />} />
                 <Route path="/love-forecasts" element={<LoveForecasts />} />

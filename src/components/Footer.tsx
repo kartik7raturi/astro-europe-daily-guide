@@ -15,13 +15,13 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
-              Discover your cosmic destiny with personalized astrology readings tailored for European wisdom and traditions. 
+              Discover your cosmic destiny with personalized astrology readings tailored for Indian wisdom and traditions. 
               Connect with the universe and unlock your potential.
             </p>
             <div className="flex space-x-4">
               <div className="flex items-center text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-2" />
-                Europe
+                India
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 mr-2" />

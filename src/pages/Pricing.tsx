@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star, Heart, Sparkles, Crown, Tag, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 
@@ -16,6 +17,7 @@ declare global {
 
 const Pricing = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
   const [selectedSketches, setSelectedSketches] = useState([1]); // Slider state for sketches
   const [couponCode, setCouponCode] = useState("");
@@ -24,6 +26,17 @@ const Pricing = () => {
     discount: number;
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user && user.email === 'sankhobusiness@gmail.com') {
+        setIsAdmin(true);
+      }
+    };
+    checkAdminStatus();
+  }, [user]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -50,16 +63,13 @@ const Pricing = () => {
     setCouponLoading(true);
     
     try {
-      const response = await fetch(`https://xoslysosyomsteckufvn.supabase.co/functions/v1/validate-coupon`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvc2x5c29zeW9tc3RlY2t1ZnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4NjAxMzEsImV4cCI6MjA2ODQzNjEzMX0.BC4VCL46ZsA8omCrzvvCxTOhOYXwU63l-oMvJRlcAkQ',
-        },
-        body: JSON.stringify({ code: couponCode.trim() })
+      const { data, error } = await supabase.functions.invoke('validate-coupon', {
+        body: { code: couponCode.trim() }
       });
 
-      const data = await response.json();
+      if (error) {
+        throw error;
+      }
 
       if (data.valid) {
         setAppliedCoupon({
@@ -102,6 +112,18 @@ const Pricing = () => {
     setLoading(plan.name);
     
     try {
+      // Admin gets everything free
+      if (isAdmin) {
+        toast({
+          title: "Admin Access Granted!",
+          description: `You have admin access to ${plan.name}! Redirecting to dashboard...`,
+        });
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
+        return;
+      }
+
       let finalPrice = parseInt(plan.price.replace('₹', ''));
       
       // Apply coupon discount if available
@@ -362,7 +384,7 @@ const Pricing = () => {
                 variant="cosmic"
                 onClick={() => window.location.href = '/dashboard'}
               >
-                Start Free
+                {isAdmin ? "Admin Access" : "Start Free"}
                 <Star className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -478,8 +500,22 @@ const Pricing = () => {
                 onClick={() => handlePayment(soulmateSketchPlan)}
                 disabled={loading === soulmateSketchPlan.name}
               >
-                {loading === soulmateSketchPlan.name ? 'Processing...' : 'Purchase Now'}
-                <Star className="w-4 h-4 ml-2" />
+                {loading === soulmateSketchPlan.name ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                    Processing...
+                  </>
+                ) : isAdmin ? (
+                  <>
+                    Admin - Get Free
+                    <Star className="w-4 h-4 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Get Your {actualSketchCount > 1 ? 'Sketches' : 'Sketch'}
+                    <soulmateSketchPlan.icon className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>

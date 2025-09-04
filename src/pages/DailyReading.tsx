@@ -156,29 +156,29 @@ const DailyReading = () => {
 
   const zodiacSign = getZodiacSign(birthMonth, birthDay);
 
-  // Generate personalized content based on European sensibilities
+  // Generate personalized content based on Indian sensibilities
   const generateReading = () => {
     const luckyNumbers = [7, 14, 23, 31, 42].map(n => Math.floor(Math.random() * 50) + 1);
     const powerColors = ["Deep Royal Purple", "Golden Amber", "Emerald Green"];
     const selectedColor = powerColors[Math.floor(Math.random() * powerColors.length)];
 
     return {
-      dailyOverview: `Good day, ${userData.name}! As a ${zodiacSign}, today brings a harmonious blend of cosmic energies. The European celestial traditions suggest this is an excellent day for personal reflection and making meaningful connections. Your natural ${zodiacSign} traits will be particularly pronounced, offering you unique insights into current life situations.`,
+      dailyOverview: `Good day, ${userData.name}! As a ${zodiacSign}, today brings a harmonious blend of cosmic energies. The Indian celestial traditions suggest this is an excellent day for personal reflection and making meaningful connections. Your natural ${zodiacSign} traits will be particularly pronounced, offering you unique insights into current life situations.`,
       
-      love: `Venus graces your romantic sector today. For those in relationships, consider a thoughtful gesture inspired by European romance traditions - perhaps a handwritten note or sharing a meaningful conversation over coffee. Single? The universe suggests being open to unexpected encounters in cultural or artistic spaces.`,
+      love: `Venus graces your romantic sector today. For those in relationships, consider a thoughtful gesture inspired by Indian romance traditions - perhaps a handwritten note or sharing a meaningful conversation over chai. Single? The universe suggests being open to unexpected encounters in cultural or spiritual spaces.`,
       
-      career: `Professional winds favor collaborative efforts today. Your European sensibility for diplomacy and thoughtful communication will serve you well. Focus on building bridges rather than making bold moves. A colleague may offer valuable insights that align with your long-term goals.`,
+      career: `Professional winds favor collaborative efforts today. Your Indian sensibility for diplomacy and thoughtful communication will serve you well. Focus on building bridges rather than making bold moves. A colleague may offer valuable insights that align with your long-term goals.`,
       
-      health: `Your body craves balance today. Consider incorporating mindful practices rooted in European wellness traditions - a gentle walk in nature, herbal tea meditation, or simply ensuring you have proper nutrition. Listen to your body's wisdom.`,
+      health: `Your body craves balance today. Consider incorporating mindful practices rooted in Indian wellness traditions - a gentle walk in nature, herbal tea meditation, or simply ensuring you have proper nutrition. Listen to your body's wisdom.`,
       
       challenge: `A minor communication misunderstanding may arise today, particularly in professional settings. This reflects the current Mercury position affecting ${zodiacSign} individuals.`,
       
-      solution: `Practice the European virtue of patience and diplomatic clarity. Before responding to any concerning message, take a moment to breathe and consider the other person's perspective. A calm, thoughtful response will transform potential conflict into understanding.`,
+      solution: `Practice the Indian virtue of patience and diplomatic clarity. Before responding to any concerning message, take a moment to breathe and consider the other person's perspective. A calm, thoughtful response will transform potential conflict into understanding.`,
       
       luckyNumbers,
       powerColor: selectedColor,
       
-      advice: `Today's cosmic energy encourages you to embrace the European values of culture, thoughtfulness, and community. Share your wisdom, appreciate beauty around you, and remember that true success comes from meaningful connections rather than rushing toward goals.`
+      advice: `Today's cosmic energy encourages you to embrace the Indian values of culture, thoughtfulness, and community. Share your wisdom, appreciate beauty around you, and remember that true success comes from meaningful connections rather than rushing toward goals.`
     };
   };
 
@@ -252,7 +252,7 @@ const DailyReading = () => {
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <span>{currentDate.toLocaleDateString('en-EU', { 
+              <span>{currentDate.toLocaleDateString('en-IN', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -453,7 +453,7 @@ const DailyReading = () => {
             </Button>
           </Link>
           <p className="text-muted-foreground text-sm">
-            Remember: The stars guide, but you create your destiny. Use this wisdom to enhance your European heritage of thoughtfulness and cultural appreciation.
+            Remember: The stars guide, but you create your destiny. Use this wisdom to enhance your Indian heritage of thoughtfulness and cultural appreciation.
           </p>
         </div>
       </div>

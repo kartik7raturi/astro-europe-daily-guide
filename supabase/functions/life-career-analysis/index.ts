@@ -125,16 +125,16 @@ function generateLifeCareerAnalysis(userData: any) {
   // Calculate zodiac sign
   const zodiacSign = getZodiacSign(birthMonth, birthDay);
 
-  return {
-    lifePathInsights: `Based on your life path number ${lifePathNumber} and ${zodiacSign} zodiac sign, you possess natural leadership qualities and analytical thinking. Your European astrological chart suggests a strong connection to intellectual pursuits and structured approaches to life. At age ${age}, you're entering a phase of significant professional development and personal growth.`,
+    return {
+    lifePathInsights: `Based on your life path number ${lifePathNumber} and ${zodiacSign} zodiac sign, you possess natural leadership qualities and analytical thinking. Your Indian astrological chart suggests a strong connection to intellectual pursuits and structured approaches to life. At age ${age}, you're entering a phase of significant professional development and personal growth according to Vedic astrology.`,
     
-    careerPredictions: `Your ${zodiacSign} nature combined with life path ${lifePathNumber} indicates excellent potential in fields requiring precision, communication, and creative problem-solving. The next 2-3 years will bring important career transitions. Focus on developing skills in technology, consulting, or leadership roles. Your European astrological influences suggest success in international business or cultural endeavors.`,
+    careerPredictions: `Your ${zodiacSign} nature combined with life path ${lifePathNumber} indicates excellent potential in fields requiring precision, communication, and creative problem-solving. The next 2-3 years will bring important career transitions. Focus on developing skills in technology, consulting, or leadership roles. Your Indian astrological influences suggest success in traditional business or cultural endeavors.`,
     
-    financialOutlook: `Financial stability will improve gradually over the next 18 months. Your methodical ${zodiacSign} approach to money management will serve you well. Avoid speculative investments during Mercury retrograde periods. Focus on building multiple income streams and consider European investment opportunities in sustainable industries.`,
+    financialOutlook: `Financial stability will improve gradually over the next 18 months. Your methodical ${zodiacSign} approach to money management will serve you well. Avoid speculative investments during Mercury retrograde periods. Focus on building multiple income streams and consider Indian investment opportunities in sustainable industries.`,
     
     opportunities: [
       "Leadership role opening in Q2-Q3 of this year",
-      "International collaboration or European business venture",
+      "International collaboration or Indian business venture",
       "Skill development opportunity in emerging technologies",
       "Networking connections through professional associations"
     ],
@@ -143,13 +143,13 @@ function generateLifeCareerAnalysis(userData: any) {
       "Balancing perfectionist tendencies with delegation needs",
       "Overcoming conservative approach to risk-taking", 
       "Managing work-life balance during career transition periods",
-      "Navigating office politics with diplomatic European approach"
+      "Navigating office politics with diplomatic Indian approach"
     ],
     
     recommendations: [
       "Develop cross-cultural communication skills for international opportunities",
       "Consider advanced education or professional certifications",
-      "Build a strong professional network through European business associations",
+      "Build a strong professional network through Indian business associations",
       "Practice mindfulness and stress management techniques",
       "Create a 5-year strategic career plan with milestone reviews"
     ],
@@ -159,7 +159,7 @@ function generateLifeCareerAnalysis(userData: any) {
       nextSixMonths: "Significant professional opportunity will emerge",
       nextYear: "Career advancement or job change likely",
       nextTwoYears: "Financial stability and leadership role consolidation",
-      nextFiveYears: "Established expert status in your field with international recognition"
+      nextFiveYears: "Established expert status in your field with national recognition"
     }
   };
 }

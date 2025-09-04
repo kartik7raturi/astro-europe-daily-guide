@@ -7,8 +7,8 @@ const About = () => {
   const values = [
     {
       icon: Globe,
-      title: "European Heritage",
-      description: "Our readings are rooted in centuries of European astrological traditions, combining ancient wisdom with modern insights tailored for contemporary European life."
+      title: "Indian Heritage",
+      description: "Our readings are rooted in centuries of Indian astrological traditions, combining ancient wisdom with modern insights tailored for contemporary Indian life."
     },
     {
       icon: Heart,
@@ -18,12 +18,12 @@ const About = () => {
     {
       icon: BookOpen,
       title: "Traditional Wisdom",
-      description: "Drawing from classical European astrology, we honor the deep traditions of celestial wisdom passed down through generations."
+      description: "Drawing from classical Indian astrology, we honor the deep traditions of celestial wisdom passed down through generations."
     },
     {
       icon: Users,
       title: "Community Focus",
-      description: "Understanding the European emphasis on community and relationships, our readings consider your social and cultural context."
+      description: "Understanding the Indian emphasis on community and relationships, our readings consider your social and cultural context."
     }
   ];
 
@@ -39,7 +39,7 @@ const About = () => {
             About astrovibe.online
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            We are dedicated to providing authentic astrological guidance that honors European traditions while addressing the unique needs and sensibilities of modern European life.
+            We are dedicated to providing authentic astrological guidance that honors Indian traditions while addressing the unique needs and sensibilities of modern Indian life.
           </p>
         </div>
       </section>
@@ -54,13 +54,13 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  At astrovibe.online, we believe that astrology should be more than entertainment—it should be a meaningful tool for personal growth, understanding, and connection with the cosmic rhythms that have guided European cultures for millennia.
+                  At astrovibe.online, we believe that astrology should be more than entertainment—it should be a meaningful tool for personal growth, understanding, and connection with the cosmic rhythms that have guided Indian cultures for millennia.
                 </p>
                 <p>
-                  Our approach combines the depth of traditional European astrological practices with contemporary psychological insights, creating personalized guidance that resonates with modern European values of sophistication, cultural awareness, and thoughtful living.
+                  Our approach combines the depth of traditional Indian astrological practices with contemporary psychological insights, creating personalized guidance that resonates with modern Indian values of sophistication, cultural awareness, and thoughtful living.
                 </p>
                 <p>
-                  We understand that Europeans value precision, cultural depth, and meaningful insights. That's why our readings go beyond generic horoscopes to provide nuanced, culturally-aware guidance that respects your heritage while supporting your personal journey.
+                  We understand that Indians value precision, cultural depth, and meaningful insights. That's why our readings go beyond generic horoscopes to provide nuanced, culturally-aware guidance that respects your heritage while supporting your personal journey.
                 </p>
               </div>
             </div>
@@ -74,11 +74,11 @@ const About = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
-                  <p className="text-sm">Culturally-aware readings designed for European sensibilities</p>
+                  <p className="text-sm">Culturally-aware readings designed for Indian sensibilities</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
-                  <p className="text-sm">Solutions grounded in European wisdom traditions</p>
+                  <p className="text-sm">Solutions grounded in Indian wisdom traditions</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
@@ -90,7 +90,7 @@ const About = () => {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
-                  <p className="text-sm">Respectful of diverse European cultural backgrounds</p>
+                  <p className="text-sm">Respectful of diverse Indian cultural backgrounds</p>
                 </div>
               </CardContent>
             </Card>
@@ -106,7 +106,7 @@ const About = () => {
               Our Values & Approach
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Everything we do is guided by deep respect for European cultural heritage and the timeless wisdom of the stars.
+              Everything we do is guided by deep respect for Indian cultural heritage and the timeless wisdom of the stars.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ const About = () => {
             Ready to Begin Your Cosmic Journey?
           </h2>
           <p className="text-muted-foreground mb-8 text-lg">
-            Join our community of thoughtful Europeans who trust the stars for daily guidance and life insights.
+            Join our community of thoughtful Indians who trust the stars for daily guidance and life insights.
           </p>
           <Link to="/horoscope">
             <Button variant="cosmic" size="lg">
