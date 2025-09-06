@@ -1066,6 +1066,7 @@ export type Database = {
       soulmate_readings: {
         Row: {
           created_at: string
+          generation_date: string | null
           id: string
           karmic_bond_reading: string | null
           love_percentage: number | null
@@ -1079,6 +1080,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          generation_date?: string | null
           id?: string
           karmic_bond_reading?: string | null
           love_percentage?: number | null
@@ -1092,6 +1094,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          generation_date?: string | null
           id?: string
           karmic_bond_reading?: string | null
           love_percentage?: number | null

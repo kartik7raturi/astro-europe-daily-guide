@@ -30,6 +30,7 @@ import DailyAffirmations from "./pages/DailyAffirmations";
 import LoveForecasts from "./pages/LoveForecasts";
 import CrushAnalyzer from "./pages/CrushAnalyzer";
 import AstroJournal from "./pages/AstroJournal";
+import ProfileSetup from "./pages/ProfileSetup";
 import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ const App = () => (
                 <Route path="/love-forecasts" element={<LoveForecasts />} />
                 <Route path="/crush-analyzer" element={<CrushAnalyzer />} />
                 <Route path="/astro-journal" element={<AstroJournal />} />
+                <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />

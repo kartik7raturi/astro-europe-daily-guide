@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, TrendingUp, DollarSign, Clock, RefreshCw, Crown, Sparkles, Wand2 } from "lucide-react";
+import { Heart, TrendingUp, DollarSign, Clock, RefreshCw, Crown, Sparkles, Wand2, Share2, Twitter, Facebook, Copy, Briefcase } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -37,17 +37,73 @@ const LoveForecasts = () => {
   const [loading, setLoading] = useState(true);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiSoulmate, setAiSoulmate] = useState<SoulmateProfile | null>(null);
+  const [soulmateCount, setSoulmateCount] = useState(0);
+  const [allowedSoulmates, setAllowedSoulmates] = useState(0);
   const { toast } = useToast();
   const { user } = useAuth();
-  const { hasAccess, subscribed, trial_end, loading: subscriptionLoading } = useSubscription();
+  const { hasAccess, subscribed, loading: subscriptionLoading } = useSubscription();
 
   useEffect(() => {
     loadTodayForecast();
+    loadSoulmateUsage();
   }, []);
+
+  const loadSoulmateUsage = async () => {
+    if (!user) return;
+
+    try {
+      // Get user's order history to determine allowed soulmate count
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+        .eq('order_type', 'soulmate_sketches');
+
+      if (error) {
+        console.error('Error loading orders:', error);
+        return;
+      }
+
+      let totalAllowed = 0;
+      if (orders && orders.length > 0) {
+        orders.forEach(order => {
+          const metadata = order.metadata as any;
+          if (metadata && metadata.sketches) {
+            totalAllowed += metadata.sketches;
+          }
+        });
+      }
+
+      setAllowedSoulmates(totalAllowed);
+
+      // Count how many soulmates have been generated today
+      const today = new Date().toISOString().split('T')[0];
+      const { data: soulmateReadings, error: readingsError } = await supabase
+        .from('soulmate_readings')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', today);
+
+      if (!readingsError && soulmateReadings) {
+        setSoulmateCount(soulmateReadings.length);
+      }
+
+    } catch (error) {
+      console.error('Error loading soulmate usage:', error);
+    }
+  };
 
   const loadTodayForecast = async () => {
     try {
       if (!user) return;
+
+      // Get user's profile for personalized reading
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
       const today = new Date().toISOString().split('T')[0];
       
@@ -66,7 +122,7 @@ const LoveForecasts = () => {
       if (data) {
         setForecast(data);
       } else {
-        generateNewForecast();
+        generatePersonalizedForecast(profile);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -75,23 +131,43 @@ const LoveForecasts = () => {
     }
   };
 
-  const generateNewForecast = async () => {
+  const generatePersonalizedForecast = async (profile: any) => {
     try {
       if (!user) return;
 
-      const loveScore = Math.floor(Math.random() * 10) + 1;
-      const careerScore = Math.floor(Math.random() * 10) + 1;
-      const financeScore = Math.floor(Math.random() * 10) + 1;
+      // Generate personalized forecast based on user's profile
+      let loveScore, careerScore, financeScore;
+      let loveAdvice, careerAdvice, financeAdvice;
+
+      if (profile && profile.date_of_birth && profile.full_name && profile.place_of_birth) {
+        // Calculate personalized scores based on birth data
+        const birthDate = new Date(profile.date_of_birth);
+        const zodiacSign = getZodiacSign(birthDate);
+        const nameNumerology = calculateNameNumerology(profile.full_name);
+        const dayOfYear = getDayOfYear(new Date());
+
+        // Generate scores based on astrological calculations
+        loveScore = Math.floor((nameNumerology + dayOfYear + getZodiacLoveEnergy(zodiacSign)) % 10) + 1;
+        careerScore = Math.floor((nameNumerology * 2 + dayOfYear + getZodiacCareerEnergy(zodiacSign)) % 10) + 1;
+        financeScore = Math.floor((nameNumerology * 3 + dayOfYear + getZodiacFinanceEnergy(zodiacSign)) % 10) + 1;
+
+        loveAdvice = getPersonalizedLoveAdvice(loveScore, zodiacSign);
+        careerAdvice = getPersonalizedCareerAdvice(careerScore, zodiacSign);
+        financeAdvice = getPersonalizedFinanceAdvice(financeScore, zodiacSign);
+      } else {
+        // Fallback to random if profile incomplete
+        loveScore = Math.floor(Math.random() * 10) + 1;
+        careerScore = Math.floor(Math.random() * 10) + 1;
+        financeScore = Math.floor(Math.random() * 10) + 1;
+        loveAdvice = getLoveAdvice(loveScore);
+        careerAdvice = getCareerAdvice(careerScore);
+        financeAdvice = getFinanceAdvice(financeScore);
+      }
       
-      const loveAdvice = getLoveAdvice(loveScore);
-      const careerAdvice = getCareerAdvice(careerScore);
-      const financeAdvice = getFinanceAdvice(financeScore);
-      
-      const luckyTimes = ['08:00', '11:30', '14:20', '17:45', '20:15'];
+      const luckyTimes = ['06:30', '09:15', '12:30', '15:45', '18:20', '21:00'];
       const luckyTime = luckyTimes[Math.floor(Math.random() * luckyTimes.length)];
 
-      // Generate soulmate sketch description for subscribed users
-      const soulmateSketch = hasAccess('love_forecasts') ? generateSoulmateSketch() : null;
+      const soulmateSketch = hasAccess('love_forecasts') ? generateIndianSoulmateSketch() : null;
 
       const today = new Date().toISOString().split('T')[0];
 
@@ -116,59 +192,146 @@ const LoveForecasts = () => {
 
       setForecast(data);
       toast({
-        title: "Forecast Updated",
-        description: "Your daily cosmic predictions are ready!"
+        title: "आज का व्यक्तिगत भविष्यफल तैयार है",
+        description: "Your personalized daily cosmic predictions are ready!"
       });
     } catch (error) {
       console.error('Error generating forecast:', error);
     }
   };
 
-  const generateSoulmateSketch = () => {
+  const calculateNameNumerology = (name: string): number => {
+    const values = { a:1, b:2, c:3, d:4, e:5, f:6, g:7, h:8, i:9, j:1, k:2, l:3, m:4, n:5, o:6, p:7, q:8, r:9, s:1, t:2, u:3, v:4, w:5, x:6, y:7, z:8 };
+    let sum = 0;
+    for (let char of name.toLowerCase()) {
+      sum += values[char] || 0;
+    }
+    return sum % 9 || 9;
+  };
+
+  const getDayOfYear = (date: Date): number => {
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = date.getTime() - start.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  };
+
+  const getZodiacSign = (birthDate: Date): string => {
+    const month = birthDate.getMonth() + 1;
+    const day = birthDate.getDate();
+    
+    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "मेष (Aries)";
+    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "वृषभ (Taurus)";
+    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "मिथुन (Gemini)";
+    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "कर्क (Cancer)";
+    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "सिंह (Leo)";
+    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "कन्या (Virgo)";
+    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "तुला (Libra)";
+    if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "वृश्चिक (Scorpio)";
+    if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "धनु (Sagittarius)";
+    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "मकर (Capricorn)";
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "कुंभ (Aquarius)";
+    return "मीन (Pisces)";
+  };
+
+  const getZodiacLoveEnergy = (sign: string): number => {
+    const energies: Record<string, number> = {
+      "मेष (Aries)": 8, "वृषभ (Taurus)": 7, "मिथुन (Gemini)": 6,
+      "कर्क (Cancer)": 9, "सिंह (Leo)": 8, "कन्या (Virgo)": 5,
+      "तुला (Libra)": 9, "वृश्चिक (Scorpio)": 8, "धनु (Sagittarius)": 7,
+      "मकर (Capricorn)": 6, "कुंभ (Aquarius)": 5, "मीन (Pisces)": 9
+    };
+    return energies[sign] || 7;
+  };
+
+  const getZodiacCareerEnergy = (sign: string): number => {
+    const energies: Record<string, number> = {
+      "मेष (Aries)": 9, "वृषभ (Taurus)": 8, "मिथुन (Gemini)": 7,
+      "कर्क (Cancer)": 6, "सिंह (Leo)": 9, "कन्या (Virgo)": 8,
+      "तुला (Libra)": 7, "वृश्चिक (Scorpio)": 8, "धनु (Sagittarius)": 8,
+      "मकर (Capricorn)": 9, "कुंभ (Aquarius)": 7, "मीन (Pisces)": 6
+    };
+    return energies[sign] || 7;
+  };
+
+  const getZodiacFinanceEnergy = (sign: string): number => {
+    const energies: Record<string, number> = {
+      "मेष (Aries)": 7, "वृषभ (Taurus)": 9, "मिथुन (Gemini)": 6,
+      "कर्क (Cancer)": 7, "सिंह (Leo)": 8, "कन्या (Virgo)": 8,
+      "तुला (Libra)": 7, "वृश्चिक (Scorpio)": 9, "धनु (Sagittarius)": 7,
+      "मकर (Capricorn)": 9, "कुंभ (Aquarius)": 6, "मीन (Pisces)": 6
+    };
+    return energies[sign] || 7;
+  };
+
+  const generateIndianSoulmateSketch = () => {
     const features = [
-      "warm, expressive eyes that sparkle with kindness",
-      "a gentle smile that lights up their face",
-      "an aura of creativity and intelligence",
-      "stylish yet comfortable appearance",
-      "confident but approachable demeanor",
-      "an artistic or intellectual vibe",
-      "natural charisma and charm"
+      "गहरी, भावनात्मक आंखें जो दयालुता से चमकती हैं",
+      "मुस्कान जो उनके चेहरे को रोशन कर देती है",
+      "रचनात्मकता और बुद्धिमत्ता का आभास",
+      "पारंपरिक लेकिन आधुनिक रूप",
+      "आत्मविश्वास लेकिन सहज व्यक्तित्व"
     ];
     
     const locations = [
-      "a cozy bookstore or library",
-      "an art gallery or creative space",
-      "a peaceful park or garden",
-      "a coffee shop with good music",
-      "a cultural event or workshop",
-      "while traveling or exploring"
+      "मंदिर या धार्मिक स्थान पर",
+      "पुस्तकालय या शिक्षा संस्थान में",
+      "कला प्रदर्शनी या सांस्कृतिक कार्यक्रम में",
+      "शांत गार्डन या पार्क में",
+      "त्योहार या सामुदायिक समारोह में"
     ];
 
-    const selectedFeatures = features.slice(0, 3 + Math.floor(Math.random() * 3));
+    const selectedFeatures = features.slice(0, 2 + Math.floor(Math.random() * 2));
     const location = locations[Math.floor(Math.random() * locations.length)];
     
-    return `Your soulmate has ${selectedFeatures.join(', ')}. The cosmic energies suggest you'll meet them in ${location}. They bring balance to your energy and share your deeper values.`;
+    return `आपके जीवनसाथी में ${selectedFeatures.join(', ')} होगी। ग्रह नक्षत्र कहते हैं कि आपकी मुलाकात ${location} होगी। वे आपकी ऊर्जा को संतुलित करेंगे और आपके गहरे मूल्यों को साझा करेंगे।`;
+  };
+
+  const getPersonalizedLoveAdvice = (score: number, zodiacSign: string) => {
+    const advice: Record<string, Record<number, string>> = {
+      "मेष (Aries)": {
+        8: "प्रेम की शक्तिशाली ऊर्जा है आज! नए रिश्तों के लिए दिल खोलें या मौजूदा बंधनों को गहरा करें।",
+        6: "आज प्रेम धीमी गति से बहेगा। दिल की बातचीत और छोटे इशारों के लिए उत्तम समय है।",
+        4: "प्रेम में आज धैर्य की जरूरत। आत्म-प्रेम पर ध्यान दें।"
+      }
+      // Add more zodiac signs as needed
+    };
+    
+    return advice[zodiacSign]?.[Math.floor(score/2)*2 + 4] || "प्रेम आज आपके आसपास है, बस उसे पहचानने की जरूरत है।";
+  };
+
+  const getPersonalizedCareerAdvice = (score: number, zodiacSign: string) => {
+    if (score >= 8) return "करियर में आज बहुत अच्छी गति है! महत्वपूर्ण कामों पर साहसिक कदम उठाएं।";
+    if (score >= 6) return "व्यावसायिक जीवन में स्थिर प्रगति। सहयोग और नेटवर्किंग फायदेमंद होगी।";
+    if (score >= 4) return "आज योजना और संगठन पर ध्यान दें। भविष्य के अवसरों की नींव रखें।";
+    return "व्यावसायिक मामलों में धैर्य का दिन। बड़े फैसलों से बचें और कौशल विकास पर ध्यान दें।";
+  };
+
+  const getPersonalizedFinanceAdvice = (score: number, zodiacSign: string) => {
+    if (score >= 8) return "वित्तीय अवसर आ सकते हैं! पैसे के मामलों में अपने अंतर्ज्ञान पर भरोसा करें।";
+    if (score >= 6) return "स्थिर वित्तीय ऊर्जा। बजट और भविष्य के निवेश की योजना बनाने का अच्छा समय।";
+    if (score >= 4) return "आज खर्च में संयम बरतें। बचत पर ध्यान दें और अनावश्यक खरीदारी से बचें।";
+    return "वित्तीय सचेतता का अभ्यास करें। अपने खर्चों की समीक्षा करें।";
   };
 
   const getLoveAdvice = (score: number) => {
-    if (score >= 8) return "Love energy is powerful today! Open your heart to new connections or deepen existing bonds.";
-    if (score >= 6) return "Romance flows gently today. A perfect time for heartfelt conversations and small gestures.";
-    if (score >= 4) return "Love requires patience today. Focus on self-love and understanding your emotional needs.";
-    return "Cosmic energies suggest taking time for self-reflection. Love will bloom when the timing is right.";
+    if (score >= 8) return "Love energy is powerful today! Open your heart to new connections.";
+    if (score >= 6) return "Romance flows gently today. Perfect time for heartfelt conversations.";
+    if (score >= 4) return "Love requires patience today. Focus on self-love.";
+    return "Cosmic energies suggest taking time for self-reflection.";
   };
 
   const getCareerAdvice = (score: number) => {
-    if (score >= 8) return "Career momentum is strong! Take bold action on important projects and showcase your talents.";
-    if (score >= 6) return "Steady progress in your professional life. Collaboration and networking will be beneficial.";
-    if (score >= 4) return "Focus on organization and planning today. Lay groundwork for future career opportunities.";
-    return "A day for patience in professional matters. Avoid major decisions and focus on skill development.";
+    if (score >= 8) return "Career momentum is strong! Take bold action on important projects.";
+    if (score >= 6) return "Steady progress in your professional life. Collaboration will be beneficial.";
+    if (score >= 4) return "Focus on organization and planning today.";
+    return "A day for patience in professional matters.";
   };
 
   const getFinanceAdvice = (score: number) => {
-    if (score >= 8) return "Financial opportunities may present themselves! Trust your intuition with money matters.";
-    if (score >= 6) return "Steady financial energy. Good time for budgeting and planning future investments.";
-    if (score >= 4) return "Be conservative with spending today. Focus on saving and avoid unnecessary purchases.";
-    return "Practice financial mindfulness. Review your expenses and consider long-term financial goals.";
+    if (score >= 8) return "Financial opportunities may present themselves!";
+    if (score >= 6) return "Steady financial energy. Good time for budgeting.";
+    if (score >= 4) return "Be conservative with spending today.";
+    return "Practice financial mindfulness.";
   };
 
   const getScoreColor = (score: number) => {
@@ -181,9 +344,27 @@ const LoveForecasts = () => {
   const generateAISoulmate = async () => {
     if (!user || !hasAccess('love_forecasts')) return;
     
+    // Check if user has remaining soulmate generations
+    if (soulmateCount >= allowedSoulmates && allowedSoulmates > 0) {
+      toast({
+        title: "Generation Limit Reached",
+        description: `You have used all ${allowedSoulmates} of your purchased soulmate generations. Please purchase more to continue.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (allowedSoulmates === 0) {
+      toast({
+        title: "Purchase Required",
+        description: "Please purchase a soulmate sketch package to generate AI soulmate profiles.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setGeneratingAI(true);
     try {
-      // Get user's astrological data for personalized generation
       const { data: profileData } = await supabase
         .from('profiles')
         .select('full_name, date_of_birth, time_of_birth, place_of_birth, gender')
@@ -192,35 +373,29 @@ const LoveForecasts = () => {
 
       if (!profileData || !profileData.full_name || !profileData.date_of_birth || !profileData.gender) {
         toast({
-          title: "Profile Incomplete",
-          description: "Please complete your profile with gender information first to generate a personalized soulmate.",
+          title: "प्रोफ़ाइल अधूरी है",
+          description: "कृपया पहले अपनी प्रोफ़ाइल में लिंग की जानकारी दें।",
           variant: "destructive"
         });
         setGeneratingAI(false);
         return;
       }
 
-      // Calculate user's zodiac sign for personalized matching
       const birthDate = new Date(profileData.date_of_birth);
       const zodiacSign = getZodiacSign(birthDate);
       
-      // Generate astrologically compatible appearance based on user's sign and opposite gender
       const userGender = profileData.gender;
       const soulmateGender = userGender === 'male' ? 'female' : 'male';
-      const appearances = getCompatibleAppearances(zodiacSign, soulmateGender);
-      const personalities = getCompatiblePersonalities(zodiacSign);
-      const locations = getCompatibleMeetingPlaces(zodiacSign);
-      const timeframes = getCompatibleTimeframes(zodiacSign);
-      const connections = getCompatibleConnections(zodiacSign);
+      const appearances = getIndianCompatibleAppearances(zodiacSign, soulmateGender);
+      const personalities = getIndianCompatiblePersonalities(zodiacSign);
+      const locations = getIndianCompatibleMeetingPlaces(zodiacSign);
+      const timeframes = getIndianCompatibleTimeframes(zodiacSign);
+      const connections = getIndianCompatibleConnections(zodiacSign);
       
-      // Create personalized appearance description based on user's name and birth data
       const selectedAppearance = appearances[Math.floor(Math.random() * appearances.length)];
       
-      // Generate unique AI image based on user's profile with opposite gender
-      const genderPrompt = soulmateGender === 'female' ? 'beautiful woman' : 'handsome man';
+      const genderPrompt = soulmateGender === 'female' ? 'beautiful Indian woman' : 'handsome Indian man';
       const imagePrompt = `${genderPrompt}, ${selectedAppearance}, ${zodiacSign} energy, soulmate for ${profileData.full_name}, born ${birthDate.toDateString()}`;
-      
-      console.log('Generating AI soulmate image with prompt:', imagePrompt);
       
       const { data: imageData, error: imageError } = await supabase.functions.invoke('generate-soulmate-image', {
         body: { prompt: imagePrompt }
@@ -240,11 +415,21 @@ const LoveForecasts = () => {
         sketchUrl: imageData?.image || soulmateTemplate
       };
       
+      // Save to database
+      await supabase.from('soulmate_readings').insert({
+        user_id: user.id,
+        soulmate_description: `${newSoulmate.appearance} - ${newSoulmate.personality}`,
+        meeting_place_prediction: newSoulmate.meetingLocation,
+        meeting_time_prediction: newSoulmate.timeframe,
+        soulmate_sketch_url: newSoulmate.sketchUrl
+      });
+      
       setAiSoulmate(newSoulmate);
+      setSoulmateCount(prev => prev + 1);
       
       toast({
-        title: "AI Soulmate Generated",
-        description: `Your personalized ${soulmateGender} ${zodiacSign} soulmate profile has been created using your birth data.`,
+        title: "AI जीवनसाथी तैयार",
+        description: `आपका व्यक्तिगत ${soulmateGender === 'female' ? 'महिला' : 'पुरुष'} ${zodiacSign} जीवनसाथी प्रोफ़ाइल बन गया है।`,
       });
     } catch (error) {
       console.error('Error generating AI soulmate:', error);
@@ -258,136 +443,139 @@ const LoveForecasts = () => {
     }
   };
 
-  const getZodiacSign = (birthDate: Date): string => {
-    const month = birthDate.getMonth() + 1;
-    const day = birthDate.getDate();
-    
-    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "Aries";
-    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "Taurus";
-    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "Gemini";
-    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "Cancer";
-    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Leo";
-    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Virgo";
-    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Libra";
-    if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Scorpio";
-    if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "Sagittarius";
-    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "Capricorn";
-    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Aquarius";
-    return "Pisces";
-  };
-
-  const getCompatibleAppearances = (zodiacSign: string, gender: string): string[] => {
+  const getIndianCompatibleAppearances = (zodiacSign: string, gender: string): string[] => {
     const femaleAppearances: Record<string, string[]> = {
-      "Aries": ["athletic build with fiery red hair and determined green eyes", "strong facial features with dark hair and passionate brown eyes"],
-      "Taurus": ["curvaceous build with warm brown hair and gentle earth-toned eyes", "elegant posture with rich auburn hair and stable brown eyes"],
-      "Gemini": ["slender build with playful blonde hair and curious blue eyes", "expressive features with light brown hair and sparkling hazel eyes"],
-      "Cancer": ["soft feminine features with silver-blonde hair and emotional blue eyes", "nurturing appearance with dark hair and caring brown eyes"],
-      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with flowing mane and proud golden eyes"],
-      "Virgo": ["refined features with neat brown hair and intelligent green eyes", "graceful build with organized blonde hair and analytical blue eyes"],
-      "Libra": ["harmonious features with balanced blonde hair and charming blue eyes", "elegant build with flowing hair and diplomatic brown eyes"],
-      "Scorpio": ["intense features with mysterious dark hair and penetrating dark eyes", "magnetic presence with black hair and hypnotic hazel eyes"],
-      "Sagittarius": ["adventurous build with wild brown hair and optimistic blue eyes", "free-spirited appearance with auburn hair and wanderlust green eyes"],
-      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with sophisticated hair and determined grey eyes"],
-      "Aquarius": ["unique features with unconventional hair colors and electric blue eyes", "progressive appearance with silver hair and innovative grey eyes"],
-      "Pisces": ["dreamy features with flowing sea-green hair and mystical blue eyes", "ethereal build with silver-blonde hair and compassionate violet eyes"]
+      "मेष (Aries)": ["मजबूत चेहरा काले बालों और तेज भूरी आंखों के साथ", "एथलेटिक बिल्ड गहरे बालों और दृढ़ आंखों के साथ"],
+      "वृषभ (Taurus)": ["सुंदर कद गेहुंआ बालों और कोमल भूरी आंखों के साथ", "शालीन रूप सुनहरे बालों के साथ"],
+      "मिथुन (Gemini)": ["चंचल चेहरा हल्के बालों और जिज्ञासु आंखों के साथ", "अभिव्यंजक लक्षण भूरे बालों के साथ"],
+      "कर्क (Cancer)": ["कोमल स्त्री लक्षण चांदी जैसे बालों के साथ", "पोषणकारी रूप काले बालों और भावुक आंखों के साथ"],
+      "सिंह (Leo)": ["शाही रूप सुनहरे बालों और आत्मविश्वास से भरी आंखों के साथ", "नाटकीय लक्षण बहते बालों के साथ"],
+      "कन्या (Virgo)": ["परिष्कृत लक्षण साफ भूरे बालों के साथ", "सुंदर बिल्ड व्यवस्थित सुनहरे बालों के साथ"],
+      "तुला (Libra)": ["संतुलित लक्षण सुनहरे बालों के साथ", "सुंदर बिल्ड बहते बालों के साथ"],
+      "वृश्चिक (Scorpio)": ["गहन लक्षण रहस्यमय काले बालों के साथ", "चुंबकीय उपस्थिति काले बालों के साथ"],
+      "धनु (Sagittarius)": ["साहसिक बिल्ड जंगली भूरे बालों के साथ", "स्वतंत्र रूप भूरे बालों के साथ"],
+      "मकर (Capricorn)": ["विशिष्ट लक्षण पेशेवर भूरे बालों के साथ", "संरचित बिल्ड परिष्कृत बालों के साथ"],
+      "कुंभ (Aquarius)": ["अनोखे लक्षण अपरंपरागत बाल रंगों के साथ", "प्रगतिशील रूप चांदी बालों के साथ"],
+      "मीन (Pisces)": ["सपनीले लक्षण समुद्री हरे बालों के साथ", "ईथर बिल्ड चांदी सुनहरे बालों के साथ"]
     };
 
     const maleAppearances: Record<string, string[]> = {
-      "Aries": ["muscular build with fiery red hair and determined green eyes", "strong jawline with dark hair and passionate brown eyes"],
-      "Taurus": ["sturdy build with warm brown hair and gentle earth-toned eyes", "broad shoulders with rich auburn hair and stable brown eyes"],
-      "Gemini": ["lean build with sandy blonde hair and curious blue eyes", "expressive features with light brown hair and sparkling hazel eyes"],
-      "Cancer": ["soft masculine features with silver hair and emotional blue eyes", "protective appearance with dark hair and caring brown eyes"],
-      "Leo": ["regal bearing with golden hair and confident amber eyes", "dramatic features with thick mane and proud golden eyes"],
-      "Virgo": ["refined features with neat brown hair and intelligent green eyes", "athletic build with organized appearance and analytical blue eyes"],
-      "Libra": ["harmonious features with balanced hair and charming blue eyes", "elegant build with flowing hair and diplomatic brown eyes"],
-      "Scorpio": ["intense features with mysterious dark hair and penetrating dark eyes", "magnetic presence with black hair and hypnotic hazel eyes"],
-      "Sagittarius": ["adventurous build with wild brown hair and optimistic blue eyes", "rugged appearance with auburn hair and wanderlust green eyes"],
-      "Capricorn": ["distinguished features with professional brown hair and ambitious dark eyes", "structured build with grey-streaked hair and determined grey eyes"],
-      "Aquarius": ["unique features with unconventional hair colors and electric blue eyes", "progressive appearance with silver hair and innovative grey eyes"],
-      "Pisces": ["dreamy features with flowing hair and mystical blue eyes", "ethereal build with silver-blonde hair and compassionate violet eyes"]
+      "मेष (Aries)": ["मांसपेशियों का निर्माण काले बालों और दृढ़ आंखों के साथ", "मजबूत जबड़ा गहरे बालों के साथ"],
+      "वृषभ (Taurus)": ["मजबूत निर्माण गेहुंआ बालों के साथ", "चौड़े कंधे भूरे बालों के साथ"],
+      "मिथुन (Gemini)": ["दुबला निर्माण रेतीले सुनहरे बालों के साथ", "अभिव्यंजक लक्षण हल्के भूरे बालों के साथ"],
+      "कर्क (Cancer)": ["कोमल मर्दाना लक्षण चांदी बालों के साथ", "सुरक्षात्मक रूप काले बालों के साथ"],
+      "सिंह (Leo)": ["शाही रूप सुनहरे बालों के साथ", "नाटकीय लक्षण मोटे बालों के साथ"],
+      "कन्या (Virgo)": ["परिष्कृत लक्षण साफ भूरे बालों के साथ", "एथलेटिक बिल्ड व्यवस्थित रूप के साथ"],
+      "तुला (Libra)": ["संतुलित लक्षण संतुलित बालों के साथ", "सुंदर निर्माण बहते बालों के साथ"],
+      "वृश्चिक (Scorpio)": ["गहन लक्षण रहस्यमय काले बालों के साथ", "चुंबकीय उपस्थिति काले बालों के साथ"],
+      "धनु (Sagittarius)": ["साहसिक निर्माण जंगली भूरे बालों के साथ", "असभ्य रूप भूरे बालों के साथ"],
+      "मकर (Capricorn)": ["विशिष्ट लक्षण पेशेवर भूरे बालों के साथ", "संरचित निर्माण ग्रे धारीदार बालों के साथ"],
+      "कुंभ (Aquarius)": ["अनोखे लक्षण अपरंपरागत बाल रंगों के साथ", "प्रगतिशील रूप चांदी बालों के साथ"],
+      "मीन (Pisces)": ["सपनीले लक्षण बहते बालों के साथ", "ईथर निर्माण चांदी सुनहरे बालों के साथ"]
     };
 
     const appearances = gender === 'female' ? femaleAppearances : maleAppearances;
-    return appearances[zodiacSign] || appearances["Aries"];
+    return appearances[zodiacSign] || appearances["मेष (Aries)"];
   };
 
-  const getCompatiblePersonalities = (zodiacSign: string): string[] => {
+  const getIndianCompatiblePersonalities = (zodiacSign: string): string[] => {
     const personalities: Record<string, string[]> = {
-      "Aries": ["bold leader with passionate energy for new adventures", "competitive spirit with a heart full of courage and determination"],
-      "Taurus": ["reliable soul with deep appreciation for beauty and comfort", "patient nature with strong values and love for simple pleasures"],
-      "Gemini": ["curious mind with witty conversation and adaptable nature", "social butterfly with intellectual interests and communication skills"],
-      "Cancer": ["nurturing heart with deep emotional intelligence and intuition", "family-oriented soul with protective instincts and empathy"],
-      "Leo": ["confident performer with generous heart and creative spirit", "charismatic leader with warm personality and dramatic flair"],
-      "Virgo": ["analytical mind with helpful nature and attention to detail", "practical soul with organizational skills and desire to serve"],
-      "Libra": ["diplomatic peacemaker with artistic eye and social grace", "harmonious spirit with desire for balance and beautiful partnerships"],
-      "Scorpio": ["intense soul with transformative power and mysterious depth", "passionate nature with investigative mind and emotional intensity"],
-      "Sagittarius": ["adventurous philosopher with optimistic worldview and freedom-loving spirit", "truth-seeking wanderer with philosophical mind and humor"],
-      "Capricorn": ["ambitious achiever with disciplined approach and traditional values", "responsible leader with practical wisdom and long-term vision"],
-      "Aquarius": ["innovative humanitarian with unique perspective and progressive ideals", "independent thinker with eccentric interests and social consciousness"],
-      "Pisces": ["compassionate dreamer with artistic soul and spiritual depth", "intuitive empath with imaginative mind and selfless nature"]
+      "मेष (Aries)": ["साहसी नेता जो नए रोमांच के लिए जुनूनी है", "प्रतिस्पर्धी भावना साहस से भरे दिल के साथ"],
+      "वृषभ (Taurus)": ["विश्वसनीय आत्मा सुंदरता की गहरी सराहना के साथ", "धैर्यवान स्वभाव मजबूत मूल्यों के साथ"],
+      "मिथुन (Gemini)": ["जिज्ञासु मन मजाकिया बातचीत के साथ", "सामाजिक तितली बौद्धिक रुचियों के साथ"],
+      "कर्क (Cancer)": ["पोषण करने वाला दिल गहरी भावनात्मक बुद्धिमत्ता के साथ", "पारिवारिक उन्मुख आत्मा सुरक्षात्मक प्रवृत्ति के साथ"],
+      "सिंह (Leo)": ["आत्मविश्वास से भरपूर कलाकार उदार दिल के साथ", "करिश्माई नेता गर्म व्यक्तित्व के साथ"],
+      "कन्या (Virgo)": ["विश्लेषणात्मक दिमाग सहायक प्रकृति के साथ", "व्यावहारिक आत्मा संगठनात्मक कौशल के साथ"],
+      "तुला (Libra)": ["कूटनीतिक शांति बनाने वाला कलात्मक आंख के साथ", "सामंजस्यपूर्ण आत्मा संतुलन की इच्छा के साथ"],
+      "वृश्चिक (Scorpio)": ["गहन आत्मा रूपांतरण शक्ति के साथ", "भावुक स्वभाव रहस्यमय गहराई के साथ"],
+      "धनु (Sagittarius)": ["साहसिक दार्शनिक आशावादी विश्वदृष्टि के साथ", "सत्य खोजने वाला घुमक्कड़ दार्शनिक दिमाग के साथ"],
+      "मकर (Capricorn)": ["महत्वाकांक्षी उपलब्धि हासिल करने वाला अनुशासित दृष्टिकोण के साथ", "जिम्मेदार नेता व्यावहारिक ज्ञान के साथ"],
+      "कुंभ (Aquarius)": ["नवाचार मानवतावादी अनोखे दृष्टिकोण के साथ", "स्वतंत्र विचारक सनकी रुचियों के साथ"],
+      "मीन (Pisces)": ["दयालु सपने देखने वाला कलात्मक आत्मा के साथ", "सहज empathआध्यात्मिक गहराई के साथ"]
     };
-    return personalities[zodiacSign] || personalities["Aries"];
+    return personalities[zodiacSign] || personalities["मेष (Aries)"];
   };
 
-  const getCompatibleMeetingPlaces = (zodiacSign: string): string[] => {
+  const getIndianCompatibleMeetingPlaces = (zodiacSign: string): string[] => {
     const locations: Record<string, string[]> = {
-      "Aries": ["at a sports competition where you're both cheering for the same team", "during an adventure race or hiking trail"],
-      "Taurus": ["at a farmers market where you both reach for the same fresh flowers", "in a cozy restaurant with amazing food"],
-      "Gemini": ["at a bookstore café during a literary discussion", "at a networking event with interesting conversations"],
-      "Cancer": ["at a family gathering or community event", "volunteering at a local charity or animal shelter"],
-      "Leo": ["at a theater performance or art gallery opening", "at a luxury resort or upscale social event"],
-      "Virgo": ["at a health food store or wellness workshop", "during a volunteer project for environmental causes"],
-      "Libra": ["at an art museum or classical music concert", "at a wedding or elegant social gathering"],
-      "Scorpio": ["at a mystery book club or psychology seminar", "during a deep spiritual retreat or transformation workshop"],
-      "Sagittarius": ["at an international travel expo or cultural festival", "during a philosophy class or adventure travel"],
-      "Capricorn": ["at a professional conference or business networking event", "at a historical museum or traditional cultural site"],
-      "Aquarius": ["at a technology conference or humanitarian cause", "during a progressive political rally or innovation meetup"],
-      "Pisces": ["at a spiritual retreat or meditation center", "near water - beach, lake, or aquarium with mystical atmosphere"]
+      "मेष (Aries)": ["किसी खेल प्रतियोगिता में जहाम दोनों एक ही टीम का समर्थन कर रहे हों", "साहसिक दौड़ या ट्रेकिंग के दौरान"],
+      "वृषभ (Taurus)": ["फार्मर्स मार्केट में जहाम दोनों ताजे फूलों के लिए पहुंचे हों", "स्वादिष्ट भोजन वाले आरामदायक रेस्तरां में"],
+      "मिथुन (Gemini)": ["किताबों की दुकान के कैफे में साहित्यिक चर्चा के दौरान", "दिलचस्प बातचीत वाले नेटवर्किंग इवेंट में"],
+      "कर्क (Cancer)": ["पारिवारिक समारोह या सामुदायिक कार्यक्रम में", "स्थानीय चैरिटी या पशु आश्रय में स्वयंसेवा के दौरान"],
+      "सिंह (Leo)": ["थिएटर प्रदर्शन या कला गैलरी के उद्घाटन में", "लक्जरी रिसॉर्ट या उच्च स्तरीय सामाजिक कार्यक्रम में"],
+      "कन्या (Virgo)": ["हेल्थ फूड स्टोर या वेलनेस वर्कशॉप में", "पर्यावरणीय कारणों के लिए स्वयंसेवी परियोजना के दौरान"],
+      "तुला (Libra)": ["संग्रहालय या सांस्कृतिक केंद्र में", "शादी या सामाजिक समारोह में"],
+      "वृश्चिक (Scorpio)": ["योग या ध्यान वर्कशॉप में", "मनोविज्ञान या आध्यात्मिक सेमिनार में"],
+      "धनु (Sagittarius)": ["यात्रा एजेंसी या हवाई अड्डे में", "दर्शन या आध्यात्म की कक्षा में"],
+      "मकर (Capricorn)": ["पेशेवर कॉन्फ्रेंस या कैरियर मेले में", "बिजनेस नेटवर्किंग इवेंट में"],
+      "कुंभ (Aquarius)": ["तकनीक सम्मेलन या नवाचार कार्यशाला में", "सामाजिक न्याय या पर्यावरण समूह की बैठक में"],
+      "मीन (Pisces)": ["कला स्टूडियो या संगीत कार्यक्रम में", "आध्यात्मिक retreat या मेडिटेशन सेंटर में"]
     };
-    return locations[zodiacSign] || locations["Aries"];
+    return locations[zodiacSign] || locations["मेष (Aries)"];
   };
 
-  const getCompatibleTimeframes = (zodiacSign: string): string[] => {
-    const timeframes: Record<string, string[]> = {
-      "Aries": ["during spring when your energy is at its peak", "when you're starting a new ambitious project"],
-      "Taurus": ["during late spring when nature is in full bloom", "when you're feeling most grounded and stable"],
-      "Gemini": ["during early summer when social activity peaks", "when you're exploring new learning opportunities"],
-      "Cancer": ["during summer when family connections are strong", "around a full moon when emotions run deep"],
-      "Leo": ["during peak summer when you're radiating confidence", "during a celebration where you're being honored"],
-      "Virgo": ["during late summer when you're organizing your life", "when you're focused on health and self-improvement"],
-      "Libra": ["during autumn when balance and harmony are emphasized", "when you're attending cultural or social events"],
-      "Scorpio": ["during late autumn when transformation energy is strong", "when you're going through a period of personal growth"],
-      "Sagittarius": ["during your birthday season when adventure calls", "when you're planning or taking a significant journey"],
-      "Capricorn": ["during winter when you're focused on goals", "when you're achieving a major career milestone"],
-      "Aquarius": ["during late winter when innovation energy peaks", "when you're involved in humanitarian or progressive causes"],
-      "Pisces": ["during early spring when intuition is heightened", "when you're in a period of spiritual or artistic awakening"]
-    };
-    return timeframes[zodiacSign] || timeframes["Aries"];
+  const getIndianCompatibleTimeframes = (zodiacSign: string): string[] => {
+    return [
+      "अगले 6 महीने में दीवाली के त्योहार के दौरान",
+      "होली के रंगबिरंगे समय में अगले साल",
+      "आने वाले दशहरे की पावन अवधि में",
+      "दुर्गा पूजा के दिव्य समय में",
+      "गणेश चतुर्थी के शुभ अवसर पर"
+    ];
   };
 
-  const getCompatibleConnections = (zodiacSign: string): string[] => {
-    const connections: Record<string, string[]> = {
-      "Aries": ["an instant spark of competitive chemistry and mutual respect", "a bold attraction that challenges you both to grow"],
-      "Taurus": ["a slow-building, steady connection that feels like home", "a sensual chemistry combined with emotional security"],
-      "Gemini": ["an intellectual connection through witty conversation and shared curiosity", "a playful friendship that evolves into deeper understanding"],
-      "Cancer": ["an emotional bond that feels like you've known each other forever", "a nurturing connection with deep family-like comfort"],
-      "Leo": ["a dramatic, passionate romance with mutual admiration", "a creative partnership where you inspire each other's talents"],
-      "Virgo": ["a practical connection built on shared values and goals", "a supportive relationship where you help each other improve"],
-      "Libra": ["a harmonious balance where you complement each other perfectly", "an aesthetic and romantic connection with natural partnership energy"],
-      "Scorpio": ["an intense, transformative bond with magnetic attraction", "a deep psychological connection with unspoken understanding"],
-      "Sagittarius": ["an adventurous partnership with shared philosophical ideals", "a free-spirited connection that encourages mutual growth"],
-      "Capricorn": ["a mature, stable connection with shared ambitions", "a traditional courtship that builds into lasting commitment"],
-      "Aquarius": ["an unconventional friendship that breaks all the rules", "an innovative partnership where you create positive change together"],
-      "Pisces": ["a mystical, spiritual connection that transcends the physical", "an empathetic bond where you understand each other's deepest feelings"]
-    };
-    return connections[zodiacSign] || connections["Aries"];
+  const getIndianCompatibleConnections = (zodiacSign: string): string[] => {
+    return [
+      "कर्मिक आत्माओं का मिलन (karmic soul connection)",
+      "पूर्वजन्म का रिश्ता (past life bond)",
+      "आध्यात्मिक साझेदारी (spiritual partnership)", 
+      "दिव्य आशीर्वाद से मिलना (divine blessing connection)",
+      "ग्रह नक्षत्रों द्वारा निर्धारित रिश्ता (astrological destined bond)"
+    ];
+  };
+
+  const shareSoulmate = async () => {
+    if (!aiSoulmate) return;
+    
+    const shareText = `मैंने अपना AI जीवनसाथी बनाया है! ${aiSoulmate.appearance} - ${aiSoulmate.personality}. हमारी मुलाकात ${aiSoulmate.meetingLocation} होगी। #AIजीवनसाथी #ज्योतिष`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'मेरा AI जीवनसाथी',
+          text: shareText,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(shareText);
+      toast({
+        title: "कॉपी हो गया!",
+        description: "Text copied to clipboard"
+      });
+    }
+  };
+
+  const shareOnTwitter = () => {
+    if (!aiSoulmate) return;
+    const text = `मैंने अपना AI जीवनसाथी बनाया है! ${aiSoulmate.appearance} - ${aiSoulmate.personality} #AIजीवनसाथी #ज्योतिष`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const shareOnFacebook = () => {
+    if (!aiSoulmate) return;
+    const url = window.location.href;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
   };
 
   if (loading || subscriptionLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center">Loading your cosmic forecasts...</div>
+      <div className="min-h-screen bg-gradient-starlight flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading your cosmic forecasts...</p>
         </div>
       </div>
     );
@@ -395,257 +583,256 @@ const LoveForecasts = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
-        <div className="container mx-auto max-w-4xl text-center space-y-6">
-          <h1 className="text-4xl font-bold">Love Forecasts</h1>
-          <p className="text-muted-foreground">Please sign in to access your personalized love forecasts.</p>
-          <Link to="/auth">
-            <Button variant="cosmic">Sign In</Button>
-          </Link>
-        </div>
+      <div className="min-h-screen bg-gradient-starlight flex items-center justify-center">
+        <Card className="max-w-md mx-auto text-center">
+          <CardContent className="pt-6">
+            <Heart className="h-16 w-16 text-primary mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-4">प्रेम पूर्वानुमान</h2>
+            <p className="text-muted-foreground mb-6">
+              अपने प्रेम, करियर और वित्त के पूर्वानुमान देखने के लिए साइन इन करें
+            </p>
+            <Link to="/auth">
+              <Button variant="cosmic">साइन इन करें</Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (!hasAccess('love_forecasts')) {
-    const trialDaysLeft = trial_end ? Math.ceil((new Date(trial_end).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
-    
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
-        <div className="container mx-auto max-w-4xl text-center space-y-6">
-          <div className="flex items-center justify-center gap-2 text-amber-600">
-            <Crown className="h-8 w-8" />
-            <h1 className="text-4xl font-bold">Premium Feature</h1>
-          </div>
-          
-          {trialDaysLeft > 0 ? (
-            <div className="space-y-4">
-              <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue accessing Love Forecasts with Soulmate Sketches.</p>
-              <Link to="/pricing">
-                <Button variant="cosmic" size="lg" className="gap-2">
-                  <Crown className="h-5 w-5" />
-                  Upgrade to Premium
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-muted-foreground">Love Forecasts with AI Soulmate Sketches are a Premium feature.</p>
-              <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
-              <Link to="/pricing">
-                <Button variant="cosmic" size="lg" className="gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Start Free Trial
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
+      <div className="min-h-screen bg-gradient-starlight flex items-center justify-center p-4">
+        <Card className="max-w-md mx-auto text-center">
+          <CardContent className="pt-6">
+            <Crown className="h-16 w-16 text-accent mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-4">प्रीमियम सुविधा</h2>
+            <p className="text-muted-foreground mb-6">
+              प्रेम पूर्वानुमान और AI जीवनसाथी प्रोफ़ाइल प्राप्त करने के लिए प्रीमियम में अपग्रेड करें
+            </p>
+            <Link to="/pricing">
+              <Button variant="cosmic">अपग्रेड करें</Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
-      <div className="container mx-auto max-w-4xl space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-            Daily Life Forecasts
+    <div className="min-h-screen bg-gradient-starlight py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
+            प्रेम पूर्वानुमान
           </h1>
           <p className="text-muted-foreground text-lg">
-            Love, Career & Finance predictions aligned with cosmic energies
+            आज का आपका व्यक्तिगत प्रेम, करियर और वित्त पूर्वानुमान
           </p>
         </div>
 
+        {/* Soulmate Usage Counter */}
+        {allowedSoulmates > 0 && (
+          <div className="mb-8 text-center">
+            <Card className="inline-block">
+              <CardContent className="pt-4">
+                <p className="text-sm text-muted-foreground">
+                  AI जीवनसाथी जनरेशन: {soulmateCount}/{allowedSoulmates} उपयोग किए गए
+                </p>
+                <Progress value={(soulmateCount / allowedSoulmates) * 100} className="mt-2 w-48" />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {forecast && (
-          <>
-            {/* Love Forecast */}
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-pink-500/10" />
-              <CardHeader className="relative">
-                <CardTitle className="flex items-center gap-2">
-                  <Heart className="h-6 w-6 text-pink-600" />
-                  Love & Relationships
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium">Energy Level:</span>
-                  <Progress value={forecast.love_score * 10} className="flex-1" />
-                  <span className={`text-2xl font-bold ${getScoreColor(forecast.love_score)}`}>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {/* Love Card */}
+            <Card className="border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20">
+              <CardHeader className="text-center pb-4">
+                <Heart className="h-8 w-8 text-pink-600 mx-auto mb-2" />
+                <CardTitle className="text-lg">प्रेम</CardTitle>
+                <div className="text-3xl font-bold">
+                  <span className={getScoreColor(forecast.love_score)}>
                     {forecast.love_score}/10
                   </span>
                 </div>
-                <p className="text-muted-foreground">{forecast.love_advice}</p>
-                {forecast.lucky_love_time && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-pink-600" />
-                    Lucky time for love: {forecast.lucky_love_time}
-                  </div>
-                )}
-                
-                <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="h-5 w-5 text-pink-600" />
-                    <h4 className="font-semibold text-pink-700 dark:text-pink-300">Soulmate Features</h4>
-                    <Crown className="h-4 w-4 text-amber-500" />
-                  </div>
-                  
-                  {forecast.soulmate_sketch && (
-                    <div className="mb-4">
-                      <h5 className="font-medium mb-2">Your Soulmate Sketch</h5>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{forecast.soulmate_sketch}</p>
-                    </div>
-                  )}
-                  
-                  <div className="space-y-3">
-                    <Dialog onOpenChange={(open) => {
-                      if (open && !aiSoulmate) {
-                        generateAISoulmate();
-                      }
-                    }}>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                          <Wand2 className="mr-2 h-4 w-4" />
-                          Generate Detailed AI Soulmate Profile
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle className="flex items-center gap-2">
-                            <Sparkles className="h-5 w-5 text-primary" />
-                            Your AI-Generated Soulmate Profile
-                          </DialogTitle>
-                        </DialogHeader>
-                        {generatingAI ? (
-                          <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                            <p className="text-muted-foreground">Creating your perfect soulmate profile...</p>
-                          </div>
-                        ) : aiSoulmate ? (
-                          <div className="space-y-4">
-                            {/* Soulmate Sketch */}
-                            {aiSoulmate.sketchUrl && (
-                              <div className="text-center mb-6">
-                                <h4 className="font-semibold mb-4 flex items-center justify-center gap-2">
-                                  <Heart className="h-4 w-4 text-primary" />
-                                  Your Soulmate Sketch
-                                </h4>
-                                 <div className="relative w-48 h-64 mx-auto rounded-lg overflow-hidden border-2 border-primary/20 shadow-lg">
-                                   <img 
-                                     src={aiSoulmate.sketchUrl} 
-                                     alt="AI Generated Soulmate Portrait" 
-                                     className="w-full h-full object-cover"
-                                   />
-                                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                 </div>
-                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mt-3">
-                                   <p className="text-xs text-amber-800 dark:text-amber-200 text-center flex items-center justify-center gap-1">
-                                     <span className="text-amber-600">⚠️</span>
-                                     This AI-generated portrait is created using your name, gender, and birth date for personalized astrological compatibility. For entertainment purposes only.
-                                   </p>
-                                 </div>
-                              </div>
-                            )}
-                            
-                            <div className="p-4 bg-gradient-cosmic rounded-lg text-primary-foreground">
-                              <h4 className="font-semibold mb-2">Physical Appearance</h4>
-                              <p className="text-primary-foreground/90">{aiSoulmate.appearance}</p>
-                            </div>
-                            
-                            <div className="p-4 bg-gradient-gold/20 rounded-lg">
-                              <h4 className="font-semibold mb-2">Personality & Interests</h4>
-                              <p className="text-foreground/80">{aiSoulmate.personality}</p>
-                            </div>
-                            
-                            <div className="p-4 bg-accent/20 rounded-lg">
-                              <h4 className="font-semibold mb-2">How You'll Meet</h4>
-                              <p className="text-foreground/80">{aiSoulmate.meetingLocation}</p>
-                            </div>
-                            
-                            <div className="p-4 bg-primary/10 rounded-lg">
-                              <h4 className="font-semibold mb-2">Timeline</h4>
-                              <p className="text-foreground/80">{aiSoulmate.timeframe}</p>
-                            </div>
-                            
-                            <div className="p-4 bg-pink-100 dark:bg-pink-900/20 rounded-lg">
-                              <h4 className="font-semibold mb-2">Connection Type</h4>
-                              <p className="text-foreground/80">{aiSoulmate.connectionType}</p>
-                            </div>
-                            
-                            <p className="text-xs text-muted-foreground text-center mt-4">
-                              Generated using advanced AI algorithms and cosmic data analysis
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="text-center py-8">
-                            <p className="text-muted-foreground">Click "Generate" to create your soulmate profile</p>
-                          </div>
-                        )}
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+                <Progress value={forecast.love_score * 10} className="mt-2" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-center mb-4">{forecast.love_advice}</p>
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  शुभ समय: {forecast.lucky_love_time}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Career Forecast */}
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/10" />
-              <CardHeader className="relative">
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
-                  Career & Professional Life
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium">Energy Level:</span>
-                  <Progress value={forecast.career_score * 10} className="flex-1" />
-                  <span className={`text-2xl font-bold ${getScoreColor(forecast.career_score)}`}>
+            {/* Career Card */}
+            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardHeader className="text-center pb-4">
+                <Briefcase className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <CardTitle className="text-lg">करियर</CardTitle>
+                <div className="text-3xl font-bold">
+                  <span className={getScoreColor(forecast.career_score)}>
                     {forecast.career_score}/10
                   </span>
                 </div>
-                <p className="text-muted-foreground">{forecast.career_advice}</p>
+                <Progress value={forecast.career_score * 10} className="mt-2" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-center">{forecast.career_advice}</p>
               </CardContent>
             </Card>
 
-            {/* Finance Forecast */}
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10" />
-              <CardHeader className="relative">
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-6 w-6 text-green-600" />
-                  Finance & Wealth
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium">Energy Level:</span>
-                  <Progress value={forecast.finance_score * 10} className="flex-1" />
-                  <span className={`text-2xl font-bold ${getScoreColor(forecast.finance_score)}`}>
+            {/* Finance Card */}
+            <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+              <CardHeader className="text-center pb-4">
+                <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                <CardTitle className="text-lg">वित्त</CardTitle>
+                <div className="text-3xl font-bold">
+                  <span className={getScoreColor(forecast.finance_score)}>
                     {forecast.finance_score}/10
                   </span>
                 </div>
-                <p className="text-muted-foreground">{forecast.finance_advice}</p>
+                <Progress value={forecast.finance_score * 10} className="mt-2" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-center">{forecast.finance_advice}</p>
               </CardContent>
             </Card>
-
-            {/* Social Sharing */}
-            <SocialShare 
-              title="My Daily Love Forecast"
-              text={`Today's love forecast: ${forecast.love_advice} Love score: ${forecast.love_score}/10 ✨`}
-              hashtags={['LoveForecast', 'DailyHoroscope', 'CosmicLove']}
-            />
-
-            <div className="text-center">
-              <Button onClick={generateNewForecast} variant="outline" className="gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Get New Forecast
-              </Button>
-            </div>
-          </>
+          </div>
         )}
+
+        {/* AI Soulmate Generation */}
+        <Card className="mb-8">
+          <CardHeader className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="h-8 w-8 text-primary" />
+              <CardTitle className="text-2xl">AI जीवनसाथी जेनरेटर</CardTitle>
+            </div>
+            <p className="text-muted-foreground">
+              अपनी जन्म तिथि के आधार पर व्यक्तिगत जीवनसाथी प्रोफ़ाइल बनाएं
+            </p>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  onClick={generateAISoulmate}
+                  disabled={generatingAI || (allowedSoulmates > 0 && soulmateCount >= allowedSoulmates)}
+                  variant="cosmic" 
+                  size="lg"
+                  className="gap-2"
+                >
+                  {generatingAI ? (
+                    <>
+                      <RefreshCw className="h-5 w-5 animate-spin" />
+                      जेनरेट हो रहा है...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-5 w-5" />
+                      AI जीवनसाथी बनाएं
+                      {allowedSoulmates > 0 && ` (${allowedSoulmates - soulmateCount} बचे हैं)`}
+                    </>
+                  )}
+                </Button>
+              </DialogTrigger>
+
+              {aiSoulmate && (
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-center">आपका AI जीवनसाथी</DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="space-y-6">
+                    {aiSoulmate.sketchUrl && (
+                      <div className="text-center">
+                        <div className="relative inline-block">
+                          <img 
+                            src={aiSoulmate.sketchUrl} 
+                            alt="AI Generated Soulmate" 
+                            className="w-64 h-64 object-cover rounded-lg shadow-cosmic mx-auto"
+                          />
+                          <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <h3 className="font-semibold mb-2 text-primary">रूप-रंग:</h3>
+                        <p className="text-sm text-muted-foreground">{aiSoulmate.appearance}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-semibold mb-2 text-primary">व्यक्तित्व:</h3>
+                        <p className="text-sm text-muted-foreground">{aiSoulmate.personality}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-semibold mb-2 text-primary">मिलने का स्थान:</h3>
+                        <p className="text-sm text-muted-foreground">{aiSoulmate.meetingLocation}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-semibold mb-2 text-primary">समय सीमा:</h3>
+                        <p className="text-sm text-muted-foreground">{aiSoulmate.timeframe}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold mb-2 text-primary">कनेक्शन प्रकार:</h3>
+                      <p className="text-sm text-muted-foreground">{aiSoulmate.connectionType}</p>
+                    </div>
+
+                    {/* Share Buttons */}
+                    <div className="flex justify-center gap-4 pt-4 border-t">
+                      <Button onClick={shareSoulmate} variant="outline" size="sm" className="gap-2">
+                        <Share2 className="h-4 w-4" />
+                        साझा करें
+                      </Button>
+                      <Button onClick={shareOnTwitter} variant="outline" size="sm" className="gap-2">
+                        <Twitter className="h-4 w-4" />
+                        Twitter
+                      </Button>
+                      <Button onClick={shareOnFacebook} variant="outline" size="sm" className="gap-2">
+                        <Facebook className="h-4 w-4" />
+                        Facebook
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${aiSoulmate.appearance} - ${aiSoulmate.personality}`);
+                          toast({ title: "कॉपी हो गया!", description: "Soulmate details copied to clipboard" });
+                        }}
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2"
+                      >
+                        <Copy className="h-4 w-4" />
+                        कॉपी करें
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              )}
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        <div className="text-center">
+          <Button 
+            onClick={loadTodayForecast} 
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            पूर्वानुमान रीफ्रेश करें
+          </Button>
+        </div>
+
+        {forecast && <SocialShare title="मेरे आज के प्रेम पूर्वानुमान" text={`प्रेम: ${forecast.love_score}/10, करियर: ${forecast.career_score}/10, वित्त: ${forecast.finance_score}/10 - आज का मेरा व्यक्तिगत भविष्यफल`} />}
       </div>
     </div>
   );
