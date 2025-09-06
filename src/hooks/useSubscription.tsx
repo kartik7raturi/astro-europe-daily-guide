@@ -66,14 +66,14 @@ export const useSubscription = () => {
           loading: false,
         });
       } else {
-        // Create new subscriber entry with 15-day trial
+        // Create new subscriber entry without trial
         const { data: newSubscriber, error: insertError } = await supabase
           .from('subscribers')
           .insert({
             user_id: user.id,
             email: user.email!,
             subscribed: false,
-            trial_end: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+            trial_end: null, // No trial period
           })
           .select()
           .single();
@@ -84,10 +84,10 @@ export const useSubscription = () => {
         }
 
         setSubscription({
-          subscribed: true, // In trial period
+          subscribed: false, // No trial access
           subscription_tier: null,
           subscription_end: null,
-          trial_end: newSubscriber.trial_end,
+          trial_end: null,
           loading: false,
         });
       }

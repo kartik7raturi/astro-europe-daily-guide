@@ -52,8 +52,6 @@ const Navigation = () => {
     { name: "Pricing", href: "/pricing" },
     { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
-    { name: "Affirmations", href: "/daily-affirmations" },
-    { name: "Journal", href: "/astro-journal" },
     { name: "About", href: "/about" },
   ];
 

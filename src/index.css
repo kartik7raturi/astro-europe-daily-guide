@@ -8,46 +8,46 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Cosmic theme for astrology app */
-    --background: 220 27% 8%;
-    --foreground: 210 40% 98%;
+    /* Indian Vedic astrology theme */
+    --background: 30 15% 6%;
+    --foreground: 45 40% 95%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 20% 10%;
+    --card-foreground: 45 40% 95%;
 
-    --popover: 220 25% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 20% 10%;
+    --popover-foreground: 45 40% 95%;
 
-    --primary: 280 65% 60%;
-    --primary-foreground: 210 40% 98%;
-    --primary-glow: 280 80% 75%;
+    --primary: 25 85% 55%;
+    --primary-foreground: 30 15% 6%;
+    --primary-glow: 35 90% 65%;
 
-    --secondary: 220 20% 20%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 25% 15%;
+    --secondary-foreground: 45 40% 95%;
 
-    --muted: 220 15% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 30 20% 12%;
+    --muted-foreground: 30 15% 60%;
 
-    --accent: 45 100% 70%;
-    --accent-foreground: 220 27% 8%;
+    --accent: 15 100% 65%;
+    --accent-foreground: 30 15% 6%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 45 40% 95%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 18%;
-    --ring: 280 65% 60%;
+    --border: 30 25% 18%;
+    --input: 30 25% 15%;
+    --ring: 25 85% 55%;
 
     --radius: 0.75rem;
 
-    /* Custom cosmic gradients */
-    --gradient-cosmic: linear-gradient(135deg, hsl(280 65% 60%), hsl(240 55% 50%), hsl(260 70% 45%));
-    --gradient-starlight: linear-gradient(180deg, hsl(220 27% 8%), hsl(240 30% 12%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 100% 70%), hsl(38 90% 60%));
+    /* Indian-inspired gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(25 85% 55%), hsl(35 80% 60%), hsl(45 75% 65%));
+    --gradient-starlight: linear-gradient(180deg, hsl(30 15% 6%), hsl(35 20% 8%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 100% 70%), hsl(35 95% 65%));
     
-    /* Shadows with cosmic glow */
-    --shadow-cosmic: 0 0 30px hsl(280 65% 60% / 0.3);
-    --shadow-gold: 0 0 20px hsl(45 100% 70% / 0.2);
+    /* Indian temple-inspired shadows */
+    --shadow-cosmic: 0 0 30px hsl(25 85% 55% / 0.4);
+    --shadow-gold: 0 0 25px hsl(45 100% 70% / 0.3);
     
     /* Smooth animations */
     --transition-cosmic: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
