@@ -107,7 +107,7 @@ const HoroscopeForm = () => {
             Your Cosmic Profile
           </h1>
           <p className="text-muted-foreground">
-            Share your birth details to receive personalized cosmic guidance tailored for European wisdom traditions.
+            Share your birth details to receive personalized cosmic guidance tailored for Indian wisdom traditions.
           </p>
         </div>
 

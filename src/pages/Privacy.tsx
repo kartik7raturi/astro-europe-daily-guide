@@ -66,7 +66,7 @@ const Privacy = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                In accordance with European data protection regulations (GDPR), you have the right to:
+                In accordance with Indian data protection regulations (GDPR), you have the right to:
               </p>
               <ul className="space-y-2 text-muted-foreground">
                 <li>• Access your personal data</li>

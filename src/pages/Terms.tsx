@@ -27,7 +27,7 @@ const Terms = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                astrovibe.online provides astrological readings and guidance based on traditional European 
+                astrovibe.online provides astrological readings and guidance based on traditional Indian 
                 astrological practices. Our services are intended for entertainment, personal insight, 
                 and spiritual guidance purposes.
               </p>
@@ -59,9 +59,9 @@ const Terms = () => {
                   not to dictate your choices.
                 </li>
                 <li>
-                  <strong>Cultural Respect:</strong> Our interpretations honor European 
+                  <strong>Cultural Respect:</strong> Our interpretations honor Indian 
                   astrological traditions while respecting diverse cultural backgrounds 
-                  within Europe.
+                  within India.
                 </li>
                 <li>
                   <strong>No Guarantees:</strong> We cannot guarantee specific outcomes 
@@ -96,7 +96,7 @@ const Terms = () => {
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
                 The content, design, and methodologies used in our readings are proprietary 
-                to astrovibe.online. While we draw from traditional European astrological practices, 
+                to astrovibe.online. While we draw from traditional Indian astrological practices, 
                 our specific interpretations and presentation are our intellectual property.
               </p>
             </CardContent>

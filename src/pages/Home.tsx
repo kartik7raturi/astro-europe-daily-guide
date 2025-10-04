@@ -17,7 +17,7 @@ const Home = () => {
   const blogPosts = [
     {
       title: "Understanding Your Zodiac Sign in Modern Times",
-      excerpt: "Discover how ancient wisdom applies to contemporary European life and relationships.",
+      excerpt: "Discover how ancient wisdom applies to contemporary Indian life and relationships.",
       date: "2024-01-15",
       readTime: "5 min read",
       category: "Astrology"
@@ -41,15 +41,15 @@ const Home = () => {
   const faqs = [
     {
       question: "How accurate are the daily horoscope readings?",
-      answer: "Our readings combine traditional European astrological wisdom with modern interpretation techniques. While astrology provides guidance and insights, remember that you have the power to shape your destiny through your choices and actions."
+      answer: "Our readings combine traditional Indian astrological wisdom with modern interpretation techniques. While astrology provides guidance and insights, remember that you have the power to shape your destiny through your choices and actions."
     },
     {
       question: "Can I get readings for multiple zodiac signs?",
       answer: "Yes! You can create multiple profiles or check readings for friends and family members. Our system allows you to save different birth data for various people you care about."
     },
     {
-      question: "What makes your approach specifically European?",
-      answer: "Our readings incorporate European astrological traditions, cultural sensibilities, and wisdom that resonates with European values of thoughtfulness, cultural appreciation, and balanced living."
+      question: "What makes your approach specifically Indian?",
+      answer: "Our readings incorporate Indian astrological traditions, cultural sensibilities, and wisdom that resonates with Indian values of thoughtfulness, cultural appreciation, and balanced living."
     },
     {
       question: "How often should I check my astro insights?",
@@ -57,11 +57,11 @@ const Home = () => {
     },
     {
       question: "Do you offer personalized consultations?",
-      answer: "Yes! We provide one-on-one consultations with experienced astrologers who specialize in European astrological traditions. You can book consultations through your dashboard."
+      answer: "Yes! We provide one-on-one consultations with experienced astrologers who specialize in Indian astrological traditions. You can book consultations through your dashboard."
     },
     {
       question: "Is my personal data secure?",
-      answer: "Absolutely. We use enterprise-grade security and never share your personal information. Your birth data and readings are encrypted and stored securely according to European data protection standards."
+      answer: "Absolutely. We use enterprise-grade security and never share your personal information. Your birth data and readings are encrypted and stored securely according to Indian data protection standards."
     }
   ];
 
@@ -113,7 +113,7 @@ const Home = () => {
     {
       icon: Target,
       title: "Problem Solutions",
-      description: "Receive cosmic guidance and practical solutions tailored for European wisdom traditions."
+      description: "Receive cosmic guidance and practical solutions tailored for Indian wisdom traditions."
     },
     {
       icon: Heart,
@@ -152,7 +152,7 @@ const Home = () => {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Unlock the mysteries of the universe with personalized astrology readings crafted for European wisdom. 
+              Unlock the mysteries of the universe with personalized astrology readings crafted for Indian wisdom. 
               Get daily guidance, lucky numbers, power colors, and solutions to life's challenges.
             </p>
             
@@ -181,7 +181,7 @@ const Home = () => {
               What the Stars Reveal
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Experience comprehensive cosmic guidance designed specifically for European sensibilities and wisdom traditions.
+              Experience comprehensive cosmic guidance designed specifically for Indian sensibilities and wisdom traditions.
             </p>
           </div>
 
@@ -316,7 +316,7 @@ const Home = () => {
               Ready to Unlock Your Cosmic Potential?
             </h2>
             <p className="text-primary-foreground/90 mb-6 text-lg">
-              Join thousands of Europeans who trust our celestial guidance for daily insights and life-changing solutions.
+              Join thousands of Indians who trust our celestial guidance for daily insights and life-changing solutions.
             </p>
             <Link to="/horoscope">
               <Button variant="gold" size="lg">
@@ -339,7 +339,7 @@ const Home = () => {
               Cosmic Wisdom Blog
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore in-depth articles about astrology, numerology, and astro insights crafted for the modern European mindset.
+              Explore in-depth articles about astrology, numerology, and astro insights crafted for the modern Indian mindset.
             </p>
           </div>
 

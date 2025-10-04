@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
+import Shop from "./pages/Shop";
 
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
@@ -62,6 +63,7 @@ const App = () => (
                 <Route path="/astro-journal" element={<AstroJournal />} />
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/shop" element={<Shop />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

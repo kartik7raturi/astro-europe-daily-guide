@@ -50,6 +50,7 @@ const Navigation = () => {
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
     { name: "Pricing", href: "/pricing" },
+    { name: "Shop", href: "/shop" },
     { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
     { name: "About", href: "/about" },

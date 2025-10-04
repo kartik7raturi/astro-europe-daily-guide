@@ -148,7 +148,8 @@ const Pricing = () => {
         body: {
           amount: finalPrice,
           planName: plan.name,
-          couponCode: appliedCoupon?.code
+          couponCode: appliedCoupon?.code,
+          credits: plan.credits || 0
         }
       });
 
@@ -176,9 +177,40 @@ const Pricing = () => {
             }
           }
           
+          // Add credits to user account
+          if (plan.credits && user) {
+            try {
+              const { data: currentCredits } = await supabase
+                .from('user_credits')
+                .select('credits_remaining, total_credits_purchased')
+                .eq('user_id', user.id)
+                .maybeSingle();
+
+              if (currentCredits) {
+                await supabase
+                  .from('user_credits')
+                  .update({
+                    credits_remaining: currentCredits.credits_remaining + plan.credits,
+                    total_credits_purchased: currentCredits.total_credits_purchased + plan.credits
+                  })
+                  .eq('user_id', user.id);
+              } else {
+                await supabase
+                  .from('user_credits')
+                  .insert({
+                    user_id: user.id,
+                    credits_remaining: plan.credits,
+                    total_credits_purchased: plan.credits
+                  });
+              }
+            } catch (creditError) {
+              console.error('Error adding credits:', creditError);
+            }
+          }
+          
           toast({
             title: "Payment Successful!",
-            description: `Welcome to ${plan.name} plan! Payment ID: ${response.razorpay_payment_id}`,
+            description: `Welcome to ${plan.name}! ${plan.credits ? `${plan.credits} credits added to your account.` : ''} Payment ID: ${response.razorpay_payment_id}`,
           });
           window.location.href = '/dashboard';
         },
@@ -231,11 +263,11 @@ const Pricing = () => {
     isFree: true
   };
 
-  // Soulmate sketch options
+  // Soulmate sketch options with new pricing
   const sketchOptions = [
-    { sketches: 1, price: 49, period: "one-time", regularPrice: 49 },
-    { sketches: 6, price: 199, period: "package deal", regularPrice: 294 },
-    { sketches: 12, price: 299, period: "premium package", regularPrice: 588 }
+    { sketches: 1, price: 1, period: "one-time", regularPrice: 1, credits: 10 },
+    { sketches: 6, price: 2, period: "package deal", regularPrice: 2, credits: 60 },
+    { sketches: 12, price: 3, period: "premium package", regularPrice: 3, credits: 120 }
   ];
 
   const currentSketchCount = selectedSketches[0];
@@ -267,6 +299,7 @@ const Pricing = () => {
                 "Ultimate soulmate discovery experience",
     features: [
       `${actualSketchCount} AI-Generated Soulmate Sketch${actualSketchCount > 1 ? 'es' : ''}`,
+      `${currentOption.credits} Credits for Soulmate Generation`,
       actualSketchCount === 1 ? "Basic Soulmate Reading" : "Detailed Soulmate Analysis",
       actualSketchCount === 1 ? "Love Compatibility Score" : "Advanced Love Readings",
       actualSketchCount === 1 ? "Meeting Place Prediction" : "Twin Flame Analysis",
@@ -278,7 +311,8 @@ const Pricing = () => {
     icon: actualSketchCount === 1 ? Heart : actualSketchCount === 6 ? Sparkles : Crown,
     gradient: actualSketchCount === 6 ? "bg-gradient-cosmic" : "bg-gradient-gold",
     popular: actualSketchCount === 6,
-    sketches: actualSketchCount
+    sketches: actualSketchCount,
+    credits: currentOption.credits
   };
 
   return (

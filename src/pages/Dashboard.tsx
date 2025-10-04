@@ -132,14 +132,14 @@ const Dashboard = () => {
       const newReading = {
         user_id: userId,
         reading_date: date,
-        overview: "Today brings harmonious cosmic energy that aligns perfectly with your European sensibilities. The stars favor thoughtful decision-making and cultural pursuits.",
+        overview: "Today brings harmonious cosmic energy that aligns perfectly with your Indian sensibilities. The stars favor thoughtful decision-making and cultural pursuits.",
         lucky_numbers: luckyNumbers,
         power_colors: powerColors,
         love_guidance: "Venus encourages meaningful conversations and emotional depth in your relationships. Focus on genuine connection rather than surface attractions.",
         career_guidance: "Professional opportunities arise through networking and collaborative efforts. Your diplomatic approach will open new doors.",
         health_guidance: "Balance work with leisure activities. Consider taking a peaceful walk in nature or practicing mindfulness meditation.",
         challenges: "Minor communication misunderstandings may arise in the afternoon. Practice patience and active listening.",
-        solutions: "Approach conflicts with typical European diplomacy - seek understanding before being understood. Cultural wisdom will guide you.",
+        solutions: "Approach conflicts with typical Indian diplomacy - seek understanding before being understood. Cultural wisdom will guide you.",
         advice: "Trust your intuition today. The universe supports your journey toward personal growth and cultural enrichment."
       };
 
