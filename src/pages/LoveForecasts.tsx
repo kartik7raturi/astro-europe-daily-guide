@@ -568,30 +568,28 @@ const LoveForecasts = () => {
               </Alert>
             )}
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button 
-                  onClick={generateAISoulmate}
-                  disabled={generatingAI || !hasAccess('love_forecasts') || credits <= 0}
-                  variant="default" 
-                  size="lg"
-                  className="gap-2 bg-gradient-cosmic text-white"
-                >
-                  {generatingAI ? (
-                    <>
-                      <RefreshCw className="h-5 w-5 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="h-5 w-5" />
-                      Generate AI Soulmate
-                      {credits > 0 && ` (${credits} credits)`}
-                    </>
-                  )}
-                </Button>
-              </DialogTrigger>
+            <Button 
+              onClick={generateAISoulmate}
+              disabled={generatingAI || !hasAccess('love_forecasts') || credits <= 0}
+              variant="default" 
+              size="lg"
+              className="gap-2 bg-gradient-cosmic text-white"
+            >
+              {generatingAI ? (
+                <>
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-5 w-5" />
+                  Generate AI Soulmate
+                  {credits > 0 && ` (${credits} credits)`}
+                </>
+              )}
+            </Button>
 
+            <Dialog open={!!aiSoulmate} onOpenChange={(open) => !open && setAiSoulmate(null)}>
               {aiSoulmate && (
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
