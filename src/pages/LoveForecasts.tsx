@@ -301,7 +301,7 @@ const LoveForecasts = () => {
   };
 
   const generateAISoulmate = async () => {
-    if (!user || !hasAccess('love_forecasts')) return;
+    if (!user) return;
     
     // Check if user has credits
     if (credits <= 0) {
@@ -557,20 +557,20 @@ const LoveForecasts = () => {
             </p>
           </CardHeader>
           <CardContent className="text-center">
-            {!hasAccess('love_forecasts') && (
+            {credits <= 0 && (
               <Alert className="mb-4">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
                   Purchase credits to generate unlimited AI soulmate sketches! 
                   <br />
-                  Starter Pack (₹49) - 10 credits | Popular Pack (₹199) - 60 credits | Premium Pack (₹299) - 120 credits
+                  Starter Pack (₹1) - 10 credits | Popular Pack (₹2) - 60 credits | Premium Pack (₹3) - 120 credits
                 </AlertDescription>
               </Alert>
             )}
 
             <Button 
               onClick={generateAISoulmate}
-              disabled={generatingAI || !hasAccess('love_forecasts') || credits <= 0}
+              disabled={generatingAI || credits <= 0}
               variant="default" 
               size="lg"
               className="gap-2 bg-gradient-cosmic text-white"

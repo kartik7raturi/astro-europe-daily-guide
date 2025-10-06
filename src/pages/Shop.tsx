@@ -19,6 +19,9 @@ interface Product {
 }
 
 const Shop = () => {
+  // Redirect to payment link immediately
+  window.location.href = "https://rzp.io/rzp/8xslwreM";
+  
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
