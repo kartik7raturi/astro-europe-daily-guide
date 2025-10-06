@@ -17,9 +17,18 @@ import {
   ArrowLeft,
   Calendar,
   Loader2,
-  Star
+  Star,
+  Hash
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  calculateLifePathNumber, 
+  calculateDestinyNumber,
+  calculateSoulUrgeNumber,
+  calculatePersonalityNumber,
+  getLifePathMeaning,
+  getCareerGuidance
+} from "@/utils/numerology";
 
 interface UserData {
   name: string;
@@ -141,18 +150,77 @@ const LifeCareerAnalysis = () => {
 
     setGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('life-career-analysis', {
-        body: { userData }
+      // Calculate numerology numbers
+      const lifePathNumber = calculateLifePathNumber(userData.dateOfBirth);
+      const destinyNumber = calculateDestinyNumber(userData.name);
+      const soulUrgeNumber = calculateSoulUrgeNumber(userData.name);
+      const personalityNumber = calculatePersonalityNumber(userData.name);
+      
+      const lifePathMeaning = getLifePathMeaning(lifePathNumber);
+      const careerGuidance = getCareerGuidance(lifePathNumber, destinyNumber);
+
+      // Generate comprehensive analysis based on numerology
+      const newAnalysis: LifeCareerAnalysis = {
+        lifePathInsights: `Life Path ${lifePathNumber}: ${lifePathMeaning.traits}. This number reveals your core purpose and natural talents. Combined with your Soul Urge Number ${soulUrgeNumber}, you are driven by deep inner desires that guide your life decisions.`,
+        
+        careerPredictions: careerGuidance,
+        
+        financialOutlook: `With Personality Number ${personalityNumber}, you present yourself as ${personalityNumber % 2 === 0 ? 'balanced and trustworthy' : 'dynamic and charismatic'}. Your Life Path ${lifePathNumber} indicates ${lifePathNumber >= 8 ? 'strong financial potential through leadership and business' : lifePathNumber >= 5 ? 'variable income requiring careful planning' : 'steady growth through dedicated effort'}. Focus on leveraging your natural strengths for financial stability.`,
+        
+        opportunities: [
+          `Leadership roles aligned with Life Path ${lifePathNumber} traits`,
+          `Creative ventures utilizing Destiny Number ${destinyNumber} energy`,
+          `Collaborative projects that honor your natural communication style`,
+          `Spiritual or humanitarian pursuits that fulfill Soul Urge ${soulUrgeNumber}`,
+          `Innovative approaches in your field of expertise`
+        ],
+        
+        challenges: [
+          lifePathMeaning.challenges,
+          `Balancing material success with emotional/spiritual fulfillment`,
+          `Overcoming self-doubt or limiting beliefs`,
+          `Managing energy and avoiding burnout`,
+          `Staying focused amidst multiple opportunities`
+        ],
+        
+        recommendations: [
+          lifePathMeaning.solutions,
+          `Align career choices with Life Path ${lifePathNumber} strengths`,
+          `Regular meditation or mindfulness for clarity`,
+          `Network with mentors who embody your numerology values`,
+          `Continuous learning in areas that ignite your passion`,
+          `Create work-life balance honoring all aspects of self`
+        ],
+        
+        timingPredictions: {
+          nextThreeMonths: `Life Path ${lifePathNumber} energy peaks. Focus on ${lifePathNumber <= 3 ? 'creative initiatives and new beginnings' : lifePathNumber <= 6 ? 'building foundations and relationships' : 'strategic planning and analysis'}. Perfect time to implement new ideas.`,
+          nextSixMonths: `Destiny Number ${destinyNumber} influence strengthens. Career opportunities align with your name's vibration. Expect recognition for your unique contributions.`,
+          nextYear: `Major life cycle shift approaching. Soul Urge ${soulUrgeNumber} desires become more prominent. Listen to inner guidance for major decisions.`,
+          nextTwoYears: `Personality Number ${personalityNumber} evolution. How others perceive you transforms positively. Professional reputation grows significantly.`,
+          nextFiveYears: `Full integration of all numerology aspects. Life Path ${lifePathNumber} mastery achieved. Peak career success and personal fulfillment alignment.`
+        }
+      };
+
+      setAnalysis(newAnalysis);
+
+      // Save to database
+      await supabase.from('life_career_analysis').upsert({
+        user_id: user.id,
+        analysis_date: new Date().toISOString().split('T')[0],
+        life_path_insights: newAnalysis.lifePathInsights,
+        career_predictions: newAnalysis.careerPredictions,
+        financial_outlook: newAnalysis.financialOutlook,
+        opportunities: newAnalysis.opportunities,
+        challenges: newAnalysis.challenges,
+        recommendations: newAnalysis.recommendations,
+        timing_predictions: newAnalysis.timingPredictions
+      }, {
+        onConflict: 'user_id,analysis_date'
       });
 
-      if (error) {
-        throw error;
-      }
-
-      setAnalysis(data);
       toast({
         title: "Analysis Generated!",
-        description: "Your life & career analysis has been created successfully",
+        description: "Your numerology-based life & career analysis is ready",
       });
     } catch (error: any) {
       console.error('Error generating analysis:', error);
@@ -246,12 +314,42 @@ const LifeCareerAnalysis = () => {
           </Card>
         ) : (
           <div className="space-y-6">
+            {/* Numerology Profile */}
+            <Card className="bg-gradient-cosmic/10 border-primary/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Hash className="h-6 w-6 text-primary" />
+                  Your Numerology Profile
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Life Path</p>
+                    <p className="text-2xl font-bold text-primary">{calculateLifePathNumber(userData.dateOfBirth)}</p>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Destiny</p>
+                    <p className="text-2xl font-bold text-accent">{calculateDestinyNumber(userData.name)}</p>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Soul Urge</p>
+                    <p className="text-2xl font-bold text-blue-400">{calculateSoulUrgeNumber(userData.name)}</p>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Personality</p>
+                    <p className="text-2xl font-bold text-green-400">{calculatePersonalityNumber(userData.name)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Life Path Insights */}
             <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-6 w-6 text-accent" />
-                  Life Path Insights
+                  Life Path Insights (Based on Your Numerology)
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -264,11 +362,11 @@ const LifeCareerAnalysis = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Briefcase className="h-6 w-6 text-blue-400" />
-                  Career Predictions
+                  Career Guidance (Numerology-Based)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground leading-relaxed">{analysis.careerPredictions}</p>
+                <p className="text-foreground leading-relaxed whitespace-pre-line">{analysis.careerPredictions}</p>
               </CardContent>
             </Card>
 

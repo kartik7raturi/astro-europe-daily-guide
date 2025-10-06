@@ -24,6 +24,12 @@ import {
   Facebook,
   Download
 } from "lucide-react";
+import { 
+  calculateLifePathNumber, 
+  calculateDestinyNumber, 
+  getLifePathMeaning, 
+  getDailyNumerologyGuidance 
+} from "@/utils/numerology";
 
 interface UserData {
   name: string;
@@ -133,7 +139,13 @@ const DailyReading = () => {
     return null;
   }
 
-  // Calculate age and zodiac sign (simplified)
+  // Calculate numerology numbers
+  const lifePathNumber = calculateLifePathNumber(userData.dateOfBirth);
+  const destinyNumber = calculateDestinyNumber(userData.name);
+  const lifePathMeaning = getLifePathMeaning(lifePathNumber);
+  const dailyGuidance = getDailyNumerologyGuidance(lifePathNumber);
+
+  // Calculate age and zodiac sign
   const age = currentDate.getFullYear() - userData.dateOfBirth.getFullYear();
   const birthMonth = userData.dateOfBirth.getMonth() + 1;
   const birthDay = userData.dateOfBirth.getDate();
@@ -156,29 +168,28 @@ const DailyReading = () => {
 
   const zodiacSign = getZodiacSign(birthMonth, birthDay);
 
-  // Generate personalized content based on Indian sensibilities
+  // Generate personalized content based on numerology and Indian sensibilities
   const generateReading = () => {
-    const luckyNumbers = [7, 14, 23, 31, 42].map(n => Math.floor(Math.random() * 50) + 1);
-    const powerColors = ["Deep Royal Purple", "Golden Amber", "Emerald Green"];
+    const powerColors = ["Deep Royal Purple", "Golden Amber", "Emerald Green", "Sapphire Blue"];
     const selectedColor = powerColors[Math.floor(Math.random() * powerColors.length)];
 
     return {
-      dailyOverview: `Good day, ${userData.name}! As a ${zodiacSign}, today brings a harmonious blend of cosmic energies. The Indian celestial traditions suggest this is an excellent day for personal reflection and making meaningful connections. Your natural ${zodiacSign} traits will be particularly pronounced, offering you unique insights into current life situations.`,
+      dailyOverview: `Good day, ${userData.name}! Your Life Path Number ${lifePathNumber} combined with your ${zodiacSign} sign reveals important cosmic alignments today. ${dailyGuidance.guidance}`,
       
-      love: `Venus graces your romantic sector today. For those in relationships, consider a thoughtful gesture inspired by Indian romance traditions - perhaps a handwritten note or sharing a meaningful conversation over chai. Single? The universe suggests being open to unexpected encounters in cultural or spiritual spaces.`,
+      love: `With Destiny Number ${destinyNumber}, your romantic energy is ${destinyNumber % 2 === 0 ? 'balanced and harmonious' : 'passionate and dynamic'}. Today favors meaningful connections and heartfelt conversations. Trust your intuition in matters of the heart.`,
       
-      career: `Professional winds favor collaborative efforts today. Your Indian sensibility for diplomacy and thoughtful communication will serve you well. Focus on building bridges rather than making bold moves. A colleague may offer valuable insights that align with your long-term goals.`,
+      career: `Life Path ${lifePathNumber}: ${lifePathMeaning.traits.split(',').slice(0, 2).join(',')}. These qualities serve you well professionally today. Focus on leveraging your natural strengths for career advancement.`,
       
-      health: `Your body craves balance today. Consider incorporating mindful practices rooted in Indian wellness traditions - a gentle walk in nature, herbal tea meditation, or simply ensuring you have proper nutrition. Listen to your body's wisdom.`,
+      health: `Your body and mind need balance today. Consider mindful practices rooted in Indian wellness traditions. Listen to your body's wisdom and honor its needs.`,
       
-      challenge: `A minor communication misunderstanding may arise today, particularly in professional settings. This reflects the current Mercury position affecting ${zodiacSign} individuals.`,
+      challenge: dailyGuidance.challenges,
       
-      solution: `Practice the Indian virtue of patience and diplomatic clarity. Before responding to any concerning message, take a moment to breathe and consider the other person's perspective. A calm, thoughtful response will transform potential conflict into understanding.`,
+      solution: dailyGuidance.solutions,
       
-      luckyNumbers,
+      luckyNumbers: dailyGuidance.luckyNumbers,
       powerColor: selectedColor,
       
-      advice: `Today's cosmic energy encourages you to embrace the Indian values of culture, thoughtfulness, and community. Share your wisdom, appreciate beauty around you, and remember that true success comes from meaningful connections rather than rushing toward goals.`
+      advice: `Life Path ${lifePathNumber} individuals thrive when: ${lifePathMeaning.traits}. Apply these strengths today while being mindful of the challenges identified.`
     };
   };
 
@@ -379,12 +390,36 @@ const DailyReading = () => {
           </CardContent>
         </Card>
 
+        {/* Numerology Insights */}
+        <Card className="mb-6 bg-gradient-cosmic/10 border-primary/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Hash className="h-5 w-5 text-primary" />
+              Your Numerology Profile
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-lg mb-2">Life Path Number: {lifePathNumber}</h4>
+              <p className="text-sm text-muted-foreground mb-3">Your Core Traits:</p>
+              <p className="text-foreground">{lifePathMeaning.traits}</p>
+            </div>
+            
+            <Separator />
+            
+            <div>
+              <h4 className="font-semibold text-lg mb-2">Destiny Number: {destinyNumber}</h4>
+              <p className="text-sm text-muted-foreground">Based on your name ({userData.name}), guiding your life purpose</p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Challenge & Solution */}
         <Card className="mb-6 bg-card/80 backdrop-blur-sm border-destructive/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
-              Today's Challenge
+              Today's Challenge (Based on Life Path {lifePathNumber})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -395,9 +430,18 @@ const DailyReading = () => {
             <div>
               <h4 className="flex items-center gap-2 font-semibold text-green-400 mb-2">
                 <CheckCircle className="h-5 w-5" />
-                Cosmic Solution
+                Numerology-Based Solution
               </h4>
               <p className="text-foreground">{reading.solution}</p>
+            </div>
+            
+            <Separator />
+            
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">Ongoing Challenges for Life Path {lifePathNumber}:</h4>
+              <p className="text-sm text-foreground">{lifePathMeaning.challenges}</p>
+              <h4 className="font-semibold mt-3 mb-2">Long-term Solutions:</h4>
+              <p className="text-sm text-foreground">{lifePathMeaning.solutions}</p>
             </div>
           </CardContent>
         </Card>
