@@ -38,7 +38,7 @@ serve(async (req) => {
     const hf = new HfInference(hfToken)
 
     const image = await hf.textToImage({
-      inputs: `Portrait of ${prompt}, photorealistic, high quality, beautiful face, detailed features, professional lighting, studio photography`,
+      inputs: `Single person portrait, ${prompt}, front view, facing camera directly, solo portrait, one person only, photorealistic, high quality, beautiful face, detailed features, professional lighting, studio photography, headshot style, centered composition`,
       model: 'black-forest-labs/FLUX.1-schnell',
     })
 

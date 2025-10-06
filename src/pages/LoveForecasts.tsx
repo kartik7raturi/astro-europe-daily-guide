@@ -342,13 +342,32 @@ const LoveForecasts = () => {
       const timeframe = getTimingPrediction(birthDate);
       const connectionType = getConnectionType(zodiacSign);
 
+      const selectedAppearance = appearances[Math.floor(Math.random() * appearances.length)];
+      
+      // Generate AI soulmate image
+      console.log('Generating AI soulmate image...');
+      const { data: imageData, error: imageError } = await supabase.functions.invoke('generate-soulmate-image', {
+        body: { 
+          prompt: `${soulmateGender} with ${selectedAppearance}, ${personality}, Indian features`
+        }
+      });
+
+      if (imageError) {
+        console.error('Error generating soulmate image:', imageError);
+        toast({
+          title: "Image Generation Failed",
+          description: "Using default template. Please try again.",
+          variant: "destructive"
+        });
+      }
+
       const newSoulmate: SoulmateProfile = {
-        appearance: appearances[Math.floor(Math.random() * appearances.length)],
+        appearance: selectedAppearance,
         personality,
         meetingLocation,
         timeframe,
         connectionType,
-        sketchUrl: soulmateTemplate
+        sketchUrl: imageData?.image || soulmateTemplate
       };
       
       setAiSoulmate(newSoulmate);
