@@ -352,15 +352,18 @@ const Dashboard = () => {
           <TabsContent value="life" className="space-y-6">
             <Card className="bg-card/50 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Detailed Life Analysis</CardTitle>
+                <CardTitle>Life & Career Analysis</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Coming soon! This section will provide comprehensive insights into your life path, 
-                  career opportunities, and long-term cosmic influences based on your birth chart.
+                  Get comprehensive insights into your life path, career opportunities, and future predictions
+                  based on numerology and your birth chart.
                 </p>
-                <Button variant="cosmic" disabled>
-                  Generate Life Analysis
+                <Button 
+                  variant="cosmic"
+                  onClick={() => navigate("/life-career-analysis")}
+                >
+                  View Life & Career Analysis
                 </Button>
               </CardContent>
             </Card>
