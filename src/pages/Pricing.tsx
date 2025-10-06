@@ -265,9 +265,9 @@ const Pricing = () => {
 
   // Soulmate sketch options with new pricing
   const sketchOptions = [
-    { sketches: 1, price: 1, period: "one-time", regularPrice: 1, credits: 10 },
-    { sketches: 6, price: 2, period: "package deal", regularPrice: 2, credits: 60 },
-    { sketches: 12, price: 3, period: "premium package", regularPrice: 3, credits: 120 }
+    { sketches: 1, price: 49, period: "one-time", regularPrice: 99, credits: 10 },
+    { sketches: 6, price: 199, period: "package deal", regularPrice: 399, credits: 60 },
+    { sketches: 12, price: 299, period: "premium package", regularPrice: 599, credits: 120 }
   ];
 
   const currentSketchCount = selectedSketches[0];
