@@ -563,7 +563,7 @@ const LoveForecasts = () => {
                 <AlertDescription>
                   Purchase credits to generate unlimited AI soulmate sketches! 
                   <br />
-                  Starter Pack (₹1) - 10 credits | Popular Pack (₹2) - 60 credits | Premium Pack (₹3) - 120 credits
+                  Starter Pack (₹49) - 10 credits | Popular Pack (₹199) - 60 credits | Premium Pack (₹299) - 120 credits
                 </AlertDescription>
               </Alert>
             )}
