@@ -49,11 +49,11 @@ const Navigation = () => {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Daily Horoscope", href: "/horoscope" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "Shop", href: "/shop" },
-    { name: "Numerology", href: "/numerology" },
     { name: "Love Forecasts", href: "/love-forecasts" },
-    { name: "About", href: "/about" },
+    { name: "AI Problem Chat", href: "/ai-chat" },
+    { name: "Shop", href: "/shop" },
+    { name: "Astro Calendar", href: "/astro-calendar" },
+    { name: "Consultation", href: "/consultations" },
   ];
 
   const isActive = (href: string) => location.pathname === href;

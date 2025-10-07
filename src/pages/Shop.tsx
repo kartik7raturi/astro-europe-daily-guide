@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { ShoppingCart, Star, Package, Sparkles, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Product {
   id: string;
@@ -19,108 +20,48 @@ interface Product {
 }
 
 const Shop = () => {
-  // Redirect to payment link immediately
-  window.location.href = "https://rzp.io/rzp/8xslwreM";
-  
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [cart, setCart] = useState<string[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
-  const products: Product[] = [
-    {
-      id: "1",
-      name: "Complete Birth Chart Analysis",
-      description: "Comprehensive analysis of your Vedic birth chart",
-      price: 999,
-      category: "Astrology",
-      image: "/placeholder.svg",
-      features: [
-        "Detailed planetary positions",
-        "House analysis",
-        "Dasha predictions",
-        "Career guidance",
-        "Relationship insights"
-      ]
-    },
-    {
-      id: "2",
-      name: "Numerology Life Path Report",
-      description: "Discover your life purpose through numerology",
-      price: 499,
-      category: "Numerology",
-      image: "/placeholder.svg",
-      features: [
-        "Life path number analysis",
-        "Destiny number insights",
-        "Soul urge interpretation",
-        "Lucky numbers",
-        "Name analysis"
-      ],
-      popular: true
-    },
-    {
-      id: "3",
-      name: "Soulmate Compatibility Reading",
-      description: "Find out if you're destined to be together",
-      price: 799,
-      category: "Love",
-      image: "/placeholder.svg",
-      features: [
-        "Ashtakoot matching",
-        "Mangal dosha analysis",
-        "Love compatibility score",
-        "Marriage timing predictions",
-        "Relationship guidance"
-      ]
-    },
-    {
-      id: "4",
-      name: "Career Astrology Consultation",
-      description: "Professional guidance for career success",
-      price: 1499,
-      category: "Career",
-      image: "/placeholder.svg",
-      features: [
-        "Career path analysis",
-        "Job change timing",
-        "Business ventures guidance",
-        "Professional growth predictions",
-        "Income enhancement tips"
-      ]
-    },
-    {
-      id: "5",
-      name: "Personalized Gemstone Recommendation",
-      description: "Find your lucky gemstone based on your chart",
-      price: 599,
-      category: "Remedies",
-      image: "/placeholder.svg",
-      features: [
-        "Planetary gemstone analysis",
-        "Wearing instructions",
-        "Alternative gemstones",
-        "Best time to wear",
-        "Mantra guidance"
-      ]
-    },
-    {
-      id: "6",
-      name: "Monthly Prediction Report",
-      description: "Detailed predictions for the coming month",
-      price: 299,
-      category: "Predictions",
-      image: "/placeholder.svg",
-      features: [
-        "Day-by-day predictions",
-        "Lucky dates and times",
-        "Challenges and solutions",
-        "Opportunities forecast",
-        "Health guidance"
-      ],
-      popular: true
+  const loadProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setProducts(
+          data.map((p) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description || "",
+            price: Number(p.price),
+            category: p.category || "General",
+            image: p.image_url || "/placeholder.svg",
+            features: (Array.isArray(p.features) ? p.features : []) as string[],
+            popular: p.category === "Numerology" || p.category === "Predictions",
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error loading products:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load products",
+        variant: "destructive",
+      });
     }
-  ];
+  };
 
   const handleAddToCart = (productId: string) => {
     if (!user) {

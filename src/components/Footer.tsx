@@ -57,6 +57,48 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Features */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Features</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/numerology" className="text-muted-foreground hover:text-primary transition-colors">
+                  Numerology
+                </Link>
+              </li>
+              <li>
+                <Link to="/crush-analyzer" className="text-muted-foreground hover:text-primary transition-colors">
+                  Crush Analyzer
+                </Link>
+              </li>
+              <li>
+                <Link to="/astro-calendar" className="text-muted-foreground hover:text-primary transition-colors">
+                  Astro Calendar
+                </Link>
+              </li>
+              <li>
+                <Link to="/consultations" className="text-muted-foreground hover:text-primary transition-colors">
+                  Consultation
+                </Link>
+              </li>
+              <li>
+                <Link to="/astro-journal" className="text-muted-foreground hover:text-primary transition-colors">
+                  Astro Journal
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Policies */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-foreground">Policies</h3>
@@ -69,16 +111,6 @@ const Footer = () => {
               <li>
                 <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                   Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/cancellation-refund" className="text-muted-foreground hover:text-primary transition-colors">
-                  Cancellation & Refund
-                </Link>
-              </li>
-              <li>
-                <Link to="/shipping-policy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Shipping Policy
                 </Link>
               </li>
             </ul>

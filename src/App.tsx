@@ -21,6 +21,11 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
 import Shop from "./pages/Shop";
+import AIChat from "./pages/AIChat";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ProductsManagement from "./pages/admin/ProductsManagement";
+import AstrologersManagement from "./pages/admin/AstrologersManagement";
+import OrdersManagement from "./pages/admin/OrdersManagement";
 
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
@@ -64,6 +69,11 @@ const App = () => (
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/shop" element={<Shop />} />
+                <Route path="/ai-chat" element={<AIChat />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/products" element={<ProductsManagement />} />
+                <Route path="/admin/astrologers" element={<AstrologersManagement />} />
+                <Route path="/admin/orders" element={<OrdersManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
