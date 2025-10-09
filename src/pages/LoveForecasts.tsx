@@ -372,11 +372,24 @@ const LoveForecasts = () => {
       
       setAiSoulmate(newSoulmate);
 
-      // Use a credit for soulmate generation
-      const creditUsed = await useCredit('soulmate_generation');
-      if (!creditUsed) {
+      // Use 10 credits for soulmate generation (as this is a premium AI feature)
+      if (credits < 10) {
+        toast({
+          title: "Insufficient Credits",
+          description: "You need 10 credits to generate an AI soulmate. Please purchase more credits.",
+          variant: "destructive"
+        });
         setGeneratingAI(false);
         return;
+      }
+      
+      // Deduct 10 credits
+      for (let i = 0; i < 10; i++) {
+        const creditUsed = await useCredit('soulmate_generation');
+        if (!creditUsed && i === 0) {
+          setGeneratingAI(false);
+          return;
+        }
       }
 
       // Save to soulmate readings

@@ -1,98 +1,94 @@
 import { Link } from "react-router-dom";
-import { Stars, Mail, MapPin, Phone } from "lucide-react";
+import { Heart, Mail, Phone } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-card border-t border-border">
+    <footer className="bg-gradient-to-b from-background to-background/95 border-t border-border/40 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <Stars className="h-8 w-8 text-primary animate-glow" />
-              <span className="text-xl font-bold bg-gradient-cosmic bg-clip-text text-transparent">
-                astrovibe.online
-              </span>
-            </div>
-            <p className="text-muted-foreground mb-4 max-w-md">
-              Discover your cosmic destiny with personalized astrology readings tailored for Indian wisdom and traditions. 
-              Connect with the universe and unlock your potential.
+        {/* Main Footer Content in One Row */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* About Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold bg-gradient-cosmic bg-clip-text text-transparent">
+              astrovibe.online
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Your trusted companion for daily horoscopes, love forecasts, and cosmic guidance.
             </p>
-            <div className="flex space-x-4">
-              <div className="flex items-center text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 mr-2" />
-                India
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Mail className="h-4 w-4 mr-2" />
-                sankhobusiness@gmail.com
-              </div>
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Heart className="h-4 w-4 text-red-500" />
+              <span>Made with love for the cosmos</span>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/horoscope" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Daily Horoscope
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  About Us
+                <Link to="/love-forecasts" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Love Forecasts
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  Contact
+                <Link to="/ai-chat" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  AI Problem Chat
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Shop
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Features */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Features</h3>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Features</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link to="/numerology" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/numerology" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Numerology
                 </Link>
               </li>
               <li>
-                <Link to="/crush-analyzer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/crush-analyzer" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Crush Analyzer
                 </Link>
               </li>
               <li>
-                <Link to="/astro-calendar" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/astro-calendar" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Astro Calendar
                 </Link>
               </li>
               <li>
-                <Link to="/consultations" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/consultations" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Consultation
                 </Link>
               </li>
               <li>
-                <Link to="/astro-journal" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/astro-journal" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Astro Journal
                 </Link>
               </li>
@@ -100,43 +96,54 @@ const Footer = () => {
           </div>
 
           {/* Policies */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Policies</h3>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Policies</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/cancellation-refund" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Cancellation & Refund
+                </Link>
+              </li>
+              <li>
+                <Link to="/shipping-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Contact Us
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} astrovibe.online. All rights reserved.
-            </p>
-            <div className="flex flex-wrap gap-4 mt-4 md:mt-0 text-center md:text-right">
-              <Link to="/privacy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Privacy
-              </Link>
-              <Link to="/terms" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Terms
-              </Link>
-              <Link to="/cancellation-refund" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Refunds
-              </Link>
-              <Link to="/shipping-policy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
-                Shipping
-              </Link>
-            </div>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
+            <a href="mailto:support@astrovibe.online" className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Mail className="h-4 w-4 mr-2" />
+              support@astrovibe.online
+            </a>
+            <a href="tel:+1234567890" className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Phone className="h-4 w-4 mr-2" />
+              +1 (234) 567-890
+            </a>
           </div>
+          
+          <p className="text-sm text-muted-foreground">
+            © 2024 astrovibe.online. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -26,6 +26,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductsManagement from "./pages/admin/ProductsManagement";
 import AstrologersManagement from "./pages/admin/AstrologersManagement";
 import OrdersManagement from "./pages/admin/OrdersManagement";
+import CouponsManagement from "./pages/admin/CouponsManagement";
+import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
@@ -70,10 +72,12 @@ const App = () => (
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/ai-chat" element={<AIChat />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/products" element={<ProductsManagement />} />
-                <Route path="/admin/astrologers" element={<AstrologersManagement />} />
-                <Route path="/admin/orders" element={<OrdersManagement />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/products" element={<ProductsManagement />} />
+              <Route path="/admin/astrologers" element={<AstrologersManagement />} />
+              <Route path="/admin/orders" element={<OrdersManagement />} />
+              <Route path="/admin/coupons" element={<CouponsManagement />} />
+              <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

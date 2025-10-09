@@ -77,6 +77,20 @@ const AdminDashboard = () => {
       path: "/admin/orders",
       color: "text-green-500",
     },
+    {
+      title: "Coupons Management",
+      description: "Create and manage discount coupons",
+      icon: Package,
+      path: "/admin/coupons",
+      color: "text-yellow-500",
+    },
+    {
+      title: "Sales Analytics",
+      description: "View sales statistics and reports",
+      icon: Shield,
+      path: "/admin/analytics",
+      color: "text-indigo-500",
+    },
   ];
 
   return (

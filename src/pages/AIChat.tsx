@@ -138,21 +138,35 @@ const AIChat = () => {
   };
 
   const getAIResponse = async (userMessage: string): Promise<string> => {
-    // This is a placeholder. You would typically call an AI API here
-    // For now, return a simple response based on keywords
-    
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes("love") || lowerMessage.includes("relationship")) {
-      return "Based on your birth chart, I can help you with love and relationship matters. Your Venus placement suggests that you value deep emotional connections. Would you like a detailed love forecast?";
-    } else if (lowerMessage.includes("career") || lowerMessage.includes("job")) {
-      return "Career guidance is one of my specialties! Based on astrological influences, I can provide insights into your professional path. Your 10th house suggests strong leadership potential. What specific career concerns do you have?";
-    } else if (lowerMessage.includes("health") || lowerMessage.includes("wellness")) {
-      return "Health and wellness are important aspects of your astrological profile. The planetary transits indicate that focusing on balance and routine will benefit you. Would you like personalized health recommendations?";
-    } else if (lowerMessage.includes("money") || lowerMessage.includes("finance")) {
-      return "Financial matters can be understood through your 2nd and 8th house placements. The current planetary positions suggest opportunities for growth. Would you like a detailed financial forecast?";
-    } else {
-      return "I'm here to help you with any life problems using astrological insights. I can provide guidance on love, career, health, finances, and more. Please tell me more about what's on your mind, and I'll offer personalized advice based on cosmic wisdom.";
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          messages: [
+            ...messages.map(m => ({ role: m.role, content: m.content })),
+            { role: 'user', content: userMessage }
+          ]
+        }
+      });
+
+      if (error) {
+        console.error('AI chat error:', error);
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      const assistantMessage = data?.choices?.[0]?.message?.content;
+      
+      if (!assistantMessage) {
+        throw new Error('No response from AI');
+      }
+
+      return assistantMessage;
+    } catch (error: any) {
+      console.error('Error getting AI response:', error);
+      throw error;
     }
   };
 
