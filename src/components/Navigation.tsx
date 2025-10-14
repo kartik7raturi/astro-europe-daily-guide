@@ -85,6 +85,14 @@ const Navigation = () => {
             
             {user ? (
               <div className="flex items-center gap-2">
+                {user.email === "sankhobusiness@gmail.com" && (
+                  <Link to="/admin">
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <User className="h-4 w-4" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Button variant="ghost" size="sm" className="gap-2">
                   <User className="h-4 w-4" />
                   {user.email?.split('@')[0]}
@@ -124,7 +132,7 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-2 bg-card/95 backdrop-blur-sm rounded-lg mt-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <div className="px-2 pt-2 pb-3 space-y-2 bg-card/95 backdrop-blur-sm rounded-lg mt-2 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
               <Link
                 to="/"
                 className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
@@ -214,6 +222,14 @@ const Navigation = () => {
                     <div className="px-3 py-2 text-sm text-muted-foreground">
                       {user.email}
                     </div>
+                    {user.email === "sankhobusiness@gmail.com" && (
+                      <Link to="/admin" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" size="sm" className="w-full gap-2">
+                          <User className="h-4 w-4" />
+                          Admin Dashboard
+                        </Button>
+                      </Link>
+                    )}
                     <Button variant="outline" size="sm" onClick={signOut} className="w-full gap-2">
                       <LogOut className="h-4 w-4" />
                       Sign Out
