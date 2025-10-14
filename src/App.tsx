@@ -22,6 +22,7 @@ import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
 import Shop from "./pages/Shop";
 import AIChat from "./pages/AIChat";
+import UserProfile from "./pages/UserProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductsManagement from "./pages/admin/ProductsManagement";
 import AstrologersManagement from "./pages/admin/AstrologersManagement";
@@ -72,6 +73,7 @@ const App = () => (
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/ai-chat" element={<AIChat />} />
+                <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<ProductsManagement />} />
               <Route path="/admin/astrologers" element={<AstrologersManagement />} />

@@ -93,10 +93,12 @@ const Navigation = () => {
                     </Button>
                   </Link>
                 )}
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <User className="h-4 w-4" />
-                  {user.email?.split('@')[0]}
-                </Button>
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <User className="h-4 w-4" />
+                    Profile
+                  </Button>
+                </Link>
                 <Button variant="outline" size="sm" onClick={signOut} className="gap-2">
                   <LogOut className="h-4 w-4" />
                   Sign Out
@@ -230,6 +232,12 @@ const Navigation = () => {
                         </Button>
                       </Link>
                     )}
+                    <Link to="/profile" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full gap-2">
+                        <User className="h-4 w-4" />
+                        My Profile
+                      </Button>
+                    </Link>
                     <Button variant="outline" size="sm" onClick={signOut} className="w-full gap-2">
                       <LogOut className="h-4 w-4" />
                       Sign Out

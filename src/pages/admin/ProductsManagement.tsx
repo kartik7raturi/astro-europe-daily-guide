@@ -78,6 +78,40 @@ const ProductsManagement = () => {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `product-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('astrovibe')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('astrovibe')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image_url: publicUrl });
+      
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -213,11 +247,21 @@ const ProductsManagement = () => {
                   />
                 </div>
                 <div>
-                  <Label>Image URL</Label>
+                  <Label>Product Image</Label>
                   <Input
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
                   />
+                  {formData.image_url && (
+                    <div className="mt-2">
+                      <img
+                        src={formData.image_url}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label>Features (one per line)</Label>
