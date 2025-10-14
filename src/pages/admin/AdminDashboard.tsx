@@ -23,20 +23,41 @@ const AdminDashboard = () => {
     }
 
     try {
+      // Check if user has admin role
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
         .eq("role", "admin")
-        .single();
+        .maybeSingle();
 
-      if (error || !data) {
+      if (error && error.code !== 'PGRST116') {
+        console.error("Error checking admin access:", error);
         navigate("/");
         return;
       }
 
-      setIsAdmin(true);
+      if (!data) {
+        // If no admin role found, check if this is the global admin email
+        if (user.email === "sankhobusiness@gmail.com") {
+          // Grant admin access automatically
+          const { error: insertError } = await supabase
+            .from("user_roles")
+            .insert({ user_id: user.id, role: "admin" });
+          
+          if (insertError) {
+            console.error("Error granting admin access:", insertError);
+          }
+          setIsAdmin(true);
+        } else {
+          navigate("/");
+          return;
+        }
+      } else {
+        setIsAdmin(true);
+      }
     } catch (error) {
+      console.error("Error in admin check:", error);
       navigate("/");
     } finally {
       setLoading(false);

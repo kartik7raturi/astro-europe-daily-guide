@@ -104,7 +104,13 @@ const Navigation = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center gap-2">
+            {user ? (
+              <Button variant="ghost" size="sm" className="gap-2">
+                <User className="h-4 w-4" />
+                {user.email?.split('@')[0]}
+              </Button>
+            ) : null}
             <Button
               variant="ghost"
               size="icon"
@@ -117,23 +123,92 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-card/50 backdrop-blur-sm rounded-lg mt-2">
-              {mobileNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isActive(item.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
+          <div className="lg:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-2 bg-card/95 backdrop-blur-sm rounded-lg mt-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+              <Link
+                to="/"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActive("/")
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Home
+              </Link>
+
+              {/* Daily Insights */}
+              <div className="space-y-1">
+                <div className="px-3 py-2 text-sm font-semibold text-foreground">Daily Insights</div>
+                <Link to="/dashboard" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Daily Horoscope
                 </Link>
-              ))}
-              <div className="pt-2">
+                <Link to="/daily-reading" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Daily Reading
+                </Link>
+                <Link to="/daily-affirmations" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Daily Affirmations
+                </Link>
+                <Link to="/astro-calendar" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Astro Calendar
+                </Link>
+              </div>
+
+              {/* Love & Compatibility */}
+              <div className="space-y-1">
+                <div className="px-3 py-2 text-sm font-semibold text-foreground">Love & Compatibility</div>
+                <Link to="/love-forecasts" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Love Forecasts
+                </Link>
+                <Link to="/soulmate-analysis" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Soulmate Analysis
+                </Link>
+                <Link to="/crush-analyzer" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Crush Analyzer
+                </Link>
+              </div>
+
+              {/* Personal Guidance */}
+              <div className="space-y-1">
+                <div className="px-3 py-2 text-sm font-semibold text-foreground">Personal Guidance</div>
+                <Link to="/ai-chat" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  AI Problem Chat
+                </Link>
+                <Link to="/life-career-analysis" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Life & Career Analysis
+                </Link>
+                <Link to="/numerology" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Numerology
+                </Link>
+                <Link to="/lucky-elements" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Lucky Elements
+                </Link>
+              </div>
+
+              {/* Services & More */}
+              <div className="space-y-1">
+                <div className="px-3 py-2 text-sm font-semibold text-foreground">Services & More</div>
+                <Link to="/consultations" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Consultation
+                </Link>
+                <Link to="/shop" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Shop
+                </Link>
+                <Link to="/astro-journal" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Astro Journal
+                </Link>
+                <Link to="/about" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  About
+                </Link>
+                <Link to="/blog" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Blog
+                </Link>
+                <Link to="/pricing" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Pricing
+                </Link>
+              </div>
+
+              <div className="pt-2 border-t border-border">
                 {user ? (
                   <div className="space-y-2">
                     <div className="px-3 py-2 text-sm text-muted-foreground">
@@ -145,7 +220,7 @@ const Navigation = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Link to="/auth">
+                  <Link to="/auth" onClick={() => setIsOpen(false)}>
                     <Button variant="cosmic" size="sm" className="w-full">
                       Sign In
                     </Button>
