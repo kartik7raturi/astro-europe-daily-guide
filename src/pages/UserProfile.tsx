@@ -53,6 +53,15 @@ const UserProfile = () => {
       return;
     }
     loadUserData();
+    
+    // Check for tab parameter in URL
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab) {
+      // Set default tab based on URL parameter
+      const tabElement = document.querySelector(`[value="${tab}"]`) as HTMLElement;
+      tabElement?.click();
+    }
   }, [user, navigate]);
 
   const loadUserData = async () => {
@@ -160,6 +169,63 @@ const UserProfile = () => {
         title: "Error",
         description: "Failed to update quantity",
         variant: "destructive",
+      });
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!user || cart.length === 0) return;
+
+    try {
+      const totalAmount = cart.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0
+      );
+
+      // Create order
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert([{
+          user_id: user.id,
+          order_type: "product",
+          amount: totalAmount,
+          status: "pending",
+          metadata: { 
+            cart_items: cart.map(item => ({
+              product_id: item.product_id,
+              quantity: item.quantity,
+              price: item.product.price,
+              name: item.product.name
+            }))
+          }
+        }])
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Clear cart
+      const { error: clearError } = await supabase
+        .from("cart_items")
+        .delete()
+        .eq("user_id", user.id);
+
+      if (clearError) throw clearError;
+
+      setCart([]);
+      toast({
+        title: "Order Created",
+        description: "Your order has been placed successfully!"
+      });
+
+      // Reload orders
+      loadUserData();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create order",
+        variant: "destructive"
       });
     }
   };
@@ -327,7 +393,11 @@ const UserProfile = () => {
                         ₹{cartTotal}
                       </span>
                     </div>
-                    <Button variant="cosmic" className="w-full">
+                    <Button 
+                      variant="cosmic" 
+                      className="w-full"
+                      onClick={handleCheckout}
+                    >
                       Proceed to Checkout
                     </Button>
                   </CardContent>

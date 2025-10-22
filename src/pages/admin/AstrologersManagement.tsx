@@ -90,13 +90,13 @@ const AstrologersManagement = () => {
       const filePath = `astrologer-images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('astrovibe')
+        .from('astrologer-images')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('astrovibe')
+        .from('astrologer-images')
         .getPublicUrl(filePath);
 
       setFormData({ ...formData, image_url: publicUrl });

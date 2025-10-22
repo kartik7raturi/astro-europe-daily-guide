@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ShoppingCart, Star, Package, Sparkles, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,10 +25,16 @@ const Shop = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [cart, setCart] = useState<string[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
   useEffect(() => {
     loadProducts();
-  }, []);
+    if (user) {
+      loadWishlist();
+    }
+  }, [user]);
 
   const loadProducts = async () => {
     try {
@@ -100,6 +107,68 @@ const Shop = () => {
     }
   };
 
+  const loadWishlist = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("wishlist")
+        .select("product_id")
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+      setWishlist(data?.map(w => w.product_id) || []);
+    } catch (error) {
+      console.error("Error loading wishlist:", error);
+    }
+  };
+
+  const toggleWishlist = async (productId: string) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required",
+        description: "Please sign in to add to wishlist",
+        variant: "destructive"
+      });
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      const isInWishlist = wishlist.includes(productId);
+      
+      if (isInWishlist) {
+        const { error } = await supabase
+          .from("wishlist")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("product_id", productId);
+
+        if (error) throw error;
+        setWishlist(wishlist.filter(id => id !== productId));
+        toast({ title: "Removed from wishlist" });
+      } else {
+        const { error } = await supabase
+          .from("wishlist")
+          .insert({
+            user_id: user.id,
+            product_id: productId
+          });
+
+        if (error) throw error;
+        setWishlist([...wishlist, productId]);
+        toast({ title: "Added to wishlist" });
+      }
+    } catch (error) {
+      console.error("Error toggling wishlist:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update wishlist",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleBuyNow = async (product: Product) => {
     if (!user) {
       toast({
@@ -124,7 +193,7 @@ const Shop = () => {
       if (cartError && cartError.code !== '23505') throw cartError; // Ignore duplicate errors
 
       // Navigate to profile with cart tab selected
-      navigate("/profile");
+      navigate("/profile?tab=cart");
       toast({
         title: "Ready to Checkout",
         description: "Review your cart and complete your purchase"
@@ -165,7 +234,7 @@ const Shop = () => {
           {products.map((product) => (
             <Card 
               key={product.id}
-              className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 ${
+              className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
                 product.popular 
                   ? 'border-primary shadow-cosmic' 
                   : 'border-border hover:border-primary/50'
@@ -180,7 +249,24 @@ const Shop = () => {
                 </div>
               )}
 
-              <CardHeader className="text-center pb-6 pt-6">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 z-10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(product.id);
+                }}
+              >
+                <Heart 
+                  className={`w-5 h-5 ${wishlist.includes(product.id) ? 'fill-primary text-primary' : ''}`}
+                />
+              </Button>
+
+              <CardHeader 
+                className="text-center pb-6 pt-6 cursor-pointer"
+                onClick={() => setSelectedProduct(product)}
+              >
                 <div className="w-full h-48 bg-gradient-cosmic rounded-lg mb-4 flex items-center justify-center">
                   {product.category === "Love" && <Heart className="w-16 h-16 text-primary-foreground" />}
                   {product.category === "Career" && <Package className="w-16 h-16 text-primary-foreground" />}
@@ -231,6 +317,66 @@ const Shop = () => {
             </Card>
           ))}
         </div>
+
+        {/* Product Detail Dialog */}
+        <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="w-full h-64 bg-gradient-cosmic rounded-lg flex items-center justify-center">
+                {selectedProduct?.category === "Love" && <Heart className="w-24 h-24 text-primary-foreground" />}
+                {selectedProduct?.category === "Career" && <Package className="w-24 h-24 text-primary-foreground" />}
+                {selectedProduct?.category === "Astrology" && <Sparkles className="w-24 h-24 text-primary-foreground" />}
+                {selectedProduct?.category === "Numerology" && <Star className="w-24 h-24 text-primary-foreground" />}
+                {selectedProduct?.category === "Remedies" && <Sparkles className="w-24 h-24 text-primary-foreground" />}
+                {selectedProduct?.category === "Predictions" && <Star className="w-24 h-24 text-primary-foreground" />}
+              </div>
+              
+              <Badge variant="outline">{selectedProduct?.category}</Badge>
+              
+              <p className="text-muted-foreground">{selectedProduct?.description}</p>
+              
+              <div className="text-3xl font-bold text-primary">₹{selectedProduct?.price}</div>
+              
+              <div>
+                <h3 className="font-semibold mb-2">Features:</h3>
+                <ul className="space-y-2">
+                  {selectedProduct?.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  className="flex-1 bg-gradient-cosmic text-primary-foreground"
+                  onClick={() => {
+                    if (selectedProduct) handleBuyNow(selectedProduct);
+                    setSelectedProduct(null);
+                  }}
+                >
+                  Buy Now
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    if (selectedProduct) handleAddToCart(selectedProduct.id);
+                    setSelectedProduct(null);
+                  }}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Add to Cart
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Coming Soon Features */}
         <div className="mt-16 text-center">
