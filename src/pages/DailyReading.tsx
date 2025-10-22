@@ -51,6 +51,38 @@ const DailyReading = () => {
     loadUserData();
   }, [user]);
 
+  // Save reading when userData changes
+  useEffect(() => {
+    const saveReading = async () => {
+      if (!user || !userData) return;
+      
+      try {
+        const reading = generateReading();
+        await supabase.from('daily_readings').upsert({
+          user_id: user.id,
+          reading_date: currentDate.toISOString().split('T')[0],
+          overview: reading.dailyOverview,
+          love_guidance: reading.love,
+          career_guidance: reading.career,
+          health_guidance: reading.health,
+          challenges: reading.challenge,
+          solutions: reading.solution,
+          advice: reading.advice,
+          lucky_numbers: reading.luckyNumbers,
+          power_colors: [reading.powerColor]
+        }, {
+          onConflict: 'user_id,reading_date'
+        });
+      } catch (error) {
+        console.error('Error saving reading:', error);
+      }
+    };
+
+    if (userData) {
+      saveReading();
+    }
+  }, [userData, user, currentDate]);
+
   const loadUserData = async () => {
     if (!user) {
       navigate("/auth");
@@ -194,38 +226,6 @@ const DailyReading = () => {
   };
 
   const reading = generateReading();
-
-  // Save reading to database
-  const saveReading = async () => {
-    if (!user) return;
-    
-    try {
-      await supabase.from('daily_readings').upsert({
-        user_id: user.id,
-        reading_date: currentDate.toISOString().split('T')[0],
-        overview: reading.dailyOverview,
-        love_guidance: reading.love,
-        career_guidance: reading.career,
-        health_guidance: reading.health,
-        challenges: reading.challenge,
-        solutions: reading.solution,
-        advice: reading.advice,
-        lucky_numbers: reading.luckyNumbers,
-        power_colors: [reading.powerColor]
-      }, {
-        onConflict: 'user_id,reading_date'
-      });
-    } catch (error) {
-      console.error('Error saving reading:', error);
-    }
-  };
-
-  // Save reading when component loads
-  useEffect(() => {
-    if (userData) {
-      saveReading();
-    }
-  }, [userData]);
 
   const shareReading = () => {
     const text = `My daily cosmic reading: ${reading.dailyOverview.substring(0, 100)}... Get yours at ${window.location.origin}`;
