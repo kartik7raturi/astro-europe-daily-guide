@@ -63,7 +63,7 @@ const Shop = () => {
     }
   };
 
-  const handleAddToCart = (productId: string) => {
+  const handleAddToCart = async (productId: string) => {
     if (!user) {
       toast({
         title: "Sign In Required",
@@ -74,14 +74,33 @@ const Shop = () => {
       return;
     }
 
-    setCart([...cart, productId]);
-    toast({
-      title: "Added to Cart",
-      description: "Item has been added to your cart"
-    });
+    try {
+      const { error } = await supabase
+        .from("cart_items")
+        .insert({
+          user_id: user.id,
+          product_id: productId,
+          quantity: 1
+        });
+
+      if (error) throw error;
+
+      setCart([...cart, productId]);
+      toast({
+        title: "Added to Cart",
+        description: "Item has been added to your cart"
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleBuyNow = (product: Product) => {
+  const handleBuyNow = async (product: Product) => {
     if (!user) {
       toast({
         title: "Sign In Required",
@@ -92,11 +111,32 @@ const Shop = () => {
       return;
     }
 
-    // Navigate to checkout (to be implemented)
-    toast({
-      title: "Coming Soon",
-      description: "Checkout functionality will be available soon!"
-    });
+    try {
+      // Add to cart first
+      const { error: cartError } = await supabase
+        .from("cart_items")
+        .insert({
+          user_id: user.id,
+          product_id: product.id,
+          quantity: 1
+        });
+
+      if (cartError && cartError.code !== '23505') throw cartError; // Ignore duplicate errors
+
+      // Navigate to profile with cart tab selected
+      navigate("/profile");
+      toast({
+        title: "Ready to Checkout",
+        description: "Review your cart and complete your purchase"
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to process. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

@@ -202,40 +202,6 @@ const AstroJournal = () => {
     );
   }
 
-  if (!hasAccess('journal')) {
-    const trialDaysLeft = trial_end ? Math.ceil((new Date(trial_end).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
-        <div className="container mx-auto max-w-4xl text-center space-y-6">
-          <div className="flex items-center justify-center gap-2 text-amber-600">
-            <Crown className="h-8 w-8" />
-            <h1 className="text-4xl font-bold">Premium Feature</h1>
-          </div>
-          
-          {trialDaysLeft > 0 ? (
-            <div className="space-y-4">
-              <p className="text-muted-foreground">Your trial has ended. Upgrade to Premium to continue using the Astro Journal.</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Crown className="h-5 w-5" />
-                Upgrade to Premium
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-muted-foreground">The Astro Journal is a Premium feature.</p>
-              <p className="text-sm text-green-600">✨ Start your 15-day FREE trial!</p>
-              <Button variant="cosmic" size="lg" className="gap-2">
-                <Sparkles className="h-5 w-5" />
-                Start Free Trial
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 p-6">
       <div className="container mx-auto max-w-6xl space-y-8">

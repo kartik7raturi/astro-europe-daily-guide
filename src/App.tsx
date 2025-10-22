@@ -64,6 +64,7 @@ const App = () => (
                 <Route path="/lucky-elements" element={<LuckyElements />} />
                 <Route path="/consultations" element={<Consultations />} />
                 <Route path="/life-career" element={<LifeCareerAnalysis />} />
+                <Route path="/life-career-analysis" element={<LifeCareerAnalysis />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/daily-affirmations" element={<DailyAffirmations />} />
                 <Route path="/love-forecasts" element={<LoveForecasts />} />
