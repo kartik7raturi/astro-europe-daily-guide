@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
+import SoulmatePortrait from "./pages/SoulmatePortrait";
 import Shop from "./pages/Shop";
 import AIChat from "./pages/AIChat";
 import UserProfile from "./pages/UserProfile";
@@ -90,6 +91,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/soulmate-analysis" element={<SoulmateAnalysis />} />
+                <Route path="/soulmate-portrait" element={<SoulmatePortrait />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
