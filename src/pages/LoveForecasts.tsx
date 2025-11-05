@@ -52,35 +52,41 @@ const LoveForecasts = () => {
     try {
       if (!user) return;
 
-      // Get user's profile for personalized reading
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
       const today = new Date().toISOString().split('T')[0];
       
-      const { data, error } = await supabase
-        .from('love_forecasts')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
-        .maybeSingle();
+      // Parallel queries for faster loading
+      const [forecastResult, profileResult] = await Promise.all([
+        supabase
+          .from('love_forecasts')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('date', today)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle()
+      ]);
 
+      const { data, error } = forecastResult;
+      
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading forecast:', error);
+        setLoading(false);
         return;
       }
 
       if (data) {
         setForecast(data);
+        setLoading(false);
       } else {
-        generatePersonalizedForecast(profile);
+        // Generate in background without blocking UI
+        setLoading(false);
+        generatePersonalizedForecast(profileResult.data);
       }
     } catch (error) {
       console.error('Error:', error);
-    } finally {
       setLoading(false);
     }
   };
