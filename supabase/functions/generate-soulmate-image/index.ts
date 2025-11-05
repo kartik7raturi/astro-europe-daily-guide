@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import { HfInference } from 'https://esm.sh/@huggingface/inference@2.3.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,12 +34,27 @@ serve(async (req) => {
     }
 
     console.log('Hugging Face token is configured, proceeding with image generation')
-    const hf = new HfInference(hfToken)
+    
+    const apiUrl = 'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell'
 
-    const image = await hf.textToImage({
-      inputs: `Single person portrait, ${prompt}, front view, facing camera directly, solo portrait, one person only, photorealistic, high quality, beautiful face, detailed features, professional lighting, studio photography, headshot style, centered composition`,
-      model: 'black-forest-labs/FLUX.1-schnell',
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${hfToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: `Single person portrait, ${prompt}, front view, facing camera directly, solo portrait, one person only, photorealistic, high quality, beautiful face, detailed features, professional lighting, studio photography, headshot style, centered composition`
+      })
     })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Hugging Face API error:', response.status, errorText)
+      throw new Error(`API request failed: ${response.status}`)
+    }
+
+    const image = await response.blob()
 
     // Convert the blob to a base64 string
     const arrayBuffer = await image.arrayBuffer()
