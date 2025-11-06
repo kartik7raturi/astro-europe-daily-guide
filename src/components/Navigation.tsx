@@ -164,6 +164,9 @@ const Navigation = () => {
                 <Link to="/soulmate-analysis" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
                   Soulmate Analysis
                 </Link>
+                <Link to="/soulmate-portrait" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  Soulmate Portrait
+                </Link>
                 <Link to="/crush-analyzer" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
                   Crush Analyzer
                 </Link>

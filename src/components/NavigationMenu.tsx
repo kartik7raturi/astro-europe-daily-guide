@@ -24,6 +24,7 @@ const NavigationMenuDemo = () => {
   const loveCompatibility = [
     { title: "Love Forecasts", href: "/love-forecasts", description: "Daily love and relationship predictions" },
     { title: "Soulmate Analysis", href: "/soulmate-analysis", description: "Find your perfect match" },
+    { title: "Soulmate Portrait", href: "/soulmate-portrait", description: "Generate your soulmate portrait" },
     { title: "Crush Analyzer", href: "/crush-analyzer", description: "Analyze your crush compatibility" },
   ];
 
