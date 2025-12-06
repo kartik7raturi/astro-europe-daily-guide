@@ -15,7 +15,7 @@ interface Product {
   description: string;
   price: number;
   category: string;
-  image: string;
+  image_url: string;
   features: string[];
   popular?: boolean;
 }
@@ -28,11 +28,13 @@ const Shop = () => {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   
   useEffect(() => {
     loadProducts();
     if (user) {
       loadWishlist();
+      loadCart();
     }
   }, [user]);
 
@@ -54,7 +56,7 @@ const Shop = () => {
             description: p.description || "",
             price: Number(p.price),
             category: p.category || "General",
-            image: p.image_url || "/placeholder.svg",
+            image_url: p.image_url || "",
             features: (Array.isArray(p.features) ? p.features : []) as string[],
             popular: p.category === "Numerology" || p.category === "Predictions",
           }))
@@ -70,6 +72,19 @@ const Shop = () => {
     }
   };
 
+  const loadCart = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from("cart_items")
+        .select("product_id")
+        .eq("user_id", user.id);
+      setCart(data?.map(c => c.product_id) || []);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+    }
+  };
+
   const handleAddToCart = async (productId: string) => {
     if (!user) {
       toast({
@@ -81,18 +96,38 @@ const Shop = () => {
       return;
     }
 
+    setAddingToCart(productId);
     try {
-      const { error } = await supabase
+      // Check if already in cart
+      const { data: existing } = await supabase
         .from("cart_items")
-        .insert({
-          user_id: user.id,
-          product_id: productId,
-          quantity: 1
-        });
+        .select("id, quantity")
+        .eq("user_id", user.id)
+        .eq("product_id", productId)
+        .single();
 
-      if (error) throw error;
+      if (existing) {
+        // Update quantity
+        const { error } = await supabase
+          .from("cart_items")
+          .update({ quantity: existing.quantity + 1 })
+          .eq("id", existing.id);
+        
+        if (error) throw error;
+      } else {
+        // Insert new item
+        const { error } = await supabase
+          .from("cart_items")
+          .insert({
+            user_id: user.id,
+            product_id: productId,
+            quantity: 1
+          });
 
-      setCart([...cart, productId]);
+        if (error) throw error;
+        setCart([...cart, productId]);
+      }
+
       toast({
         title: "Added to Cart",
         description: "Item has been added to your cart"
@@ -104,6 +139,8 @@ const Shop = () => {
         description: "Failed to add item to cart",
         variant: "destructive"
       });
+    } finally {
+      setAddingToCart(null);
     }
   };
 
@@ -181,16 +218,25 @@ const Shop = () => {
     }
 
     try {
-      // Add to cart first
-      const { error: cartError } = await supabase
+      // Check if already in cart
+      const { data: existing } = await supabase
         .from("cart_items")
-        .insert({
-          user_id: user.id,
-          product_id: product.id,
-          quantity: 1
-        });
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("product_id", product.id)
+        .single();
 
-      if (cartError && cartError.code !== '23505') throw cartError; // Ignore duplicate errors
+      if (!existing) {
+        const { error: cartError } = await supabase
+          .from("cart_items")
+          .insert({
+            user_id: user.id,
+            product_id: product.id,
+            quantity: 1
+          });
+
+        if (cartError) throw cartError;
+      }
 
       // Navigate to profile with cart tab selected
       navigate("/profile?tab=cart");
@@ -208,6 +254,19 @@ const Shop = () => {
     }
   };
 
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Love":
+        return <Heart className="w-16 h-16 text-primary-foreground" />;
+      case "Career":
+        return <Package className="w-16 h-16 text-primary-foreground" />;
+      case "Numerology":
+        return <Star className="w-16 h-16 text-primary-foreground" />;
+      default:
+        return <Sparkles className="w-16 h-16 text-primary-foreground" />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
       <div className="max-w-7xl mx-auto">
@@ -219,14 +278,18 @@ const Shop = () => {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Explore our premium astrology products and services
           </p>
-          {cart.length > 0 && (
-            <div className="mt-6">
-              <Badge variant="secondary" className="text-lg px-4 py-2">
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                {cart.length} items in cart
-              </Badge>
-            </div>
-          )}
+          <div className="mt-6 flex justify-center gap-4">
+            {cart.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={() => navigate("/profile?tab=cart")}
+                className="gap-2"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                View Cart ({cart.length})
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Products Grid */}
@@ -241,7 +304,7 @@ const Shop = () => {
               }`}
             >
               {product.popular && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                   <div className="bg-gradient-gold text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
                     <Star className="w-3 h-3" />
                     Popular
@@ -267,13 +330,22 @@ const Shop = () => {
                 className="text-center pb-6 pt-6 cursor-pointer"
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="w-full h-48 bg-gradient-cosmic rounded-lg mb-4 flex items-center justify-center">
-                  {product.category === "Love" && <Heart className="w-16 h-16 text-primary-foreground" />}
-                  {product.category === "Career" && <Package className="w-16 h-16 text-primary-foreground" />}
-                  {product.category === "Astrology" && <Sparkles className="w-16 h-16 text-primary-foreground" />}
-                  {product.category === "Numerology" && <Star className="w-16 h-16 text-primary-foreground" />}
-                  {product.category === "Remedies" && <Sparkles className="w-16 h-16 text-primary-foreground" />}
-                  {product.category === "Predictions" && <Star className="w-16 h-16 text-primary-foreground" />}
+                {/* Product Image or Fallback */}
+                <div className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                  {product.image_url ? (
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name}
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  <div className={`w-full h-full bg-gradient-cosmic flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+                    {getCategoryIcon(product.category)}
+                  </div>
                 </div>
                 <Badge variant="outline" className="mb-2 w-fit mx-auto">
                   {product.category}
@@ -289,7 +361,7 @@ const Shop = () => {
 
               <CardContent className="pt-0">
                 <ul className="space-y-2 mb-6">
-                  {product.features.map((feature, idx) => (
+                  {product.features.slice(0, 3).map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-sm">
                       <Star className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                       <span className="text-card-foreground">{feature}</span>
@@ -308,15 +380,24 @@ const Shop = () => {
                     variant="outline"
                     className="w-full"
                     onClick={() => handleAddToCart(product.id)}
+                    disabled={addingToCart === product.id}
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
-                    Add to Cart
+                    {addingToCart === product.id ? "Adding..." : "Add to Cart"}
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {products.length === 0 && (
+          <div className="text-center py-16">
+            <Sparkles className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No Products Available</h3>
+            <p className="text-muted-foreground">Check back soon for new products!</p>
+          </div>
+        )}
 
         {/* Product Detail Dialog */}
         <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
@@ -325,13 +406,18 @@ const Shop = () => {
               <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="w-full h-64 bg-gradient-cosmic rounded-lg flex items-center justify-center">
-                {selectedProduct?.category === "Love" && <Heart className="w-24 h-24 text-primary-foreground" />}
-                {selectedProduct?.category === "Career" && <Package className="w-24 h-24 text-primary-foreground" />}
-                {selectedProduct?.category === "Astrology" && <Sparkles className="w-24 h-24 text-primary-foreground" />}
-                {selectedProduct?.category === "Numerology" && <Star className="w-24 h-24 text-primary-foreground" />}
-                {selectedProduct?.category === "Remedies" && <Sparkles className="w-24 h-24 text-primary-foreground" />}
-                {selectedProduct?.category === "Predictions" && <Star className="w-24 h-24 text-primary-foreground" />}
+              <div className="w-full h-64 rounded-lg flex items-center justify-center overflow-hidden">
+                {selectedProduct?.image_url ? (
+                  <img 
+                    src={selectedProduct.image_url} 
+                    alt={selectedProduct.name}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-cosmic flex items-center justify-center">
+                    {selectedProduct && getCategoryIcon(selectedProduct.category)}
+                  </div>
+                )}
               </div>
               
               <Badge variant="outline">{selectedProduct?.category}</Badge>
@@ -377,50 +463,6 @@ const Shop = () => {
             </div>
           </DialogContent>
         </Dialog>
-
-        {/* Coming Soon Features */}
-        <div className="mt-16 text-center">
-          <Card className="bg-gradient-cosmic/10 border-primary/30">
-            <CardHeader>
-              <CardTitle className="text-2xl">More Features Coming Soon!</CardTitle>
-              <CardDescription className="text-base">
-                We're building a complete e-commerce experience with:
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4 text-left">
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Full cart and checkout system</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Order tracking and management</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Digital product downloads</span>
-                  </li>
-                </ul>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Multiple payment options</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Personalized recommendations</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-primary" />
-                    <span>Customer reviews and ratings</span>
-                  </li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );

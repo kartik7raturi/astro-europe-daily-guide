@@ -25,9 +25,21 @@ interface Consultation {
   created_at: string;
 }
 
+interface Astrologer {
+  id: string;
+  name: string;
+  specialization: string;
+  rating: number;
+  hourly_rate: number;
+  image_url: string;
+  bio: string;
+  experience_years: number;
+}
+
 const Consultations = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [astrologers, setAstrologers] = useState<Astrologer[]>([]);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [formData, setFormData] = useState({
@@ -41,16 +53,9 @@ const Consultations = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const astrologers = [
-    { name: 'Dr. Priya Sharma', specialty: 'Vedic Astrology', rating: 4.9, price: 50 },
-    { name: 'Master Chen Wei', specialty: 'Chinese Astrology', rating: 4.8, price: 60 },
-    { name: 'Prof. Sarah Johnson', specialty: 'Western Astrology', rating: 4.7, price: 45 },
-    { name: 'Guru Rajesh Kumar', specialty: 'Numerology', rating: 4.9, price: 55 },
-    { name: 'Dr. Maria Rodriguez', specialty: 'Tarot & Astrology', rating: 4.6, price: 40 }
-  ];
-
   useEffect(() => {
     checkUser();
+    loadAstrologers();
   }, []);
 
   const checkUser = async () => {
@@ -61,6 +66,21 @@ const Consultations = () => {
     }
     setUser(session.user);
     await loadConsultations(session.user.id);
+  };
+
+  const loadAstrologers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('astrologers')
+        .select('*')
+        .eq('is_available', true)
+        .order('rating', { ascending: false });
+
+      if (error) throw error;
+      setAstrologers(data || []);
+    } catch (error) {
+      console.error('Error loading astrologers:', error);
+    }
   };
 
   const loadConsultations = async (userId: string) => {
@@ -96,7 +116,7 @@ const Consultations = () => {
           consultation_type: formData.consultation_type,
           scheduled_at: scheduledAt.toISOString(),
           duration_minutes: formData.duration_minutes,
-          price: selectedAstrologer?.price || 50,
+          price: selectedAstrologer?.hourly_rate || 50,
           notes: formData.notes,
           status: 'pending'
         }])
@@ -187,8 +207,8 @@ const Consultations = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {astrologers.map((astrologer) => (
-                        <SelectItem key={astrologer.name} value={astrologer.name}>
-                          {astrologer.name} - ${astrologer.price}
+                        <SelectItem key={astrologer.id} value={astrologer.name}>
+                          {astrologer.name} - ₹{astrologer.hourly_rate}/hr
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -275,33 +295,59 @@ const Consultations = () => {
         </TabsContent>
 
         <TabsContent value="astrologers" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {astrologers.map((astrologer) => (
-              <Card key={astrologer.name}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    {astrologer.name}
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm">{astrologer.rating}</span>
-                    </div>
-                  </CardTitle>
-                  <CardDescription>{astrologer.specialty}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary">${astrologer.price}/session</Badge>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setFormData({...formData, astrologer_name: astrologer.name})}
-                    >
-                      Select
-                    </Button>
+          {astrologers.length === 0 ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <p className="text-muted-foreground">No astrologers available at the moment.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {astrologers.map((astrologer) => (
+                <Card key={astrologer.id} className="overflow-hidden">
+                  <div className="h-48 bg-gradient-cosmic flex items-center justify-center overflow-hidden">
+                    {astrologer.image_url ? (
+                      <img 
+                        src={astrologer.image_url} 
+                        alt={astrologer.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span className="text-3xl font-bold text-primary-foreground">
+                          {astrologer.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      {astrologer.name}
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm">{astrologer.rating}</span>
+                      </div>
+                    </CardTitle>
+                    <CardDescription>{astrologer.specialization}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {astrologer.bio || `${astrologer.experience_years} years of experience`}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary">₹{astrologer.hourly_rate}/hr</Badge>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setFormData({...formData, astrologer_name: astrologer.name})}
+                      >
+                        Select
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="history" className="space-y-4">
@@ -334,7 +380,7 @@ const Consultations = () => {
                     </div>
                     <div>
                       <span className="font-medium">Price:</span><br />
-                      ${consultation.price}
+                      ₹{consultation.price}
                     </div>
                     <div>
                       <span className="font-medium">Booked:</span><br />

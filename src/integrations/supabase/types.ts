@@ -904,6 +904,9 @@ export type Database = {
           amount: number
           created_at: string
           currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
           id: string
           metadata: Json | null
           order_id: string | null
@@ -911,7 +914,10 @@ export type Database = {
           payment_id: string | null
           payment_provider: string
           quantity: number
+          shipping_address: Json | null
           status: string
+          status_history: Json | null
+          tracking_number: string | null
           updated_at: string
           user_id: string | null
         }
@@ -919,6 +925,9 @@ export type Database = {
           amount: number
           created_at?: string
           currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           metadata?: Json | null
           order_id?: string | null
@@ -926,7 +935,10 @@ export type Database = {
           payment_id?: string | null
           payment_provider?: string
           quantity?: number
+          shipping_address?: Json | null
           status?: string
+          status_history?: Json | null
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -934,6 +946,9 @@ export type Database = {
           amount?: number
           created_at?: string
           currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           metadata?: Json | null
           order_id?: string | null
@@ -941,7 +956,10 @@ export type Database = {
           payment_id?: string | null
           payment_provider?: string
           quantity?: number
+          shipping_address?: Json | null
           status?: string
+          status_history?: Json | null
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
