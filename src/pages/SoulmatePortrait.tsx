@@ -41,7 +41,6 @@ const SoulmatePortrait = () => {
     const fire = ['Aries', 'Leo', 'Sagittarius'];
     const earth = ['Taurus', 'Virgo', 'Capricorn'];
     const air = ['Gemini', 'Libra', 'Aquarius'];
-    const water = ['Cancer', 'Scorpio', 'Pisces'];
     
     if (fire.includes(sign)) return 'Fire';
     if (earth.includes(sign)) return 'Earth';
@@ -311,14 +310,15 @@ Single person portrait, front-facing, centered composition, professional headsho
                     </Button>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <div className="relative group">
+                <CardContent className="p-4">
+                  <div className="relative group rounded-lg overflow-hidden bg-gradient-to-b from-primary/10 to-background">
                     <img
                       src={generatedImage}
                       alt="Your destined soulmate"
-                      className="w-full h-auto object-cover"
+                      className="w-full h-auto max-h-[600px] object-contain rounded-lg"
+                      style={{ display: 'block' }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                   </div>
                 </CardContent>
               </Card>

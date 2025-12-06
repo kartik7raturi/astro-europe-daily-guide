@@ -44,7 +44,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs: `Mysterious half-face portrait emerging from soft ethereal mist, ${prompt}, showing only partial face with one eye visible, dramatic side lighting, ultra realistic photograph, stunningly beautiful features, flawless skin, captivating soulful eye, romantic dreamy atmosphere, soft bokeh background with subtle cosmic starlight, cinematic lighting, 8k resolution, hyperrealistic, magazine quality beauty portrait, elegant and mysterious reveal, artistic half-hidden face composition`
+        inputs: `Ultra realistic portrait photograph, ${prompt}, stunningly beautiful person, flawless skin, captivating soulful eyes looking at camera, romantic dreamy atmosphere, soft bokeh background with subtle cosmic starlight, cinematic studio lighting, 8k resolution, hyperrealistic, magazine quality beauty portrait, professional headshot, centered composition, full face visible`
       })
     })
 
