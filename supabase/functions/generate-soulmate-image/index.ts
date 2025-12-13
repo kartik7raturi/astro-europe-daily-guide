@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,7 +6,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -22,7 +20,7 @@ serve(async (req) => {
       )
     }
 
-    console.log('Generating soulmate image with prompt:', prompt)
+    console.log('Generating soulmate portrait with numerology-based prompt')
 
     const hfToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
     if (!hfToken) {
@@ -32,8 +30,6 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       )
     }
-
-    console.log('Hugging Face token is configured, proceeding with image generation')
     
     const apiUrl = 'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell'
 
@@ -44,7 +40,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs: `Ultra realistic portrait photograph, ${prompt}, stunningly beautiful person, flawless skin, captivating soulful eyes looking at camera, romantic dreamy atmosphere, soft bokeh background with subtle cosmic starlight, cinematic studio lighting, 8k resolution, hyperrealistic, magazine quality beauty portrait, professional headshot, centered composition, full face visible`
+        inputs: prompt
       })
     })
 
@@ -55,12 +51,10 @@ serve(async (req) => {
     }
 
     const image = await response.blob()
-
-    // Convert the blob to a base64 string
     const arrayBuffer = await image.arrayBuffer()
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
 
-    console.log('Successfully generated soulmate image')
+    console.log('Successfully generated soulmate portrait')
 
     return new Response(
       JSON.stringify({ image: `data:image/png;base64,${base64}` }),

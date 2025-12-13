@@ -94,47 +94,50 @@ const SoulmatePortrait = () => {
 
   const generateSoulmatePrompt = () => {
     const birthDate = new Date(formData.dateOfBirth);
-    const zodiacSign = getZodiacSign(birthDate);
-    const element = getZodiacElement(zodiacSign);
     const lifePathNumber = calculateLifePathNumber(birthDate);
     const destinyNumber = calculateDestinyNumber(formData.fullName);
     const auraColor = getAuraColor(lifePathNumber);
-    const traits = getSoulmateTraits(element, lifePathNumber);
 
-    const analysisText = `🔮 Astrological & Numerological Analysis
+    // Pure numerology-based traits
+    const numerologyTraitsMap: { [key: number]: { appearance: string; energy: string } } = {
+      1: { appearance: 'strong jawline, confident posture, piercing eyes', energy: 'leadership and independence' },
+      2: { appearance: 'soft gentle features, kind eyes, harmonious face', energy: 'balance and partnership' },
+      3: { appearance: 'bright expressive eyes, joyful smile, creative aura', energy: 'creativity and expression' },
+      4: { appearance: 'stable structured features, wise steady gaze', energy: 'stability and reliability' },
+      5: { appearance: 'dynamic energetic look, adventurous spark in eyes', energy: 'freedom and adventure' },
+      6: { appearance: 'nurturing warm expression, loving gentle eyes', energy: 'love and responsibility' },
+      7: { appearance: 'mysterious deep eyes, introspective calm face', energy: 'wisdom and spirituality' },
+      8: { appearance: 'powerful commanding presence, ambitious gaze', energy: 'success and abundance' },
+      9: { appearance: 'compassionate soulful eyes, humanitarian warmth', energy: 'universal love and healing' },
+      11: { appearance: 'illuminated ethereal features, spiritual radiance', energy: 'intuition and enlightenment' },
+      22: { appearance: 'visionary powerful look, master builder presence', energy: 'manifestation and mastery' },
+      33: { appearance: 'divine healing presence, unconditional love in eyes', energy: 'spiritual teaching and love' }
+    };
 
-**Your Details:**
+    const traits = numerologyTraitsMap[lifePathNumber] || numerologyTraitsMap[1];
+
+    const analysisText = `🔢 Numerological Soulmate Analysis
+
+**Your Numerology Profile:**
 • Name: ${formData.fullName}
 • Birth Date: ${formData.dateOfBirth}
-• Zodiac Sign: ${zodiacSign} (${element} Element)
 • Life Path Number: ${lifePathNumber}
 • Destiny Number: ${destinyNumber}
-• Soulmate Aura: ${auraColor}
+• Soulmate Aura Color: ${auraColor}
 
 **Your Soulmate's Energy:**
-Your destined soulmate carries the complementary energy of your ${element} sign nature. They embody ${traits}. Their presence brings balance to your life path number ${lifePathNumber}, creating a harmonious union of souls.`;
+Based on your Life Path Number ${lifePathNumber}, your destined soulmate embodies the energy of ${traits.energy}. They will complement your soul's journey and bring balance to your life path.`;
 
     setAnalysis(analysisText);
 
-    return `Hyper-realistic portrait photograph of a destined soulmate, ${traits}. 
+    return `Clean professional portrait photograph of a beautiful person, ${traits.appearance}. 
     
-Artistic specifications:
-- Style: Ultra-realistic, high-definition portrait photography, professional studio quality
-- Eyes: Captivating, deeply soulful ${auraColor} tinted eyes, looking directly at viewer with profound love and recognition, as if seeing their true love for the first time
-- Expression: Calm, genuinely kind, and radiantly loving, emanating pure spiritual connection and unconditional love
-- Lighting: Soft, romantic lighting with gentle ${auraColor} cosmic glow, subtle ${element.toLowerCase()} element symbolism (${
-      element === 'Fire' ? 'warm golden amber tones' :
-      element === 'Earth' ? 'natural green and brown earth tones' :
-      element === 'Air' ? 'cool silver and blue celestial tones' :
-      'flowing aqua and deep blue ocean tones'
-    })
-- Background: Dreamy, ethereal cosmic background with subtle stars, moonlight, and ${auraColor} aura colors blending harmoniously, ${element.toLowerCase()} elemental essence
-- Facial features: Symmetrical, naturally beautiful, emotionally expressive, radiating warmth and spiritual depth
-- Overall mood: Romantic, mystical, deeply connected, representing perfect soulmate compatibility based on ${zodiacSign} zodiac sign and life path number ${lifePathNumber}
-- Technical quality: 8K resolution, portrait photography, professional lighting, detailed skin texture, photorealistic rendering
-- Emotional essence: The portrait should feel like looking into the eyes of your destined partner, someone who understands your soul completely
-
-Single person portrait, front-facing, centered composition, professional headshot style`;
+Style: Ultra realistic, high resolution portrait photography, clean white or soft gradient background.
+Face: Clear symmetrical features, natural beauty, genuine warm smile, eyes radiating ${traits.energy}.
+Lighting: Soft professional studio lighting, no harsh shadows, clean and bright.
+Mood: Warm, approachable, loving, genuine connection.
+Quality: 8K resolution, sharp focus, professional headshot style.
+Important: Single person, front facing, centered, clean simple background, no text, no watermarks.`;
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
