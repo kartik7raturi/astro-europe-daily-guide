@@ -148,13 +148,26 @@ const OrdersManagement = () => {
 
       if (error) throw error;
 
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-order-notification', {
+          body: { 
+            orderId, 
+            newStatus, 
+            trackingNumber: updateData.tracking_number 
+          }
+        });
+      } catch (emailError) {
+        console.error("Error sending notification email:", emailError);
+      }
+
       setOrders(orders.map(o => 
         o.id === orderId ? { ...o, ...updateData } : o
       ));
 
       toast({
         title: "Status Updated",
-        description: `Order status changed to ${newStatus}`
+        description: `Order status changed to ${newStatus}. Customer notified via email.`
       });
 
       setTrackingNumber("");

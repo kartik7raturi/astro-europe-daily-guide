@@ -227,63 +227,111 @@ const UserProfile = () => {
         0
       );
 
-      // Create order with shipping details
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert([{
-          user_id: user.id,
-          order_type: "product",
-          amount: totalAmount,
-          status: "pending",
-          customer_name: shippingDetails.fullName,
-          customer_email: shippingDetails.email,
-          customer_phone: shippingDetails.phone,
-          shipping_address: {
-            address: shippingDetails.address,
-            city: shippingDetails.city,
-            state: shippingDetails.state,
-            pincode: shippingDetails.pincode,
-            country: shippingDetails.country
-          },
-          metadata: { 
-            cart_items: cart.map(item => ({
-              product_id: item.product_id,
-              quantity: item.quantity,
-              price: item.product.price,
-              name: item.product.name
-            }))
-          }
-        }])
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Clear cart
-      const { error: clearError } = await supabase
-        .from("cart_items")
-        .delete()
-        .eq("user_id", user.id);
-
-      if (clearError) throw clearError;
-
-      setCart([]);
-      setShowCheckoutDialog(false);
-      toast({
-        title: "Order Placed Successfully!",
-        description: "You will receive a confirmation soon."
+      // Create Razorpay order
+      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
+        body: { amount: totalAmount, currency: 'INR', planName: 'Product Purchase' }
       });
 
-      // Reload orders
-      loadUserData();
-    } catch (error) {
+      if (orderError || !orderData) {
+        throw new Error(orderError?.message || 'Failed to create payment order');
+      }
+
+      // Load Razorpay script dynamically
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+
+      script.onload = () => {
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'AstroVibe',
+          description: 'Product Purchase',
+          order_id: orderData.orderId,
+          handler: async function (response: any) {
+            try {
+              // Verify payment and create order
+              const { data: verifyData, error: verifyError } = await supabase.functions.invoke('process-razorpay-payment', {
+                body: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderData: {
+                    user_id: user.id,
+                    amount: totalAmount,
+                    order_type: 'product',
+                    customer_name: shippingDetails.fullName,
+                    customer_email: shippingDetails.email,
+                    customer_phone: shippingDetails.phone,
+                    shipping_address: {
+                      address: shippingDetails.address,
+                      city: shippingDetails.city,
+                      state: shippingDetails.state,
+                      pincode: shippingDetails.pincode,
+                      country: shippingDetails.country
+                    },
+                    metadata: { 
+                      cart_items: cart.map(item => ({
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                        price: item.product.price,
+                        name: item.product.name
+                      }))
+                    }
+                  }
+                }
+              });
+
+              if (verifyError) throw verifyError;
+
+              setCart([]);
+              setShowCheckoutDialog(false);
+              toast({
+                title: "Payment Successful!",
+                description: "Your order has been placed. Invoice sent to your email."
+              });
+              loadUserData();
+            } catch (error) {
+              console.error("Error processing payment:", error);
+              toast({
+                title: "Payment Error",
+                description: "Payment received but order creation failed. Please contact support.",
+                variant: "destructive"
+              });
+            }
+          },
+          prefill: {
+            name: shippingDetails.fullName,
+            email: shippingDetails.email,
+            contact: shippingDetails.phone
+          },
+          theme: {
+            color: '#667eea'
+          },
+          modal: {
+            ondismiss: function() {
+              setProcessingCheckout(false);
+            }
+          }
+        };
+
+        const razorpay = new (window as any).Razorpay(options);
+        razorpay.open();
+      };
+
+      script.onerror = () => {
+        throw new Error('Failed to load payment gateway');
+      };
+
+    } catch (error: any) {
       console.error("Error creating order:", error);
       toast({
         title: "Error",
-        description: "Failed to create order",
+        description: error.message || "Failed to initiate payment",
         variant: "destructive"
       });
-    } finally {
       setProcessingCheckout(false);
     }
   };

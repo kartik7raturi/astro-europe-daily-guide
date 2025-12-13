@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import ProductReviews from "@/components/ProductReviews";
 
 interface Product {
   id: string;
@@ -401,7 +402,7 @@ const Shop = () => {
 
         {/* Product Detail Dialog */}
         <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
             </DialogHeader>
@@ -460,6 +461,14 @@ const Shop = () => {
                   Add to Cart
                 </Button>
               </div>
+
+              {/* Product Reviews */}
+              {selectedProduct && (
+                <ProductReviews 
+                  productId={selectedProduct.id} 
+                  productName={selectedProduct.name} 
+                />
+              )}
             </div>
           </DialogContent>
         </Dialog>
