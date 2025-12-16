@@ -31,9 +31,9 @@ serve(async (req) => {
       )
     }
     
-    // Enhance prompt for Indian face structure and realistic color portrait
-    const genderText = gender === 'female' ? 'Indian woman' : gender === 'male' ? 'Indian man' : 'Indian person'
-    const enhancedPrompt = `Ultra realistic professional portrait photograph of a beautiful ${genderText} with traditional Indian facial features, almond-shaped eyes, defined cheekbones, straight nose, full lips, warm brown skin tone. High-end studio photography, soft natural lighting, sharp focus, 8K resolution, professional headshot, clean soft gradient background, warm colors, genuine natural smile, photorealistic, hyperrealistic, beautiful eyes with natural catch light. ${prompt}`
+    // Enhance prompt for beautiful Indian portraits - realistic color style
+    const genderText = gender === 'female' ? 'extremely beautiful young Indian woman, stunning gorgeous face, flawless glowing skin' : gender === 'male' ? 'very handsome young Indian man, attractive masculine features, well-groomed' : 'beautiful attractive young Indian person'
+    const enhancedPrompt = `Ultra realistic professional portrait photograph of a ${genderText}, traditional Indian facial features, captivating expressive almond-shaped eyes, perfectly defined cheekbones, elegant nose, attractive full lips, radiant warm brown skin, thick healthy hair. Magazine cover quality, high-end fashion photography, soft golden hour lighting, sharp focus, 8K ultra HD resolution, professional headshot, clean soft bokeh background, warm inviting colors, genuine warm charming smile, photorealistic, hyperrealistic, beautiful sparkling eyes with natural catch light, model-like appearance, extremely attractive and appealing. ${prompt}`
 
     console.log('Enhanced prompt:', enhancedPrompt)
 
