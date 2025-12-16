@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Heart, Sparkles, Download } from 'lucide-react';
+import { Loader2, Heart, Sparkles, Download, RefreshCw, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { calculateLifePathNumber, calculateDestinyNumber } from '@/utils/numerology';
@@ -18,6 +18,7 @@ const SoulmatePortrait = () => {
   });
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   const getZodiacSign = (date: Date) => {
     const month = date.getMonth() + 1;
@@ -140,8 +141,8 @@ Quality: 8K resolution, sharp focus, professional headshot style.
 Important: Single person, front facing, centered, clean simple background, no text, no watermarks.`;
   };
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGenerate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     
     if (!formData.fullName || !formData.dateOfBirth || !formData.placeOfBirth) {
       toast.error('Please fill in all required fields');
@@ -150,15 +151,20 @@ Important: Single person, front facing, centered, clean simple background, no te
 
     setLoading(true);
     setGeneratedImage(null);
+    setError(null);
 
     try {
       const prompt = generateSoulmatePrompt();
 
-      const { data, error } = await supabase.functions.invoke('generate-soulmate-image', {
+      const { data, error: invokeError } = await supabase.functions.invoke('generate-soulmate-image', {
         body: { prompt }
       });
 
-      if (error) throw error;
+      if (invokeError) throw invokeError;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       if (data?.image) {
         setGeneratedImage(data.image);
@@ -166,12 +172,19 @@ Important: Single person, front facing, centered, clean simple background, no te
       } else {
         throw new Error('No image data received');
       }
-    } catch (error: any) {
-      console.error('Error generating soulmate portrait:', error);
+    } catch (err: any) {
+      console.error('Error generating soulmate portrait:', err);
+      const errorMessage = err?.message || 'Failed to generate portrait';
+      setError(errorMessage);
       toast.error('Failed to generate portrait. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    handleGenerate();
   };
 
   const handleDownload = () => {
@@ -343,7 +356,36 @@ Important: Single person, front facing, centered, clean simple background, no te
               </Card>
             )}
 
-            {!generatedImage && !loading && (
+            {error && !loading && (
+              <Card className="border-destructive/50 shadow-xl bg-destructive/5">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-destructive">
+                    <AlertCircle className="w-5 h-5" />
+                    Portrait Generation Failed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    We couldn't generate your soulmate portrait. This could be due to:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                    <li>High server demand - please wait a moment and try again</li>
+                    <li>Network connectivity issues</li>
+                    <li>AI service temporarily unavailable</li>
+                  </ul>
+                  <Button
+                    onClick={handleRetry}
+                    className="w-full gap-2"
+                    variant="outline"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Try Again
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {!generatedImage && !loading && !error && (
               <Card className="border-primary/20 shadow-xl">
                 <CardHeader>
                   <CardTitle>How It Works</CardTitle>

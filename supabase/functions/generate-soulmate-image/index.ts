@@ -20,7 +20,7 @@ serve(async (req) => {
       )
     }
 
-    console.log('Generating soulmate portrait sketch with Indian face structure')
+    console.log('Generating realistic color soulmate portrait with Indian face structure')
 
     const hfToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
     if (!hfToken) {
@@ -31,9 +31,9 @@ serve(async (req) => {
       )
     }
     
-    // Enhance prompt for Indian face structure and pencil sketch style
+    // Enhance prompt for Indian face structure and realistic color portrait
     const genderText = gender === 'female' ? 'Indian woman' : gender === 'male' ? 'Indian man' : 'Indian person'
-    const enhancedPrompt = `Professional pencil sketch portrait of a beautiful ${genderText} with traditional Indian facial features, almond-shaped eyes, defined cheekbones, straight nose, full lips. Black and white graphite pencil drawing, detailed shading, realistic sketch art style, clean white background, portrait orientation, high detail face study, no color, monochrome. ${prompt}`
+    const enhancedPrompt = `Ultra realistic professional portrait photograph of a beautiful ${genderText} with traditional Indian facial features, almond-shaped eyes, defined cheekbones, straight nose, full lips, warm brown skin tone. High-end studio photography, soft natural lighting, sharp focus, 8K resolution, professional headshot, clean soft gradient background, warm colors, genuine natural smile, photorealistic, hyperrealistic, beautiful eyes with natural catch light. ${prompt}`
 
     console.log('Enhanced prompt:', enhancedPrompt)
 
