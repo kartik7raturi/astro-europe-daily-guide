@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json()
+    const { prompt, gender } = await req.json()
     
     if (!prompt) {
       return new Response(
@@ -20,7 +20,7 @@ serve(async (req) => {
       )
     }
 
-    console.log('Generating soulmate portrait with numerology-based prompt')
+    console.log('Generating soulmate portrait sketch with Indian face structure')
 
     const hfToken = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
     if (!hfToken) {
@@ -31,6 +31,12 @@ serve(async (req) => {
       )
     }
     
+    // Enhance prompt for Indian face structure and pencil sketch style
+    const genderText = gender === 'female' ? 'Indian woman' : gender === 'male' ? 'Indian man' : 'Indian person'
+    const enhancedPrompt = `Professional pencil sketch portrait of a beautiful ${genderText} with traditional Indian facial features, almond-shaped eyes, defined cheekbones, straight nose, full lips. Black and white graphite pencil drawing, detailed shading, realistic sketch art style, clean white background, portrait orientation, high detail face study, no color, monochrome. ${prompt}`
+
+    console.log('Enhanced prompt:', enhancedPrompt)
+
     const apiUrl = 'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell'
 
     const response = await fetch(apiUrl, {
@@ -40,7 +46,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs: prompt
+        inputs: enhancedPrompt
       })
     })
 
@@ -54,7 +60,7 @@ serve(async (req) => {
     const arrayBuffer = await image.arrayBuffer()
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
 
-    console.log('Successfully generated soulmate portrait')
+    console.log('Successfully generated soulmate portrait sketch')
 
     return new Response(
       JSON.stringify({ image: `data:image/png;base64,${base64}` }),
