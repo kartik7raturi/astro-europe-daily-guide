@@ -31,9 +31,9 @@ serve(async (req) => {
       )
     }
     
-    // Enhance prompt for beautiful Indian portraits - realistic color style
-    const genderText = gender === 'female' ? 'extremely beautiful young Indian woman, stunning gorgeous face, flawless glowing skin' : gender === 'male' ? 'very handsome young Indian man, attractive masculine features, well-groomed' : 'beautiful attractive young Indian person'
-    const enhancedPrompt = `Ultra realistic professional portrait photograph of a ${genderText}, traditional Indian facial features, captivating expressive almond-shaped eyes, perfectly defined cheekbones, elegant nose, attractive full lips, radiant warm brown skin, thick healthy hair. Magazine cover quality, high-end fashion photography, soft golden hour lighting, sharp focus, 8K ultra HD resolution, professional headshot, clean soft bokeh background, warm inviting colors, genuine warm charming smile, photorealistic, hyperrealistic, beautiful sparkling eyes with natural catch light, model-like appearance, extremely attractive and appealing. ${prompt}`
+    // Enhance prompt for beautiful fair-skinned Indian portraits - realistic color style
+    const genderText = gender === 'female' ? 'extremely beautiful young Indian woman, stunning gorgeous face, flawless fair glowing skin' : gender === 'male' ? 'very handsome young Indian man, attractive masculine features, fair complexion, well-groomed' : 'beautiful attractive young Indian person with fair skin'
+    const enhancedPrompt = `Ultra realistic professional portrait photograph of a ${genderText}, fair light skin complexion, traditional Indian facial features, captivating expressive almond-shaped eyes, perfectly defined cheekbones, elegant nose, attractive full lips, fair radiant glowing skin tone, thick healthy dark hair. Magazine cover quality, high-end fashion photography, soft golden hour lighting, sharp focus, 8K ultra HD resolution, professional headshot, clean soft bokeh background, warm inviting colors, genuine warm charming smile, photorealistic, hyperrealistic, beautiful sparkling eyes with natural catch light, model-like appearance, extremely attractive and appealing, light fair skin. ${prompt}`
 
     console.log('Enhanced prompt:', enhancedPrompt)
 
