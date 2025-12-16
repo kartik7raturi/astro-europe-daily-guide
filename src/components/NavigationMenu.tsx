@@ -37,7 +37,6 @@ const NavigationMenuDemo = () => {
 
   const services = [
     { title: "Consultation", href: "/consultations", description: "Book a personal consultation" },
-    { title: "Shop", href: "/shop", description: "Browse our products" },
     { title: "Astro Journal", href: "/astro-journal", description: "Track your cosmic journey" },
   ];
 
@@ -59,6 +58,19 @@ const NavigationMenuDemo = () => {
               )}
             >
               Home
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link to="/shop">
+            <NavigationMenuLink
+              className={cn(
+                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                isActive("/shop") && "bg-accent text-accent-foreground"
+              )}
+            >
+              Shop
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
