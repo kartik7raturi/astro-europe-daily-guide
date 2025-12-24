@@ -31,9 +31,9 @@ serve(async (req) => {
       )
     }
     
-    // Enhance prompt for beautiful fair-skinned Indian portraits - realistic color style
-    const genderText = gender === 'female' ? 'extremely beautiful young Indian woman, stunning gorgeous face, flawless fair glowing skin' : gender === 'male' ? 'very handsome young Indian man, attractive masculine features, fair complexion, well-groomed' : 'beautiful attractive young Indian person with fair skin'
-    const enhancedPrompt = `Ultra realistic professional portrait photograph of a ${genderText}, fair light skin complexion, traditional Indian facial features, captivating expressive almond-shaped eyes, perfectly defined cheekbones, elegant nose, attractive full lips, fair radiant glowing skin tone, thick healthy dark hair. Magazine cover quality, high-end fashion photography, soft golden hour lighting, sharp focus, 8K ultra HD resolution, professional headshot, clean soft bokeh background, warm inviting colors, genuine warm charming smile, photorealistic, hyperrealistic, beautiful sparkling eyes with natural catch light, model-like appearance, extremely attractive and appealing, light fair skin. ${prompt}`
+    // Enhance prompt for beautiful pencil sketch portrait using numerology
+    const genderText = gender === 'female' ? 'beautiful young woman with soft feminine features' : gender === 'male' ? 'handsome young man with strong masculine features' : 'attractive young person'
+    const enhancedPrompt = `Professional artistic pencil sketch portrait of a ${genderText}, full face forward facing view, clear unobstructed face, no hair covering face, detailed graphite pencil drawing style, fine line art, beautiful expressive eyes, symmetrical facial features, gentle smile, clean white paper background, high detail pencil strokes, artistic sketch technique, portrait illustration, no shading on face, well-defined facial contours, elegant and attractive appearance, masterful pencil artwork, classical portrait style, front-facing composition, nothing covering or obscuring any part of the face. Based on numerology: ${prompt}`
 
     console.log('Enhanced prompt:', enhancedPrompt)
 

@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin } from "lucide-react";
+import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin, Percent } from "lucide-react";
 
 interface WishlistItem {
   id: string;
@@ -57,6 +57,12 @@ interface ShippingDetails {
   country: string;
 }
 
+interface ComboOffer {
+  min_quantity: number;
+  discount_percentage: number;
+  description: string;
+}
+
 const UserProfile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -64,6 +70,7 @@ const UserProfile = () => {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [comboOffers, setComboOffers] = useState<ComboOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [processingCheckout, setProcessingCheckout] = useState(false);
@@ -120,9 +127,17 @@ const UserProfile = () => {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
+      // Load combo offers
+      const { data: offersData } = await supabase
+        .from("combo_offers")
+        .select("min_quantity, discount_percentage, description")
+        .eq("is_active", true)
+        .order("min_quantity", { ascending: true });
+
       setWishlist(wishlistData || []);
       setCart(cartData || []);
       setOrders(ordersData || []);
+      setComboOffers(offersData || []);
     } catch (error) {
       console.error("Error loading user data:", error);
       toast({
@@ -222,10 +237,8 @@ const UserProfile = () => {
 
     setProcessingCheckout(true);
     try {
-      const totalAmount = cart.reduce(
-        (sum, item) => sum + item.product.price * item.quantity,
-        0
-      );
+      // Use the discounted total (cartTotal already has discount applied)
+      const totalAmount = Math.round(cartTotal);
 
       // Create Razorpay order
       const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
@@ -365,10 +378,21 @@ const UserProfile = () => {
     );
   }
 
-  const cartTotal = cart.reduce(
+  // Calculate total quantity and apply combo discount
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartSubtotal = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
+  
+  // Find applicable combo offer
+  const applicableOffer = comboOffers
+    .filter(offer => totalQuantity >= offer.min_quantity)
+    .sort((a, b) => b.min_quantity - a.min_quantity)[0];
+  
+  const discountPercentage = applicableOffer?.discount_percentage || 0;
+  const discountAmount = (cartSubtotal * discountPercentage) / 100;
+  const cartTotal = cartSubtotal - discountAmount;
 
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
@@ -521,16 +545,49 @@ const UserProfile = () => {
                     </Card>
                   ))}
                 </div>
+                
+                {/* Combo Offers Info */}
+                {comboOffers.length > 0 && (
+                  <Card className="mb-4 border-dashed border-primary/50">
+                    <CardContent className="py-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Percent className="w-5 h-5 text-primary" />
+                        <span className="font-semibold text-primary">Combo Offers Available!</span>
+                      </div>
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        {comboOffers.map((offer, idx) => (
+                          <p key={idx} className={totalQuantity >= offer.min_quantity ? 'text-green-600 font-medium' : ''}>
+                            {offer.description}
+                            {totalQuantity >= offer.min_quantity && ' ✓ Applied'}
+                          </p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Cart Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-lg">Total:</span>
-                      <span className="text-2xl font-bold text-primary">
-                        ₹{cartTotal}
-                      </span>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between">
+                        <span>Subtotal ({totalQuantity} items):</span>
+                        <span>₹{cartSubtotal}</span>
+                      </div>
+                      {discountPercentage > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Combo Discount ({discountPercentage}%):</span>
+                          <span>- ₹{discountAmount.toFixed(0)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center pt-2 border-t">
+                        <span className="text-lg font-medium">Total:</span>
+                        <span className="text-2xl font-bold text-primary">
+                          ₹{cartTotal.toFixed(0)}
+                        </span>
+                      </div>
                     </div>
                     <Button 
                       variant="cosmic" 
@@ -714,9 +771,21 @@ const UserProfile = () => {
             </div>
 
             <div className="border-t pt-4">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-medium">Order Total:</span>
-                <span className="text-2xl font-bold text-primary">₹{cartTotal}</span>
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span>Subtotal:</span>
+                  <span>₹{cartSubtotal}</span>
+                </div>
+                {discountPercentage > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Combo Discount ({discountPercentage}%):</span>
+                    <span>- ₹{discountAmount.toFixed(0)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center pt-2 border-t">
+                  <span className="font-medium">Order Total:</span>
+                  <span className="text-2xl font-bold text-primary">₹{cartTotal.toFixed(0)}</span>
+                </div>
               </div>
               <Button 
                 className="w-full" 
