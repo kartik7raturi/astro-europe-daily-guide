@@ -401,6 +401,36 @@ export type Database = {
         }
         Relationships: []
       }
+      combo_offers: {
+        Row: {
+          created_at: string
+          description: string | null
+          discount_percentage: number
+          id: string
+          is_active: boolean | null
+          min_quantity: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          discount_percentage: number
+          id?: string
+          is_active?: boolean | null
+          min_quantity: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          discount_percentage?: number
+          id?: string
+          is_active?: boolean | null
+          min_quantity?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       compatibility_readings: {
         Row: {
           advice: string | null

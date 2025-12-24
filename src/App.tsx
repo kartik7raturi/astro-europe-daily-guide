@@ -30,6 +30,8 @@ import AstrologersManagement from "./pages/admin/AstrologersManagement";
 import OrdersManagement from "./pages/admin/OrdersManagement";
 import CouponsManagement from "./pages/admin/CouponsManagement";
 import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
+import ComboOffersManagement from "./pages/admin/ComboOffersManagement";
+import BlogManagement from "./pages/admin/BlogManagement";
 
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
@@ -82,6 +84,8 @@ const App = () => (
               <Route path="/admin/orders" element={<OrdersManagement />} />
               <Route path="/admin/coupons" element={<CouponsManagement />} />
               <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
+              <Route path="/admin/blog" element={<BlogManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
