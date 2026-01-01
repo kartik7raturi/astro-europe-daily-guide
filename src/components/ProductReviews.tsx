@@ -14,6 +14,7 @@ interface Review {
   rating: number;
   review_text: string;
   created_at: string;
+  reviewer_name?: string;
 }
 
 interface ProductReviewsProps {
@@ -35,14 +36,31 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
   }, [productId, user]);
 
   const loadReviews = async () => {
+    // Try to use the view with profile names first
     const { data, error } = await supabase
-      .from('product_reviews')
+      .from('product_reviews_with_profiles')
       .select('*')
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error loading reviews:', error);
+      // Fallback to regular table if view doesn't work
+      const { data: fallbackData } = await supabase
+        .from('product_reviews')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: false });
+      
+      setReviews(fallbackData || []);
+      
+      if (user) {
+        const existing = fallbackData?.find(r => r.user_id === user.id);
+        if (existing) {
+          setUserReview(existing);
+          setRating(existing.rating);
+          setReviewText(existing.review_text || '');
+        }
+      }
       return;
     }
 
@@ -67,7 +85,6 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
     setIsSubmitting(true);
     try {
       if (userReview) {
-        // Update existing review
         const { error } = await supabase
           .from('product_reviews')
           .update({ rating, review_text: reviewText })
@@ -76,7 +93,6 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
         if (error) throw error;
         toast.success('Review updated!');
       } else {
-        // Create new review
         const { error } = await supabase
           .from('product_reviews')
           .insert({
@@ -145,6 +161,15 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
     );
   };
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <Card className="mt-6">
       <CardHeader>
@@ -207,20 +232,35 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
           {reviews.filter(r => r.user_id !== user?.id).map((review) => (
             <div key={review.id} className="border-b pb-4 last:border-0">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <User className="w-4 h-4 text-primary" />
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  {review.reviewer_name && review.reviewer_name !== 'Anonymous User' ? (
+                    <span className="text-sm font-semibold text-primary">
+                      {getInitials(review.reviewer_name)}
+                    </span>
+                  ) : (
+                    <User className="w-5 h-5 text-primary" />
+                  )}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-foreground">
+                      {review.reviewer_name || 'Anonymous User'}
+                    </span>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(review.created_at).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 mt-0.5">
                     {renderStars(review.rating, false, 'w-3 h-3')}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(review.created_at).toLocaleDateString('en-IN')}
-                  </p>
                 </div>
               </div>
               {review.review_text && (
-                <p className="text-sm text-foreground ml-11">{review.review_text}</p>
+                <p className="text-sm text-foreground ml-13 pl-13">{review.review_text}</p>
               )}
             </div>
           ))}

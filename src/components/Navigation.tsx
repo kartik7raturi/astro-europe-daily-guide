@@ -1,22 +1,31 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Stars, Sparkles, LogOut, User } from "lucide-react";
+import { Menu, X, Stars, Sparkles, LogOut, User, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import NavigationMenuDemo from "./NavigationMenu";
+
+interface NavCategory {
+  name: string;
+  items: { name: string; href: string }[];
+}
+
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
   const {
     user,
     signOut
   } = useAuth();
+
   useEffect(() => {
     checkUserProfile();
   }, [user]);
+
   const checkUserProfile = async () => {
     if (!user) {
       setHasProfile(false);
@@ -31,6 +40,7 @@ const Navigation = () => {
       setHasProfile(false);
     }
   };
+
   const handleDailyHoroscopeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!user) {
@@ -41,42 +51,67 @@ const Navigation = () => {
       navigate("/horoscope");
     }
   };
-  const mobileNavigation = [{
-    name: "Home",
-    href: "/"
-  }, {
-    name: "Daily Horoscope",
-    href: "/dashboard"
-  }, {
-    name: "Love Forecasts",
-    href: "/love-forecasts"
-  }, {
-    name: "AI Problem Chat",
-    href: "/ai-chat"
-  }, {
-    name: "Numerology",
-    href: "/numerology"
-  }, {
-    name: "Crush Analyzer",
-    href: "/crush-analyzer"
-  }, {
-    name: "Shop",
-    href: "/shop"
-  }, {
-    name: "Astro Calendar",
-    href: "/astro-calendar"
-  }, {
-    name: "Consultation",
-    href: "/consultations"
-  }, {
-    name: "Blog",
-    href: "/blog"
-  }, {
-    name: "Pricing",
-    href: "/pricing"
-  }];
+
+  const navCategories: NavCategory[] = [
+    {
+      name: "Shop",
+      items: [
+        { name: "Browse Products", href: "/shop" },
+      ]
+    },
+    {
+      name: "Daily Insights",
+      items: [
+        { name: "Daily Horoscope", href: "/dashboard" },
+        { name: "Daily Reading", href: "/daily-reading" },
+        { name: "Daily Affirmations", href: "/daily-affirmations" },
+        { name: "Astro Calendar", href: "/astro-calendar" },
+      ]
+    },
+    {
+      name: "Love & Compatibility",
+      items: [
+        { name: "Love Forecasts", href: "/love-forecasts" },
+        { name: "Soulmate Analysis", href: "/soulmate-analysis" },
+        { name: "Soulmate Portrait", href: "/soulmate-portrait" },
+        { name: "Crush Analyzer", href: "/crush-analyzer" },
+      ]
+    },
+    {
+      name: "Personal Guidance",
+      items: [
+        { name: "AI Problem Chat", href: "/ai-chat" },
+        { name: "Life & Career Analysis", href: "/life-career-analysis" },
+        { name: "Numerology", href: "/numerology" },
+        { name: "Lucky Elements", href: "/lucky-elements" },
+      ]
+    },
+    {
+      name: "Services & More",
+      items: [
+        { name: "Consultation", href: "/consultations" },
+        { name: "Astro Journal", href: "/astro-journal" },
+        { name: "About", href: "/about" },
+        { name: "Blog", href: "/blog" },
+        { name: "Pricing", href: "/pricing" },
+      ]
+    }
+  ];
+
+  const toggleCategory = (categoryName: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryName) 
+        ? prev.filter(c => c !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
+
   const isActive = (href: string) => location.pathname === href;
-  return <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+  const isCategoryActive = (category: NavCategory) => 
+    category.items.some(item => isActive(item.href));
+
+  return (
+    <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -95,13 +130,16 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-4">
             <NavigationMenuDemo />
             
-            {user ? <div className="flex items-center gap-2">
-                {user.email === "sankhobusiness@gmail.com" && <Link to="/admin">
+            {user ? (
+              <div className="flex items-center gap-2">
+                {user.email === "sankhobusiness@gmail.com" && (
+                  <Link to="/admin">
                     <Button variant="outline" size="sm" className="gap-2">
                       <User className="h-4 w-4" />
                       Admin
                     </Button>
-                  </Link>}
+                  </Link>
+                )}
                 <Link to="/profile">
                   <Button variant="ghost" size="sm" className="gap-2">
                     <User className="h-4 w-4" />
@@ -112,19 +150,24 @@ const Navigation = () => {
                   <LogOut className="h-4 w-4" />
                   Sign Out
                 </Button>
-              </div> : <Link to="/auth">
+              </div>
+            ) : (
+              <Link to="/auth">
                 <Button variant="cosmic" size="sm">
                   Sign In
                 </Button>
-              </Link>}
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center gap-2">
-            {user ? <Button variant="ghost" size="sm" className="gap-2">
+          <div className="md:hidden flex items-center gap-2">
+            {user ? (
+              <Button variant="ghost" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
                 {user.email?.split('@')[0]}
-              </Button> : null}
+              </Button>
+            ) : null}
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -132,97 +175,73 @@ const Navigation = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isOpen && <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-2 bg-card/95 backdrop-blur-sm rounded-lg mt-2 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-              <Link to="/" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
+        {isOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-card/95 backdrop-blur-sm rounded-lg mt-2 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+              <Link
+                to="/"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActive("/") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
                 Home
               </Link>
 
-              {/* Daily Insights */}
-              <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-foreground">Daily Insights</div>
-                <Link to="/dashboard" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Daily Horoscope
-                </Link>
-                <Link to="/daily-reading" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Daily Reading
-                </Link>
-                <Link to="/daily-affirmations" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Daily Affirmations
-                </Link>
-                <Link to="/astro-calendar" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Astro Calendar
-                </Link>
-              </div>
-
-              {/* Love & Compatibility */}
-              <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-foreground">Love & Compatibility</div>
-                <Link to="/love-forecasts" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Love Forecasts
-                </Link>
-                <Link to="/soulmate-analysis" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Soulmate Analysis
-                </Link>
-                <Link to="/soulmate-portrait" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Soulmate Portrait
-                </Link>
-                <Link to="/crush-analyzer" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Crush Analyzer
-                </Link>
-              </div>
-
-              {/* Personal Guidance */}
-              <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-foreground">Personal Guidance</div>
-                <Link to="/ai-chat" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  AI Problem Chat
-                </Link>
-                <Link to="/life-career-analysis" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Life & Career Analysis
-                </Link>
-                <Link to="/numerology" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Numerology
-                </Link>
-                <Link to="/lucky-elements" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Lucky Elements
-                </Link>
-              </div>
-
-              {/* Services & More */}
-              <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-foreground">Services & More</div>
-                <Link to="/consultations" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Consultation
-                </Link>
-                <Link to="/shop" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Shop
-                </Link>
-                <Link to="/astro-journal" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Astro Journal
-                </Link>
-                <Link to="/about" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  About
-                </Link>
-                <Link to="/blog" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Blog
-                </Link>
-                <Link to="/pricing" className="block px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50" onClick={() => setIsOpen(false)}>
-                  Pricing
-                </Link>
-              </div>
+              {/* Categories with Dropdown */}
+              {navCategories.map((category) => (
+                <div key={category.name} className="border-b border-border/50 last:border-0">
+                  <button
+                    onClick={() => toggleCategory(category.name)}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-sm font-semibold transition-colors rounded-md ${
+                      isCategoryActive(category) 
+                        ? "text-primary bg-primary/5" 
+                        : "text-foreground hover:bg-accent/30"
+                    }`}
+                  >
+                    <span>{category.name}</span>
+                    {expandedCategories.includes(category.name) ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
+                  
+                  {expandedCategories.includes(category.name) && (
+                    <div className="pl-4 pb-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                      {category.items.map((item) => (
+                        <Link
+                          key={item.href}
+                          to={item.href}
+                          className={`block px-3 py-2 rounded-md text-sm transition-colors ${
+                            isActive(item.href)
+                              ? "text-primary bg-primary/10"
+                              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
 
               <div className="pt-2 border-t border-border">
-                {user ? <div className="space-y-2">
+                {user ? (
+                  <div className="space-y-2">
                     <div className="px-3 py-2 text-sm text-muted-foreground">
                       {user.email}
                     </div>
-                    {user.email === "sankhobusiness@gmail.com" && <Link to="/admin" onClick={() => setIsOpen(false)}>
+                    {user.email === "sankhobusiness@gmail.com" && (
+                      <Link to="/admin" onClick={() => setIsOpen(false)}>
                         <Button variant="outline" size="sm" className="w-full gap-2">
                           <User className="h-4 w-4" />
                           Admin Dashboard
                         </Button>
-                      </Link>}
+                      </Link>
+                    )}
                     <Link to="/profile" onClick={() => setIsOpen(false)}>
                       <Button variant="outline" size="sm" className="w-full gap-2">
                         <User className="h-4 w-4" />
@@ -233,15 +252,21 @@ const Navigation = () => {
                       <LogOut className="h-4 w-4" />
                       Sign Out
                     </Button>
-                  </div> : <Link to="/auth" onClick={() => setIsOpen(false)}>
+                  </div>
+                ) : (
+                  <Link to="/auth" onClick={() => setIsOpen(false)}>
                     <Button variant="cosmic" size="sm" className="w-full">
                       Sign In
                     </Button>
-                  </Link>}
+                  </Link>
+                )}
               </div>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
-    </nav>;
+    </nav>
+  );
 };
+
 export default Navigation;
