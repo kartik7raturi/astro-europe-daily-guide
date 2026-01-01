@@ -1149,6 +1149,7 @@ export type Database = {
       }
       products: {
         Row: {
+          additional_images: string[] | null
           category: string | null
           created_at: string
           description: string | null
@@ -1161,6 +1162,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          additional_images?: string[] | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -1173,6 +1175,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          additional_images?: string[] | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -1538,7 +1541,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      product_reviews_with_profiles: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          product_id: string | null
+          rating: number | null
+          review_text: string | null
+          reviewer_name: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
