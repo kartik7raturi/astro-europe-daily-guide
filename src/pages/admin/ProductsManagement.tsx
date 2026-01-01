@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Edit, Trash2, ArrowLeft, X, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,7 @@ interface Product {
   price: number;
   category: string;
   image_url: string;
+  additional_images: string[];
   features: string[];
   is_active: boolean;
 }
@@ -35,12 +36,14 @@ const ProductsManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
     image_url: "",
+    additional_images: [] as string[],
     features: "",
   });
 
@@ -74,14 +77,18 @@ const ProductsManagement = () => {
       .order("created_at", { ascending: false });
 
     if (data) {
-      setProducts(data as Product[]);
+      setProducts(data.map(p => ({
+        ...p,
+        additional_images: p.additional_images || []
+      })) as Product[]);
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isMain = true) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setIsUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
@@ -97,7 +104,14 @@ const ProductsManagement = () => {
         .from('product-images')
         .getPublicUrl(filePath);
 
-      setFormData({ ...formData, image_url: publicUrl });
+      if (isMain) {
+        setFormData({ ...formData, image_url: publicUrl });
+      } else {
+        setFormData({ 
+          ...formData, 
+          additional_images: [...formData.additional_images, publicUrl] 
+        });
+      }
       
       toast({
         title: "Success",
@@ -109,7 +123,16 @@ const ProductsManagement = () => {
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setIsUploading(false);
     }
+  };
+
+  const removeAdditionalImage = (index: number) => {
+    setFormData({
+      ...formData,
+      additional_images: formData.additional_images.filter((_, i) => i !== index)
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,6 +144,7 @@ const ProductsManagement = () => {
       price: parseFloat(formData.price),
       category: formData.category,
       image_url: formData.image_url,
+      additional_images: formData.additional_images,
       features: formData.features.split("\n").filter((f) => f.trim()),
       is_active: true,
     };
@@ -172,7 +196,8 @@ const ProductsManagement = () => {
       price: product.price.toString(),
       category: product.category || "",
       image_url: product.image_url || "",
-      features: product.features.join("\n"),
+      additional_images: product.additional_images || [],
+      features: product.features?.join("\n") || "",
     });
     setIsDialogOpen(true);
   };
@@ -184,6 +209,7 @@ const ProductsManagement = () => {
       price: "",
       category: "",
       image_url: "",
+      additional_images: [],
       features: "",
     });
     setEditingProduct(null);
@@ -246,23 +272,68 @@ const ProductsManagement = () => {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   />
                 </div>
+                
+                {/* Main Product Image */}
                 <div>
-                  <Label>Product Image</Label>
+                  <Label>Main Product Image</Label>
                   <Input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageUpload}
+                    onChange={(e) => handleImageUpload(e, true)}
+                    disabled={isUploading}
                   />
                   {formData.image_url && (
-                    <div className="mt-2">
+                    <div className="mt-2 relative inline-block">
                       <img
                         src={formData.image_url}
-                        alt="Preview"
-                        className="w-32 h-32 object-cover rounded-lg"
+                        alt="Main Preview"
+                        className="w-32 h-32 object-cover rounded-lg border-2 border-primary"
                       />
+                      <span className="absolute -top-2 -left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
+                        Main
+                      </span>
                     </div>
                   )}
                 </div>
+
+                {/* Additional Images */}
+                <div>
+                  <Label>Additional Images</Label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, false)}
+                      disabled={isUploading}
+                    />
+                    {isUploading && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  </div>
+                  
+                  {formData.additional_images.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.additional_images.map((img, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={img}
+                            alt={`Additional ${index + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeAdditionalImage(index)}
+                            className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Add more product photos for better display
+                  </p>
+                </div>
+
                 <div>
                   <Label>Features (one per line)</Label>
                   <Textarea
@@ -271,7 +342,7 @@ const ProductsManagement = () => {
                     rows={5}
                   />
                 </div>
-                <Button type="submit" variant="cosmic" className="w-full">
+                <Button type="submit" variant="cosmic" className="w-full" disabled={isUploading}>
                   {editingProduct ? "Update" : "Create"} Product
                 </Button>
               </form>
@@ -283,9 +354,23 @@ const ProductsManagement = () => {
           {products.map((product) => (
             <Card key={product.id}>
               <CardHeader>
-                <CardTitle>{product.name}</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>{product.name}</span>
+                  {product.additional_images?.length > 0 && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                      +{product.additional_images.length} photos
+                    </span>
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent>
+                {product.image_url && (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full h-32 object-cover rounded-lg mb-3"
+                  />
+                )}
                 <p className="text-muted-foreground text-sm mb-2">{product.description}</p>
                 <p className="text-2xl font-bold text-primary mb-4">₹{product.price}</p>
                 <p className="text-sm text-muted-foreground mb-4">Category: {product.category}</p>
