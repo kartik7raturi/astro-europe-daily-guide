@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Users, ShoppingCart, Shield, Percent, FileText } from "lucide-react";
+import { Package, Users, ShoppingCart, Shield, Percent, FileText, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -118,6 +118,13 @@ const AdminDashboard = () => {
       icon: FileText,
       path: "/admin/blog",
       color: "text-pink-500",
+    },
+    {
+      title: "Affiliate Management",
+      description: "Manage affiliate partners and commissions",
+      icon: Gift,
+      path: "/admin/affiliates",
+      color: "text-cyan-500",
     },
     {
       title: "Sales Analytics",

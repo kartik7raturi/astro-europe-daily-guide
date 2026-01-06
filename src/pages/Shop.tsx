@@ -6,9 +6,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ShoppingCart, Star, Package, Sparkles, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import ProductReviews from "@/components/ProductReviews";
+import ProductImageCarousel from "@/components/ProductImageCarousel";
 
 interface Product {
   id: string;
@@ -17,6 +18,7 @@ interface Product {
   price: number;
   category: string;
   image_url: string;
+  additional_images: string[];
   features: string[];
   popular?: boolean;
 }
@@ -25,11 +27,20 @@ const Shop = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [cart, setCart] = useState<string[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const affiliateRef = searchParams.get("ref");
+
+  // Store affiliate ref in session storage for tracking
+  useEffect(() => {
+    if (affiliateRef) {
+      sessionStorage.setItem("affiliate_ref", affiliateRef);
+    }
+  }, [affiliateRef]);
   
   useEffect(() => {
     loadProducts();
@@ -58,6 +69,7 @@ const Shop = () => {
             price: Number(p.price),
             category: p.category || "General",
             image_url: p.image_url || "",
+            additional_images: (p.additional_images || []) as string[],
             features: (Array.isArray(p.features) ? p.features : []) as string[],
             popular: p.category === "Numerology" || p.category === "Predictions",
           }))
@@ -290,6 +302,14 @@ const Shop = () => {
                 View Cart ({cart.length})
               </Button>
             )}
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/wishlist")}
+              className="gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Wishlist
+            </Button>
           </div>
         </div>
 
@@ -407,19 +427,14 @@ const Shop = () => {
               <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="w-full h-64 rounded-lg flex items-center justify-center overflow-hidden">
-                {selectedProduct?.image_url ? (
-                  <img 
-                    src={selectedProduct.image_url} 
-                    alt={selectedProduct.name}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-cosmic flex items-center justify-center">
-                    {selectedProduct && getCategoryIcon(selectedProduct.category)}
-                  </div>
-                )}
-              </div>
+              {selectedProduct && (
+                <ProductImageCarousel
+                  mainImage={selectedProduct.image_url}
+                  additionalImages={selectedProduct.additional_images}
+                  productName={selectedProduct.name}
+                  category={selectedProduct.category}
+                />
+              )}
               
               <Badge variant="outline">{selectedProduct?.category}</Badge>
               
