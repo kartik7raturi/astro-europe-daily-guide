@@ -44,6 +44,10 @@ import CrushAnalyzer from "./pages/CrushAnalyzer";
 import AstroJournal from "./pages/AstroJournal";
 import ProfileSetup from "./pages/ProfileSetup";
 import Pricing from "./pages/Pricing";
+import OrderTracking from "./pages/OrderTracking";
+import Wishlist from "./pages/Wishlist";
+import Affiliate from "./pages/Affiliate";
+import AffiliateManagement from "./pages/admin/AffiliateManagement";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +82,9 @@ const App = () => (
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/profile" element={<UserProfile />} />
+                <Route path="/order-tracking" element={<OrderTracking />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/affiliate" element={<Affiliate />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<ProductsManagement />} />
               <Route path="/admin/astrologers" element={<AstrologersManagement />} />
@@ -86,6 +93,7 @@ const App = () => (
               <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
               <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
               <Route path="/admin/blog" element={<BlogManagement />} />
+              <Route path="/admin/affiliates" element={<AffiliateManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

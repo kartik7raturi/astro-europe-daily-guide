@@ -124,6 +124,16 @@ const Footer = () => {
                   Contact Us
                 </Link>
               </li>
+              <li>
+                <Link to="/order-tracking" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Track Order
+                </Link>
+              </li>
+              <li>
+                <Link to="/affiliate" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Become an Affiliate
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

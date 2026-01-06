@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_orders: {
+        Row: {
+          affiliate_id: string
+          commission_amount: number
+          commission_paid: boolean
+          created_at: string
+          id: string
+          order_amount: number
+          order_id: string
+        }
+        Insert: {
+          affiliate_id: string
+          commission_amount: number
+          commission_paid?: boolean
+          created_at?: string
+          id?: string
+          order_amount: number
+          order_id: string
+        }
+        Update: {
+          affiliate_id?: string
+          commission_amount?: number
+          commission_paid?: boolean
+          created_at?: string
+          id?: string
+          order_amount?: number
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_orders_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_orders_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          affiliate_code: string
+          commission_rate: number
+          created_at: string
+          id: string
+          payment_details: Json | null
+          pending_earnings: number
+          status: string
+          total_earnings: number
+          total_referrals: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          affiliate_code: string
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          payment_details?: Json | null
+          pending_earnings?: number
+          status?: string
+          total_earnings?: number
+          total_referrals?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          affiliate_code?: string
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          payment_details?: Json | null
+          pending_earnings?: number
+          status?: string
+          total_earnings?: number
+          total_referrals?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ashtakoot_analysis: {
         Row: {
           bhakoot_points: number | null
