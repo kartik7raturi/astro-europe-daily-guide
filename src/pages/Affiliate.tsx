@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Users, DollarSign, TrendingUp, Copy, Share2, 
-  CheckCircle, Clock, AlertCircle, Gift 
+  CheckCircle, Clock, AlertCircle, Gift, BarChart3 
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import AffiliateAnalytics from "@/components/AffiliateAnalytics";
 
 interface AffiliateData {
   id: string;
@@ -391,11 +392,24 @@ const Affiliate = () => {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="orders">
+        <Tabs defaultValue="analytics">
           <TabsList className="mb-4">
+            <TabsTrigger value="analytics">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Analytics
+            </TabsTrigger>
             <TabsTrigger value="orders">Referred Orders</TabsTrigger>
             <TabsTrigger value="payment">Payment Settings</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="analytics">
+            <AffiliateAnalytics 
+              orders={orders}
+              totalEarnings={affiliate.total_earnings}
+              totalReferrals={affiliate.total_referrals}
+              commissionRate={affiliate.commission_rate}
+            />
+          </TabsContent>
 
           <TabsContent value="orders">
             <Card>
