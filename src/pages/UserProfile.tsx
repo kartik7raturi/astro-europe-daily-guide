@@ -11,7 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin, Percent } from "lucide-react";
+import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin, Percent, Settings, MessageCircle, RotateCcw } from "lucide-react";
+import ProfileSettings from "@/components/ProfileSettings";
+import CustomerSupport from "@/components/CustomerSupport";
+import CheckoutUpsell from "@/components/CheckoutUpsell";
 
 interface WishlistItem {
   id: string;
@@ -406,18 +409,26 @@ const UserProfile = () => {
         </div>
 
         <Tabs defaultValue="wishlist" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="wishlist">
               <Heart className="h-4 w-4 mr-2" />
-              Wishlist ({wishlist.length})
+              Wishlist
             </TabsTrigger>
             <TabsTrigger value="cart">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart ({cart.length})
+              Cart
             </TabsTrigger>
             <TabsTrigger value="orders">
               <Package className="h-4 w-4 mr-2" />
-              Orders ({orders.length})
+              Orders
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </TabsTrigger>
+            <TabsTrigger value="support">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Support
             </TabsTrigger>
           </TabsList>
 
@@ -669,11 +680,44 @@ const UserProfile = () => {
                           </p>
                         </div>
                       )}
+
+                      {/* Refund/Return Options */}
+                      {(order.status === "delivered" || order.status === "shipped") && (
+                        <div className="border-t pt-4 mt-4">
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => navigate("/order-tracking")}>
+                              <Truck className="w-4 h-4 mr-2" />
+                              Track Order
+                            </Button>
+                            {order.status === "delivered" && (
+                              <>
+                                <Button variant="outline" size="sm">
+                                  <RotateCcw className="w-4 h-4 mr-2" />
+                                  Return
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  Request Refund
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          {/* Profile Settings Tab */}
+          <TabsContent value="settings">
+            <ProfileSettings />
+          </TabsContent>
+
+          {/* Customer Support Tab */}
+          <TabsContent value="support">
+            <CustomerSupport />
           </TabsContent>
         </Tabs>
       </div>
@@ -770,7 +814,13 @@ const UserProfile = () => {
               </div>
             </div>
 
-            <div className="border-t pt-4">
+            {/* Upsell Products */}
+            <CheckoutUpsell 
+              cartProductIds={cart.map(c => c.product_id)} 
+              onAddToCart={() => loadUserData()} 
+            />
+
+            <div className="border-t pt-4 mt-4">
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal:</span>

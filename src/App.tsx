@@ -48,7 +48,7 @@ import OrderTracking from "./pages/OrderTracking";
 import Wishlist from "./pages/Wishlist";
 import Affiliate from "./pages/Affiliate";
 import AffiliateManagement from "./pages/admin/AffiliateManagement";
-
+import CustomerSupportManagement from "./pages/admin/CustomerSupportManagement";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -94,6 +94,7 @@ const App = () => (
               <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
               <Route path="/admin/blog" element={<BlogManagement />} />
               <Route path="/admin/affiliates" element={<AffiliateManagement />} />
+              <Route path="/admin/support" element={<CustomerSupportManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
