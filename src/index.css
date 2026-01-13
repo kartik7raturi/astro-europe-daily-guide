@@ -115,5 +115,33 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* GPU acceleration for animated elements */
+  .animate-float,
+  .animate-glow,
+  .animate-sparkle {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-glow,
+    .animate-sparkle {
+      animation: none !important;
+    }
+  }
+}
+
+/* Optimize backdrop-blur for performance */
+@layer utilities {
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 }

@@ -132,18 +132,18 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform-gpu"
           style={{ backgroundImage: `url(${cosmicHero})` }}
         >
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-background/70"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <div className="flex justify-center mb-6">
-              <div className="relative">
-                <Stars className="h-16 w-16 text-primary animate-float" />
-                <Sparkles className="h-8 w-8 text-accent absolute -top-2 -right-2 animate-sparkle" />
+              <div className="relative transform-gpu">
+                <Stars className="h-16 w-16 text-primary" />
+                <Sparkles className="h-8 w-8 text-accent absolute -top-2 -right-2" />
               </div>
             </div>
             
@@ -189,10 +189,10 @@ const Home = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+                <Card key={index} className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300 group">
                   <CardHeader className="text-center">
                     <div className="flex justify-center mb-4">
-                      <Icon className="h-12 w-12 text-primary group-hover:animate-float" />
+                      <Icon className="h-12 w-12 text-primary" />
                     </div>
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </CardHeader>
@@ -213,7 +213,7 @@ const Home = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="flex justify-center mb-6">
-              <Smartphone className="h-16 w-16 text-primary animate-float" />
+              <Smartphone className="h-16 w-16 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Take Your Cosmic Journey Mobile
@@ -225,7 +225,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* iOS Download */}
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+            <Card className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300 group">
               <CardContent className="p-8 text-center">
                 <div className="flex justify-center mb-6">
                   <div className="relative">
@@ -249,7 +249,7 @@ const Home = () => {
             </Card>
 
             {/* Android Download */}
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+            <Card className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300 group">
               <CardContent className="p-8 text-center">
                 <div className="flex justify-center mb-6">
                   <div className="relative">
@@ -333,7 +333,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="flex justify-center mb-6">
-              <BookOpen className="h-16 w-16 text-primary animate-float" />
+              <BookOpen className="h-16 w-16 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Cosmic Wisdom Blog
@@ -345,7 +345,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.map((post, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group hover:shadow-cosmic">
+              <Card key={index} className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300 group">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">
@@ -394,7 +394,7 @@ const Home = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-primary-foreground">
             <div className="flex justify-center mb-6">
-              <Mail className="h-16 w-16 animate-float" />
+              <Mail className="h-16 w-16" />
             </div>
             <h2 className="text-3xl font-bold mb-4">
               Weekly Cosmic Newsletter
@@ -435,7 +435,7 @@ const Home = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="flex justify-center mb-6">
-              <HelpCircle className="h-16 w-16 text-primary animate-float" />
+              <HelpCircle className="h-16 w-16 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Frequently Asked Questions

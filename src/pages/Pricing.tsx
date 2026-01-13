@@ -387,7 +387,7 @@ const Pricing = () => {
         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Freemium Plan */}
           <Card 
-            className="relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 border-border hover:border-primary/50"
+            className="relative overflow-hidden border-2 transition-colors duration-300 border-border hover:border-primary/50"
           >
             <CardHeader className="text-center pb-6 pt-6">
               <div className={`w-14 h-14 mx-auto rounded-full ${freemiumPlan.gradient} flex items-center justify-center mb-3`}>
@@ -426,7 +426,7 @@ const Pricing = () => {
 
           {/* Soulmate Sketch Plan with Slider */}
           <Card 
-            className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 ${
+            className={`relative overflow-hidden border-2 transition-colors duration-300 ${
               soulmateSketchPlan.popular 
                 ? 'border-primary shadow-cosmic' 
                 : 'border-border hover:border-primary/50'
