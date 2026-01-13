@@ -173,7 +173,7 @@ const Index = () => {
               return (
                 <Card 
                   key={plan.name}
-                  className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 ${
+                  className={`relative overflow-hidden border-2 transition-colors duration-300 ${
                     plan.popular 
                       ? 'border-primary shadow-cosmic' 
                       : 'border-border hover:border-primary/50'
@@ -231,7 +231,7 @@ const Index = () => {
       {/* Newsletter Section */}
       <section className="px-4 py-16">
         <div className="max-w-4xl mx-auto text-center">
-          <Card className="bg-card/50 backdrop-blur-sm border border-primary/20">
+          <Card className="bg-card/80 border border-primary/20">
             <CardHeader>
               <CardTitle className="text-2xl mb-2">Stay Connected to the Cosmos</CardTitle>
               <CardDescription className="text-lg">
