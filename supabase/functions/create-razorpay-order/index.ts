@@ -49,13 +49,22 @@ serve(async (req) => {
       body: JSON.stringify(orderData),
     });
 
+    const responseText = await response.text();
+    console.log('Razorpay API response status:', response.status);
+    console.log('Razorpay API response:', responseText);
+
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Razorpay API error:', error);
-      throw new Error('Failed to create Razorpay order');
+      console.error('Razorpay API error:', responseText);
+      throw new Error(`Razorpay API error: ${responseText}`);
     }
 
-    const order = await response.json();
+    let order;
+    try {
+      order = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Failed to parse Razorpay response:', e);
+      throw new Error('Invalid response from Razorpay');
+    }
 
     return new Response(JSON.stringify({
       orderId: order.id,

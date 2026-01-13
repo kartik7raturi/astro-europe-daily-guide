@@ -1,5 +1,8 @@
 project_id = "xoslysosyomsteckufvn"
 
+[functions.process-cod-order]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321
