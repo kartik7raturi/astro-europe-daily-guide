@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin, Percent, Settings, MessageCircle, RotateCcw } from "lucide-react";
+import { User, Heart, ShoppingCart, Package, Trash2, Truck, CheckCircle, Clock, MapPin, Percent, Settings, MessageCircle, RotateCcw, CreditCard, Banknote } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ProfileSettings from "@/components/ProfileSettings";
 import CustomerSupport from "@/components/CustomerSupport";
 import CheckoutUpsell from "@/components/CheckoutUpsell";
@@ -77,6 +78,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [processingCheckout, setProcessingCheckout] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
   const [shippingDetails, setShippingDetails] = useState<ShippingDetails>({
     fullName: '',
     email: user?.email || '',
@@ -239,113 +241,145 @@ const UserProfile = () => {
     }
 
     setProcessingCheckout(true);
+    
     try {
-      // Use the discounted total (cartTotal already has discount applied)
       const totalAmount = Math.round(cartTotal);
+      const orderDetails = {
+        user_id: user.id,
+        amount: totalAmount,
+        order_type: 'product',
+        customer_name: shippingDetails.fullName,
+        customer_email: shippingDetails.email,
+        customer_phone: shippingDetails.phone,
+        shipping_address: {
+          address: shippingDetails.address,
+          city: shippingDetails.city,
+          state: shippingDetails.state,
+          pincode: shippingDetails.pincode,
+          country: shippingDetails.country
+        },
+        metadata: { 
+          cart_items: cart.map(item => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price: item.product.price,
+            name: item.product.name
+          }))
+        }
+      };
 
-      // Create Razorpay order
-      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
-        body: { amount: totalAmount, currency: 'INR', planName: 'Product Purchase' }
-      });
+      if (paymentMethod === 'cod') {
+        // Process COD order
+        const { data, error } = await supabase.functions.invoke('process-cod-order', {
+          body: orderDetails
+        });
 
-      if (orderError || !orderData) {
-        throw new Error(orderError?.message || 'Failed to create payment order');
-      }
+        if (error) throw error;
 
-      // Load Razorpay script dynamically
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      document.body.appendChild(script);
+        setCart([]);
+        setShowCheckoutDialog(false);
+        toast({
+          title: "Order Placed!",
+          description: "Your Cash on Delivery order has been placed successfully. Pay ₹" + totalAmount + " on delivery."
+        });
+        loadUserData();
+      } else {
+        // Process Razorpay payment
+        const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
+          body: { amount: totalAmount, currency: 'INR', planName: 'Product Purchase' }
+        });
 
-      script.onload = () => {
-        const options = {
-          key: orderData.keyId,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: 'AstroVibe',
-          description: 'Product Purchase',
-          order_id: orderData.orderId,
-          handler: async function (response: any) {
-            try {
-              // Verify payment and create order
-              const { data: verifyData, error: verifyError } = await supabase.functions.invoke('process-razorpay-payment', {
-                body: {
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  orderData: {
-                    user_id: user.id,
-                    amount: totalAmount,
-                    order_type: 'product',
-                    customer_name: shippingDetails.fullName,
-                    customer_email: shippingDetails.email,
-                    customer_phone: shippingDetails.phone,
-                    shipping_address: {
-                      address: shippingDetails.address,
-                      city: shippingDetails.city,
-                      state: shippingDetails.state,
-                      pincode: shippingDetails.pincode,
-                      country: shippingDetails.country
-                    },
-                    metadata: { 
-                      cart_items: cart.map(item => ({
-                        product_id: item.product_id,
-                        quantity: item.quantity,
-                        price: item.product.price,
-                        name: item.product.name
-                      }))
-                    }
+        if (orderError) {
+          console.error('Razorpay order error:', orderError);
+          throw new Error(orderError.message || 'Failed to create payment order');
+        }
+
+        if (!orderData || !orderData.orderId) {
+          console.error('Invalid Razorpay response:', orderData);
+          throw new Error('Failed to initialize payment. Please try Cash on Delivery.');
+        }
+
+        // Load Razorpay script dynamically
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.body.appendChild(script);
+
+        script.onload = () => {
+          const options = {
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: 'AstroVibe',
+            description: 'Product Purchase',
+            order_id: orderData.orderId,
+            handler: async function (response: any) {
+              try {
+                const { data: verifyData, error: verifyError } = await supabase.functions.invoke('process-razorpay-payment', {
+                  body: {
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                    orderData: orderDetails
                   }
-                }
-              });
+                });
 
-              if (verifyError) throw verifyError;
+                if (verifyError) throw verifyError;
 
-              setCart([]);
-              setShowCheckoutDialog(false);
-              toast({
-                title: "Payment Successful!",
-                description: "Your order has been placed. Invoice sent to your email."
-              });
-              loadUserData();
-            } catch (error) {
-              console.error("Error processing payment:", error);
-              toast({
-                title: "Payment Error",
-                description: "Payment received but order creation failed. Please contact support.",
-                variant: "destructive"
-              });
+                setCart([]);
+                setShowCheckoutDialog(false);
+                toast({
+                  title: "Payment Successful!",
+                  description: "Your order has been placed. Invoice sent to your email."
+                });
+                loadUserData();
+              } catch (error) {
+                console.error("Error processing payment:", error);
+                toast({
+                  title: "Payment Error",
+                  description: "Payment received but order creation failed. Please contact support.",
+                  variant: "destructive"
+                });
+              }
+            },
+            prefill: {
+              name: shippingDetails.fullName,
+              email: shippingDetails.email,
+              contact: shippingDetails.phone
+            },
+            theme: {
+              color: '#667eea'
+            },
+            modal: {
+              ondismiss: function() {
+                setProcessingCheckout(false);
+              }
             }
-          },
-          prefill: {
-            name: shippingDetails.fullName,
-            email: shippingDetails.email,
-            contact: shippingDetails.phone
-          },
-          theme: {
-            color: '#667eea'
-          },
-          modal: {
-            ondismiss: function() {
-              setProcessingCheckout(false);
-            }
-          }
+          };
+
+          const razorpay = new (window as any).Razorpay(options);
+          razorpay.on('payment.failed', function(response: any) {
+            console.error('Payment failed:', response.error);
+            toast({
+              title: "Payment Failed",
+              description: response.error.description || "Payment was not completed. Please try again or use Cash on Delivery.",
+              variant: "destructive"
+            });
+            setProcessingCheckout(false);
+          });
+          razorpay.open();
         };
 
-        const razorpay = new (window as any).Razorpay(options);
-        razorpay.open();
-      };
-
-      script.onerror = () => {
-        throw new Error('Failed to load payment gateway');
-      };
+        script.onerror = () => {
+          throw new Error('Failed to load payment gateway. Please try Cash on Delivery.');
+        };
+      }
 
     } catch (error: any) {
       console.error("Error creating order:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to initiate payment",
+        description: error.message || "Failed to process order. Please try Cash on Delivery.",
         variant: "destructive"
       });
       setProcessingCheckout(false);
@@ -819,6 +853,33 @@ const UserProfile = () => {
               cartProductIds={cart.map(c => c.product_id)} 
               onAddToCart={() => loadUserData()} 
             />
+
+            {/* Payment Method Selection */}
+            <div className="border-t pt-4 mt-4">
+              <Label className="text-base font-semibold mb-3 block">Payment Method</Label>
+              <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'razorpay' | 'cod')}>
+                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                  <RadioGroupItem value="razorpay" id="razorpay" />
+                  <Label htmlFor="razorpay" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <CreditCard className="w-5 h-5 text-primary" />
+                    <div>
+                      <p className="font-medium">Pay Online</p>
+                      <p className="text-xs text-muted-foreground">Credit/Debit Card, UPI, Net Banking</p>
+                    </div>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer mt-2">
+                  <RadioGroupItem value="cod" id="cod" />
+                  <Label htmlFor="cod" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <Banknote className="w-5 h-5 text-green-600" />
+                    <div>
+                      <p className="font-medium">Cash on Delivery</p>
+                      <p className="text-xs text-muted-foreground">Pay when your order arrives</p>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
 
             <div className="border-t pt-4 mt-4">
               <div className="space-y-2 mb-4">
