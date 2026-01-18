@@ -7,6 +7,7 @@ import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Smartphone, D
 import cosmicHero from "@/assets/cosmic-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import SponsorBanner from "@/components/SponsorBanner";
 
 const Home = () => {
   const [email, setEmail] = useState("");
@@ -172,6 +173,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Sponsor Banner */}
+      <SponsorBanner page="home" />
 
       {/* Features Section */}
       <section className="py-20 bg-background/50">

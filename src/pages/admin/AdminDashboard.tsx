@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Users, ShoppingCart, Shield, Percent, FileText, Gift, MessageCircle } from "lucide-react";
+import { Package, Users, ShoppingCart, Shield, Percent, FileText, Gift, MessageCircle, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -139,6 +139,13 @@ const AdminDashboard = () => {
       icon: MessageCircle,
       path: "/admin/support",
       color: "text-rose-500",
+    },
+    {
+      title: "Sponsors Management",
+      description: "Manage sponsored banners and ads",
+      icon: Megaphone,
+      path: "/admin/sponsors",
+      color: "text-amber-500",
     },
   ];
 

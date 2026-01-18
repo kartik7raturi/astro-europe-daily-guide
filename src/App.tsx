@@ -49,6 +49,7 @@ import Wishlist from "./pages/Wishlist";
 import Affiliate from "./pages/Affiliate";
 import AffiliateManagement from "./pages/admin/AffiliateManagement";
 import CustomerSupportManagement from "./pages/admin/CustomerSupportManagement";
+import SponsorsManagement from "./pages/admin/SponsorsManagement";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -95,6 +96,7 @@ const App = () => (
               <Route path="/admin/blog" element={<BlogManagement />} />
               <Route path="/admin/affiliates" element={<AffiliateManagement />} />
               <Route path="/admin/support" element={<CustomerSupportManagement />} />
+              <Route path="/admin/sponsors" element={<SponsorsManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

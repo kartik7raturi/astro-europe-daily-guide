@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import ProductReviews from "@/components/ProductReviews";
 import ProductImageCarousel from "@/components/ProductImageCarousel";
+import SponsorBanner from "@/components/SponsorBanner";
 
 interface Product {
   id: string;
@@ -283,6 +284,9 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Sponsor Banner */}
+        <SponsorBanner page="shop" />
+        
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-6">

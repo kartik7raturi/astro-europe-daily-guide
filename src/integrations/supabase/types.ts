@@ -1018,6 +1018,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          affiliate_code: string | null
           amount: number
           created_at: string
           currency: string
@@ -1039,6 +1040,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          affiliate_code?: string | null
           amount: number
           created_at?: string
           currency?: string
@@ -1060,6 +1062,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          affiliate_code?: string | null
           amount?: number
           created_at?: string
           currency?: string
@@ -1426,6 +1429,42 @@ export type Database = {
           twin_flame_analysis?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      sponsors: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          link_url: string
+          name: string
+          pages: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          link_url: string
+          name: string
+          pages?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          link_url?: string
+          name?: string
+          pages?: string[] | null
+          updated_at?: string
         }
         Relationships: []
       }
