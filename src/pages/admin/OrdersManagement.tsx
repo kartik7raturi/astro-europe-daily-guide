@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Search, Filter, Truck, Package, CheckCircle, Clock, MapPin, Eye } from "lucide-react";
+import { ArrowLeft, Search, Filter, Truck, Package, CheckCircle, Clock, MapPin, Eye, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -46,6 +46,12 @@ interface Order {
   shipping_address: any;
   tracking_number: string | null;
   metadata: any;
+  affiliate_code: string | null;
+}
+
+interface AffiliateInfo {
+  code: string;
+  name: string;
 }
 
 const OrdersManagement = () => {
@@ -59,10 +65,12 @@ const OrdersManagement = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [affiliateMap, setAffiliateMap] = useState<Record<string, AffiliateInfo>>({});
 
   useEffect(() => {
     checkAdmin();
     loadOrders();
+    loadAffiliates();
   }, [user]);
 
   useEffect(() => {
@@ -105,6 +113,20 @@ const OrdersManagement = () => {
 
     if (data) {
       setOrders(data);
+    }
+  };
+
+  const loadAffiliates = async () => {
+    const { data, error } = await supabase
+      .from("affiliates")
+      .select("referral_code, name");
+
+    if (data) {
+      const map: Record<string, AffiliateInfo> = {};
+      data.forEach((aff: any) => {
+        map[aff.referral_code] = { code: aff.referral_code, name: aff.name };
+      });
+      setAffiliateMap(map);
     }
   };
 
@@ -319,6 +341,7 @@ const OrdersManagement = () => {
                     <TableHead>Order ID</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Amount</TableHead>
+                    <TableHead>Referral</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Actions</TableHead>
@@ -338,6 +361,16 @@ const OrdersManagement = () => {
                       </TableCell>
                       <TableCell className="font-semibold">
                         {order.currency} {order.amount}
+                      </TableCell>
+                      <TableCell>
+                        {order.affiliate_code && affiliateMap[order.affiliate_code] ? (
+                          <Badge className="bg-cyan-500/20 text-cyan-600 border-cyan-500/30 flex items-center gap-1 w-fit">
+                            <Users className="w-3 h-3" />
+                            {affiliateMap[order.affiliate_code].name}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Direct</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {getStatusBadge(order.status)}
@@ -428,6 +461,25 @@ const OrdersManagement = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Affiliate Referral */}
+                {selectedOrder.affiliate_code && affiliateMap[selectedOrder.affiliate_code] && (
+                  <div className="border rounded-lg p-4 bg-cyan-500/10 border-cyan-500/30">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Users className="w-4 h-4 text-cyan-600" /> Affiliate Referral
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Affiliate Name:</span>
+                        <p className="font-medium">{affiliateMap[selectedOrder.affiliate_code].name}</p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Referral Code:</span>
+                        <p className="font-medium font-mono">{selectedOrder.affiliate_code}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Shipping Address */}
                 {selectedOrder.shipping_address && Object.keys(selectedOrder.shipping_address).length > 0 && (

@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Calendar, User, Tag } from 'lucide-react';
 import ZodiacWheelIcon from '@/components/icons/ZodiacWheelIcon';
 import { format } from 'date-fns';
+import SponsorBanner from '@/components/SponsorBanner';
 
 interface BlogPost {
   id: string;
@@ -171,6 +172,9 @@ const Blog = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Sponsor Banner */}
+      <SponsorBanner page="blog" />
+      
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Astrology Blog</h1>
         <p className="text-muted-foreground">Explore articles on astrology, numerology, and cosmic wisdom</p>

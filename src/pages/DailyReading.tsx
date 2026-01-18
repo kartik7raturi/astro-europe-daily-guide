@@ -30,6 +30,7 @@ import {
   getLifePathMeaning, 
   getDailyNumerologyGuidance 
 } from "@/utils/numerology";
+import SponsorBanner from "@/components/SponsorBanner";
 
 interface UserData {
   name: string;
@@ -252,6 +253,9 @@ const DailyReading = () => {
   return (
     <div className="min-h-screen bg-gradient-starlight py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Sponsor Banner */}
+        <SponsorBanner page="daily-reading" />
+        
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Link to="/horoscope">
