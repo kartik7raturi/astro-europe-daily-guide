@@ -20,6 +20,7 @@ interface PaymentVerification {
     customer_phone: string;
     shipping_address: any;
     metadata: any;
+    affiliate_code?: string;
   };
 }
 
@@ -91,6 +92,66 @@ serve(async (req) => {
     }
 
     console.log("Order created:", order.id);
+
+    // Process affiliate commission if affiliate code is provided
+    if (orderData.affiliate_code) {
+      console.log("Processing affiliate commission for code:", orderData.affiliate_code);
+      
+      try {
+        // Find the affiliate by code
+        const { data: affiliate, error: affiliateError } = await supabase
+          .from('affiliates')
+          .select('*')
+          .eq('affiliate_code', orderData.affiliate_code)
+          .eq('status', 'approved')
+          .single();
+
+        if (affiliateError) {
+          console.log("Affiliate not found or not approved:", affiliateError.message);
+        } else if (affiliate) {
+          console.log("Found affiliate:", affiliate.id);
+          
+          // Calculate commission
+          const commissionAmount = (orderData.amount * affiliate.commission_rate) / 100;
+          
+          // Create affiliate order record
+          const { error: affiliateOrderError } = await supabase
+            .from('affiliate_orders')
+            .insert({
+              affiliate_id: affiliate.id,
+              order_id: order.id,
+              order_amount: orderData.amount,
+              commission_amount: commissionAmount,
+              commission_paid: false
+            });
+
+          if (affiliateOrderError) {
+            console.error("Error creating affiliate order:", affiliateOrderError);
+          } else {
+            console.log("Affiliate order created with commission:", commissionAmount);
+            
+            // Update affiliate stats
+            const { error: updateError } = await supabase
+              .from('affiliates')
+              .update({
+                total_referrals: affiliate.total_referrals + 1,
+                total_earnings: affiliate.total_earnings + commissionAmount,
+                pending_earnings: affiliate.pending_earnings + commissionAmount
+              })
+              .eq('id', affiliate.id);
+
+            if (updateError) {
+              console.error("Error updating affiliate stats:", updateError);
+            } else {
+              console.log("Affiliate stats updated successfully");
+            }
+          }
+        }
+      } catch (affiliateProcessError) {
+        console.error("Error processing affiliate:", affiliateProcessError);
+        // Don't fail the order if affiliate processing fails
+      }
+    }
 
     // Send invoice email
     try {
