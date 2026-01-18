@@ -244,6 +244,9 @@ const UserProfile = () => {
     
     try {
       const totalAmount = Math.round(cartTotal);
+      // Get affiliate referral from session storage
+      const affiliateRef = sessionStorage.getItem('affiliate_ref');
+      
       const orderDetails = {
         user_id: user.id,
         amount: totalAmount,
@@ -265,7 +268,8 @@ const UserProfile = () => {
             price: item.product.price,
             name: item.product.name
           }))
-        }
+        },
+        affiliate_code: affiliateRef
       };
 
       if (paymentMethod === 'cod') {
@@ -278,6 +282,8 @@ const UserProfile = () => {
 
         setCart([]);
         setShowCheckoutDialog(false);
+        // Clear affiliate ref after successful order
+        sessionStorage.removeItem('affiliate_ref');
         toast({
           title: "Order Placed!",
           description: "Your Cash on Delivery order has been placed successfully. Pay ₹" + totalAmount + " on delivery."
@@ -328,6 +334,8 @@ const UserProfile = () => {
 
                 setCart([]);
                 setShowCheckoutDialog(false);
+                // Clear affiliate ref after successful order
+                sessionStorage.removeItem('affiliate_ref');
                 toast({
                   title: "Payment Successful!",
                   description: "Your order has been placed. Invoice sent to your email."
