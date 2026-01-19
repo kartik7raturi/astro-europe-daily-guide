@@ -78,6 +78,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [processingCheckout, setProcessingCheckout] = useState(false);
+  const [processingRequest, setProcessingRequest] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
   const [shippingDetails, setShippingDetails] = useState<ShippingDetails>({
     fullName: '',
@@ -154,6 +155,70 @@ const UserProfile = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReturnRequest = async (order: Order) => {
+    if (!user) return;
+    setProcessingRequest(order.id);
+    try {
+      const { error } = await supabase.from("support_tickets").insert({
+        user_id: user.id,
+        subject: `Return Request for Order #${order.id.slice(0, 8).toUpperCase()}`,
+        status: "open",
+        priority: "high"
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Return Request Submitted",
+        description: "Your return request has been submitted. Our team will contact you within 24-48 hours.",
+      });
+      
+      // Switch to support tab
+      setActiveTab('support');
+    } catch (error) {
+      console.error("Error submitting return request:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit return request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingRequest(null);
+    }
+  };
+
+  const handleRefundRequest = async (order: Order) => {
+    if (!user) return;
+    setProcessingRequest(order.id);
+    try {
+      const { error } = await supabase.from("support_tickets").insert({
+        user_id: user.id,
+        subject: `Refund Request for Order #${order.id.slice(0, 8).toUpperCase()} - ₹${order.amount}`,
+        status: "open",
+        priority: "high"
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Refund Request Submitted",
+        description: "Your refund request has been submitted. Our team will review and process it within 3-5 business days.",
+      });
+      
+      // Switch to support tab
+      setActiveTab('support');
+    } catch (error) {
+      console.error("Error submitting refund request:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit refund request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingRequest(null);
     }
   };
 
@@ -735,12 +800,22 @@ const UserProfile = () => {
                             </Button>
                             {order.status === "delivered" && (
                               <>
-                                <Button variant="outline" size="sm">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  disabled={processingRequest === order.id}
+                                  onClick={() => handleReturnRequest(order)}
+                                >
                                   <RotateCcw className="w-4 h-4 mr-2" />
-                                  Return
+                                  {processingRequest === order.id ? "Submitting..." : "Return"}
                                 </Button>
-                                <Button variant="ghost" size="sm">
-                                  Request Refund
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  disabled={processingRequest === order.id}
+                                  onClick={() => handleRefundRequest(order)}
+                                >
+                                  {processingRequest === order.id ? "Submitting..." : "Request Refund"}
                                 </Button>
                               </>
                             )}
