@@ -199,7 +199,7 @@ const AffiliateManagement = () => {
     }
   };
 
-  const markCommissionPaid = async (orderId: string) => {
+  const markCommissionPaid = async (orderId: string, commissionAmount: number) => {
     try {
       const { error } = await supabase
         .from("affiliate_orders")
@@ -207,6 +207,23 @@ const AffiliateManagement = () => {
         .eq("id", orderId);
 
       if (error) throw error;
+
+      // Also update the affiliate's pending_earnings
+      if (selectedAffiliate) {
+        const newPendingEarnings = Math.max(0, selectedAffiliate.pending_earnings - commissionAmount);
+        await supabase
+          .from("affiliates")
+          .update({ pending_earnings: newPendingEarnings })
+          .eq("id", selectedAffiliate.id);
+        
+        // Update local state
+        setAffiliates(
+          affiliates.map((a) =>
+            a.id === selectedAffiliate.id ? { ...a, pending_earnings: newPendingEarnings } : a
+          )
+        );
+        setSelectedAffiliate({ ...selectedAffiliate, pending_earnings: newPendingEarnings });
+      }
 
       setAffiliateOrders(
         affiliateOrders.map((o) =>
@@ -458,7 +475,7 @@ const AffiliateManagement = () => {
                       {!order.commission_paid && (
                         <Button
                           size="sm"
-                          onClick={() => markCommissionPaid(order.id)}
+                          onClick={() => markCommissionPaid(order.id, order.commission_amount)}
                         >
                           Mark Paid
                         </Button>

@@ -57,11 +57,11 @@ const AffiliateAnalytics = ({ orders, totalEarnings, totalReferrals, commissionR
   const chartConfig = {
     referrals: {
       label: "Referrals",
-      color: "hsl(var(--chart-1))"
+      color: "hsl(280 70% 50%)"
     },
     earnings: {
       label: "Earnings",
-      color: "hsl(var(--chart-2))"
+      color: "hsl(142 76% 36%)"
     }
   };
 
@@ -154,7 +154,7 @@ const AffiliateAnalytics = ({ orders, totalEarnings, totalReferrals, commissionR
                 <Line 
                   type="monotone" 
                   dataKey="referrals" 
-                  stroke="var(--color-referrals)" 
+                  stroke="hsl(280 70% 50%)" 
                   strokeWidth={2}
                   dot={false}
                 />
@@ -180,7 +180,7 @@ const AffiliateAnalytics = ({ orders, totalEarnings, totalReferrals, commissionR
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar 
                   dataKey="earnings" 
-                  fill="var(--color-earnings)" 
+                  fill="hsl(142 76% 36%)" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
