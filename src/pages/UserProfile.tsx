@@ -89,6 +89,11 @@ const UserProfile = () => {
     pincode: '',
     country: 'India'
   });
+  
+  // Get initial tab from URL
+  const params = new URLSearchParams(window.location.search);
+  const urlTab = params.get('tab');
+  const [activeTab, setActiveTab] = useState(urlTab || 'wishlist');
 
   useEffect(() => {
     if (!user) {
@@ -98,14 +103,11 @@ const UserProfile = () => {
     setShippingDetails(prev => ({ ...prev, email: user.email || '' }));
     loadUserData();
     
-    // Check for tab parameter in URL
+    // Update active tab from URL when it changes
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    if (tab) {
-      setTimeout(() => {
-        const tabElement = document.querySelector(`[value="${tab}"]`) as HTMLElement;
-        tabElement?.click();
-      }, 100);
+    if (tab && ['wishlist', 'cart', 'orders', 'settings', 'support'].includes(tab)) {
+      setActiveTab(tab);
     }
   }, [user, navigate]);
 
@@ -450,7 +452,7 @@ const UserProfile = () => {
           <p className="text-muted-foreground">{user?.email}</p>
         </div>
 
-        <Tabs defaultValue="wishlist" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="wishlist">
               <Heart className="h-4 w-4 mr-2" />

@@ -8,6 +8,7 @@ import cosmicHero from "@/assets/cosmic-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import SponsorBanner from "@/components/SponsorBanner";
+import TrustBadges from "@/components/TrustBadges";
 
 const Home = () => {
   const [email, setEmail] = useState("");
@@ -176,6 +177,11 @@ const Home = () => {
 
       {/* Sponsor Banner */}
       <SponsorBanner page="home" />
+      
+      {/* Trust Badges */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <TrustBadges />
+      </div>
 
       {/* Features Section */}
       <section className="py-20 bg-background/50">

@@ -227,9 +227,9 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
           </p>
         )}
 
-        {/* Reviews List */}
+        {/* Reviews List - Show ALL reviews including user's own */}
         <div className="space-y-4">
-          {reviews.filter(r => r.user_id !== user?.id).map((review) => (
+          {reviews.map((review) => (
             <div key={review.id} className="border-b pb-4 last:border-0">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ProductReviews from "@/components/ProductReviews";
 import ProductImageCarousel from "@/components/ProductImageCarousel";
 import SponsorBanner from "@/components/SponsorBanner";
+import TrustBadges from "@/components/TrustBadges";
 
 interface Product {
   id: string;
@@ -286,6 +287,9 @@ const Shop = () => {
       <div className="max-w-7xl mx-auto">
         {/* Sponsor Banner */}
         <SponsorBanner page="shop" />
+        
+        {/* Trust Badges */}
+        <TrustBadges />
         
         {/* Header */}
         <div className="text-center mb-16">
