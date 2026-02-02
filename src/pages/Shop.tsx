@@ -12,6 +12,8 @@ import ProductReviews from "@/components/ProductReviews";
 import ProductImageCarousel from "@/components/ProductImageCarousel";
 import SponsorBanner from "@/components/SponsorBanner";
 import TrustBadges from "@/components/TrustBadges";
+import ProductRating from "@/components/ProductRating";
+import ProductShippingInfo from "@/components/ProductShippingInfo";
 
 interface Product {
   id: string;
@@ -253,12 +255,8 @@ const Shop = () => {
         if (cartError) throw cartError;
       }
 
-      // Navigate to profile with cart tab selected
-      navigate("/profile?tab=cart");
-      toast({
-        title: "Ready to Checkout",
-        description: "Review your cart and complete your purchase"
-      });
+      // Navigate to fullscreen checkout page
+      navigate("/checkout");
     } catch (error) {
       console.error("Error:", error);
       toast({
@@ -303,7 +301,7 @@ const Shop = () => {
             {cart.length > 0 && (
               <Button
                 variant="outline"
-                onClick={() => navigate("/profile?tab=cart")}
+                onClick={() => navigate("/checkout")}
                 className="gap-2"
               >
                 <ShoppingCart className="w-4 h-4" />
@@ -383,9 +381,13 @@ const Shop = () => {
                 <CardDescription className="text-muted-foreground text-sm">
                   {product.description}
                 </CardDescription>
+                <div className="pt-2">
+                  <ProductRating productId={product.id} />
+                </div>
                 <div className="pt-3">
                   <span className="text-3xl font-bold text-primary">₹{product.price}</span>
                 </div>
+                <ProductShippingInfo />
               </CardHeader>
 
               <CardContent className="pt-0">
@@ -448,7 +450,11 @@ const Shop = () => {
               
               <p className="text-muted-foreground">{selectedProduct?.description}</p>
               
+              {selectedProduct && <ProductRating productId={selectedProduct.id} size="md" />}
+              
               <div className="text-3xl font-bold text-primary">₹{selectedProduct?.price}</div>
+              
+              <ProductShippingInfo />
               
               <div>
                 <h3 className="font-semibold mb-2">Features:</h3>
