@@ -20,8 +20,11 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import SoulmateAnalysis from "./pages/SoulmateAnalysis";
-import SoulmatePortrait from "./pages/SoulmatePortrait";
+import TwinFlameAnalysis from "./pages/TwinFlameAnalysis";
+import KarmicBonds from "./pages/KarmicBonds";
+import MeetingPrediction from "./pages/MeetingPrediction";
 import Shop from "./pages/Shop";
+import Checkout from "./pages/Checkout";
 import AIChat from "./pages/AIChat";
 import UserProfile from "./pages/UserProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -106,7 +109,10 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/soulmate-analysis" element={<SoulmateAnalysis />} />
-                <Route path="/soulmate-portrait" element={<SoulmatePortrait />} />
+                <Route path="/twin-flame" element={<TwinFlameAnalysis />} />
+                <Route path="/karmic-bonds" element={<KarmicBonds />} />
+                <Route path="/meeting-prediction" element={<MeetingPrediction />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

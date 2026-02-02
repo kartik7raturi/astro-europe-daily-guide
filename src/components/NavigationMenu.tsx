@@ -24,7 +24,9 @@ const NavigationMenuDemo = () => {
   const loveCompatibility = [
     { title: "Love Forecasts", href: "/love-forecasts", description: "Daily love and relationship predictions" },
     { title: "Soulmate Analysis", href: "/soulmate-analysis", description: "Find your perfect match" },
-    { title: "Soulmate Portrait", href: "/soulmate-portrait", description: "Generate your soulmate portrait" },
+    { title: "Twin Flame Analysis", href: "/twin-flame", description: "Discover your twin flame connection" },
+    { title: "Karmic Bonds", href: "/karmic-bonds", description: "Understand past life connections" },
+    { title: "Meeting Prediction", href: "/meeting-prediction", description: "When & where you'll meet your soulmate" },
     { title: "Crush Analyzer", href: "/crush-analyzer", description: "Analyze your crush compatibility" },
   ];
 
