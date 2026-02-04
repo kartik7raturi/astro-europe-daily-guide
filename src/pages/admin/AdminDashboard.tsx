@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Users, ShoppingCart, Shield, Percent, FileText, Gift, MessageCircle, Megaphone } from "lucide-react";
+import { Package, Users, ShoppingCart, Shield, Percent, FileText, Gift, MessageCircle, Megaphone, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -77,6 +77,13 @@ const AdminDashboard = () => {
   }
 
   const adminSections = [
+    {
+      title: "Pricing Plans",
+      description: "Manage subscription plans and pricing",
+      icon: CreditCard,
+      path: "/admin/plans",
+      color: "text-emerald-500",
+    },
     {
       title: "Products Management",
       description: "Manage all products in the shop",

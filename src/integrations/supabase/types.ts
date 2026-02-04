@@ -1157,6 +1157,60 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_plans: {
+        Row: {
+          created_at: string
+          credits: number | null
+          description: string | null
+          display_order: number | null
+          features: string[]
+          gradient: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_popular: boolean | null
+          name: string
+          period: string
+          price: number
+          sketches: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number | null
+          description?: string | null
+          display_order?: number | null
+          features?: string[]
+          gradient?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_popular?: boolean | null
+          name: string
+          period?: string
+          price?: number
+          sketches?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number | null
+          description?: string | null
+          display_order?: number | null
+          features?: string[]
+          gradient?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_popular?: boolean | null
+          name?: string
+          period?: string
+          price?: number
+          sketches?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       problem_solutions: {
         Row: {
           astrological_solution: string
