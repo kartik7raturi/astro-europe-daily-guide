@@ -73,7 +73,9 @@ const Navigation = () => {
       items: [
         { name: "Love Forecasts", href: "/love-forecasts" },
         { name: "Soulmate Analysis", href: "/soulmate-analysis" },
-        { name: "Soulmate Portrait", href: "/soulmate-portrait" },
+        { name: "Twin Flame Analysis", href: "/twin-flame" },
+        { name: "Karmic Bonds", href: "/karmic-bonds" },
+        { name: "Meeting Prediction", href: "/meeting-prediction" },
         { name: "Crush Analyzer", href: "/crush-analyzer" },
       ]
     },

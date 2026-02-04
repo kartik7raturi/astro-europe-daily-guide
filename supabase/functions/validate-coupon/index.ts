@@ -25,17 +25,17 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client
+    // Create Supabase client with service role for accessing coupon codes
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Validate coupon code
+    // Validate coupon code - use ilike for case-insensitive matching
     const { data: coupon, error } = await supabaseClient
       .from('coupon_codes')
       .select('*')
-      .eq('code', code.toUpperCase())
+      .ilike('code', code.trim())
       .eq('is_active', true)
       .maybeSingle();
 

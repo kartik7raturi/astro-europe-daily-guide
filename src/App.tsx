@@ -35,7 +35,7 @@ import CouponsManagement from "./pages/admin/CouponsManagement";
 import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 import ComboOffersManagement from "./pages/admin/ComboOffersManagement";
 import BlogManagement from "./pages/admin/BlogManagement";
-
+import PlansManagement from "./pages/admin/PlansManagement";
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
 import LuckyElements from "./pages/LuckyElements";
@@ -90,6 +90,7 @@ const App = () => (
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/affiliate" element={<Affiliate />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/plans" element={<PlansManagement />} />
               <Route path="/admin/products" element={<ProductsManagement />} />
               <Route path="/admin/astrologers" element={<AstrologersManagement />} />
               <Route path="/admin/orders" element={<OrdersManagement />} />
