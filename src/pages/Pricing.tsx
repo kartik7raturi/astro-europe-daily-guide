@@ -24,6 +24,9 @@ const Pricing = () => {
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
     discount: number;
+    discountType: string;
+    discountAmount: number;
+    applicableTo: string;
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -72,13 +75,25 @@ const Pricing = () => {
       }
 
       if (data.valid) {
+        const discountType = data.discount_type || 'percentage';
+        const discountAmount = data.discount_amount || 0;
+        const discountPercentage = data.discount_percentage || 0;
+        
         setAppliedCoupon({
           code: data.code,
-          discount: data.discount_percentage
+          discount: discountPercentage,
+          discountType,
+          discountAmount,
+          applicableTo: data.applicable_to || 'all'
         });
+        
+        const discountText = discountType === 'fixed' 
+          ? `₹${discountAmount} off` 
+          : `${discountPercentage}% discount`;
+        
         toast({
           title: "Coupon Applied!",
-          description: `${data.discount_percentage}% discount applied successfully`,
+          description: `${discountText} applied successfully`,
         });
       } else {
         toast({
@@ -126,20 +141,38 @@ const Pricing = () => {
 
       let finalPrice = parseInt(plan.price.replace('₹', ''));
       
-      // Apply coupon discount if available
-      if (appliedCoupon) {
-        if (appliedCoupon.discount === 100) {
-          // Free coupon - no payment needed
+      // Apply coupon discount if available (only if applicable to credits or all)
+      if (appliedCoupon && (appliedCoupon.applicableTo === 'all' || appliedCoupon.applicableTo === 'credits')) {
+        if (appliedCoupon.discountType === 'fixed') {
+          // Fixed amount discount
+          finalPrice = Math.max(0, finalPrice - appliedCoupon.discountAmount);
+        } else {
+          // Percentage discount
+          if (appliedCoupon.discount === 100) {
+            // Free coupon - no payment needed
+            toast({
+              title: "Free Access Granted!",
+              description: `You've got free access to ${plan.name}! Redirecting to dashboard...`,
+            });
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 2000);
+            return;
+          } else {
+            finalPrice = Math.round(finalPrice * (1 - appliedCoupon.discount / 100));
+          }
+        }
+        
+        // If price becomes 0 or negative after discount
+        if (finalPrice <= 0) {
           toast({
             title: "Free Access Granted!",
-            description: `You've got free access to ${plan.name}! Redirecting to dashboard...`,
+            description: `Your coupon covers the full price! Redirecting to dashboard...`,
           });
           setTimeout(() => {
             window.location.href = '/dashboard';
           }, 2000);
           return;
-        } else {
-          finalPrice = Math.round(finalPrice * (1 - appliedCoupon.discount / 100));
         }
       }
 
@@ -361,13 +394,20 @@ const Pricing = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant="outline" className="border-green-500 text-green-700 dark:text-green-400">
                       {appliedCoupon.code}
                     </Badge>
                     <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                      {appliedCoupon.discount}% OFF Applied
+                      {appliedCoupon.discountType === 'fixed' 
+                        ? `₹${appliedCoupon.discountAmount} OFF` 
+                        : `${appliedCoupon.discount}% OFF`} Applied
                     </span>
+                    {appliedCoupon.applicableTo !== 'all' && (
+                      <Badge variant="secondary" className="text-xs">
+                        {appliedCoupon.applicableTo === 'credits' ? 'Credits Only' : 'Products Only'}
+                      </Badge>
+                    )}
                   </div>
                   <Button
                     onClick={removeCoupon}

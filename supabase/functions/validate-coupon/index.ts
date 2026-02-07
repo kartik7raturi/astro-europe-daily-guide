@@ -95,6 +95,9 @@ serve(async (req) => {
       JSON.stringify({
         valid: true,
         discount_percentage: coupon.discount_percentage,
+        discount_type: coupon.discount_type || 'percentage',
+        discount_amount: coupon.discount_amount || 0,
+        applicable_to: coupon.applicable_to || 'all',
         code: coupon.code
       }),
       { 

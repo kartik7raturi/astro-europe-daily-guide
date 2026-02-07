@@ -613,10 +613,13 @@ export type Database = {
       }
       coupon_codes: {
         Row: {
+          applicable_to: string
           code: string
           created_at: string
           current_uses: number
+          discount_amount: number | null
           discount_percentage: number
+          discount_type: string
           expires_at: string | null
           id: string
           is_active: boolean
@@ -624,10 +627,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          applicable_to?: string
           code: string
           created_at?: string
           current_uses?: number
+          discount_amount?: number | null
           discount_percentage: number
+          discount_type?: string
           expires_at?: string | null
           id?: string
           is_active?: boolean
@@ -635,10 +641,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          applicable_to?: string
           code?: string
           created_at?: string
           current_uses?: number
+          discount_amount?: number | null
           discount_percentage?: number
+          discount_type?: string
           expires_at?: string | null
           id?: string
           is_active?: boolean

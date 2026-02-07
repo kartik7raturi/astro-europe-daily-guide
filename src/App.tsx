@@ -24,6 +24,7 @@ import TwinFlameAnalysis from "./pages/TwinFlameAnalysis";
 import KarmicBonds from "./pages/KarmicBonds";
 import MeetingPrediction from "./pages/MeetingPrediction";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import Checkout from "./pages/Checkout";
 import AIChat from "./pages/AIChat";
 import UserProfile from "./pages/UserProfile";
@@ -84,6 +85,7 @@ const App = () => (
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/shop" element={<Shop />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/order-tracking" element={<OrderTracking />} />
