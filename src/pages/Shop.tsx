@@ -1,19 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ShoppingCart, Star, Package, Sparkles, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import ProductReviews from "@/components/ProductReviews";
-import ProductImageCarousel from "@/components/ProductImageCarousel";
 import SponsorBanner from "@/components/SponsorBanner";
 import TrustBadges from "@/components/TrustBadges";
 import ProductRating from "@/components/ProductRating";
 import ProductShippingInfo from "@/components/ProductShippingInfo";
+import ShopFilters from "@/components/ShopFilters";
 
 interface Product {
   id: string;
@@ -25,6 +23,7 @@ interface Product {
   additional_images: string[];
   features: string[];
   popular?: boolean;
+  created_at: string;
 }
 
 const Shop = () => {
@@ -35,9 +34,14 @@ const Shop = () => {
   const [cart, setCart] = useState<string[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const affiliateRef = searchParams.get("ref");
+
+  // Filter states
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   // Store affiliate ref in session storage for tracking
   useEffect(() => {
@@ -65,19 +69,23 @@ const Shop = () => {
       if (error) throw error;
 
       if (data && data.length > 0) {
-        setProducts(
-          data.map((p) => ({
-            id: p.id,
-            name: p.name,
-            description: p.description || "",
-            price: Number(p.price),
-            category: p.category || "General",
-            image_url: p.image_url || "",
-            additional_images: (p.additional_images || []) as string[],
-            features: (Array.isArray(p.features) ? p.features : []) as string[],
-            popular: p.category === "Numerology" || p.category === "Predictions",
-          }))
-        );
+        const mappedProducts = data.map((p) => ({
+          id: p.id,
+          name: p.name,
+          description: p.description || "",
+          price: Number(p.price),
+          category: p.category || "General",
+          image_url: p.image_url || "",
+          additional_images: (p.additional_images || []) as string[],
+          features: (Array.isArray(p.features) ? p.features : []) as string[],
+          popular: p.category === "Numerology" || p.category === "Predictions",
+          created_at: p.created_at,
+        }));
+        setProducts(mappedProducts);
+        
+        // Set initial max price
+        const maxPrice = Math.max(...mappedProducts.map(p => p.price), 10000);
+        setPriceRange([0, maxPrice]);
       }
     } catch (error) {
       console.error("Error loading products:", error);
@@ -88,6 +96,58 @@ const Shop = () => {
       });
     }
   };
+
+  // Get unique categories
+  const categories = useMemo(() => {
+    const cats = [...new Set(products.map(p => p.category))];
+    return cats.filter(Boolean);
+  }, [products]);
+
+  // Get max price
+  const maxPrice = useMemo(() => {
+    return Math.max(...products.map(p => p.price), 10000);
+  }, [products]);
+
+  // Filtered and sorted products
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    // Filter by search
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(p => 
+        p.name.toLowerCase().includes(query) || 
+        p.description.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== "all") {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+
+    // Filter by price
+    result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+
+    // Sort
+    switch (sortBy) {
+      case "price-low":
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case "name":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "newest":
+      default:
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+
+    return result;
+  }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
 
   const loadCart = async () => {
     if (!user) return;
@@ -115,7 +175,6 @@ const Shop = () => {
 
     setAddingToCart(productId);
     try {
-      // Check if already in cart
       const { data: existing } = await supabase
         .from("cart_items")
         .select("id, quantity")
@@ -124,7 +183,6 @@ const Shop = () => {
         .single();
 
       if (existing) {
-        // Update quantity
         const { error } = await supabase
           .from("cart_items")
           .update({ quantity: existing.quantity + 1 })
@@ -132,7 +190,6 @@ const Shop = () => {
         
         if (error) throw error;
       } else {
-        // Insert new item
         const { error } = await supabase
           .from("cart_items")
           .insert({
@@ -177,7 +234,9 @@ const Shop = () => {
     }
   };
 
-  const toggleWishlist = async (productId: string) => {
+  const toggleWishlist = async (productId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
     if (!user) {
       toast({
         title: "Sign In Required",
@@ -223,50 +282,6 @@ const Shop = () => {
     }
   };
 
-  const handleBuyNow = async (product: Product) => {
-    if (!user) {
-      toast({
-        title: "Sign In Required",
-        description: "Please sign in to make a purchase",
-        variant: "destructive"
-      });
-      navigate("/auth");
-      return;
-    }
-
-    try {
-      // Check if already in cart
-      const { data: existing } = await supabase
-        .from("cart_items")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("product_id", product.id)
-        .single();
-
-      if (!existing) {
-        const { error: cartError } = await supabase
-          .from("cart_items")
-          .insert({
-            user_id: user.id,
-            product_id: product.id,
-            quantity: 1
-          });
-
-        if (cartError) throw cartError;
-      }
-
-      // Navigate to fullscreen checkout page
-      navigate("/checkout");
-    } catch (error) {
-      console.error("Error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to process. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "Love":
@@ -290,7 +305,7 @@ const Shop = () => {
         <TrustBadges />
         
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-6">
             Astrology Shop
           </h1>
@@ -319,9 +334,23 @@ const Shop = () => {
           </div>
         </div>
 
+        {/* Filters */}
+        <ShopFilters
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          priceRange={priceRange}
+          onPriceRangeChange={setPriceRange}
+          maxPrice={maxPrice}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+        />
+
         {/* Products Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Card 
               key={product.id}
               className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
@@ -329,6 +358,7 @@ const Shop = () => {
                   ? 'border-primary shadow-cosmic' 
                   : 'border-border hover:border-primary/50'
               }`}
+              onClick={() => navigate(`/product/${product.id}`)}
             >
               {product.popular && (
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
@@ -343,20 +373,14 @@ const Shop = () => {
                 variant="ghost"
                 size="icon"
                 className="absolute top-4 right-4 z-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleWishlist(product.id);
-                }}
+                onClick={(e) => toggleWishlist(product.id, e)}
               >
                 <Heart 
                   className={`w-5 h-5 ${wishlist.includes(product.id) ? 'fill-primary text-primary' : ''}`}
                 />
               </Button>
 
-              <CardHeader 
-                className="text-center pb-6 pt-6 cursor-pointer"
-                onClick={() => setSelectedProduct(product)}
-              >
+              <CardHeader className="text-center pb-6 pt-6">
                 {/* Product Image or Fallback */}
                 <div className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                   {product.image_url ? (
@@ -378,7 +402,7 @@ const Shop = () => {
                   {product.category}
                 </Badge>
                 <CardTitle className="text-xl font-bold">{product.name}</CardTitle>
-                <CardDescription className="text-muted-foreground text-sm">
+                <CardDescription className="text-muted-foreground text-sm line-clamp-2">
                   {product.description}
                 </CardDescription>
                 <div className="pt-2">
@@ -403,14 +427,20 @@ const Shop = () => {
                 <div className="space-y-2">
                   <Button 
                     className="w-full bg-gradient-cosmic text-primary-foreground"
-                    onClick={() => handleBuyNow(product)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/${product.id}`);
+                    }}
                   >
-                    Buy Now
+                    View Details
                   </Button>
                   <Button 
                     variant="outline"
                     className="w-full"
-                    onClick={() => handleAddToCart(product.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product.id);
+                    }}
                     disabled={addingToCart === product.id}
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
@@ -422,85 +452,13 @@ const Shop = () => {
           ))}
         </div>
 
-        {products.length === 0 && (
+        {filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <Sparkles className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No Products Available</h3>
-            <p className="text-muted-foreground">Check back soon for new products!</p>
+            <h3 className="text-xl font-semibold mb-2">No Products Found</h3>
+            <p className="text-muted-foreground">Try adjusting your filters or search query</p>
           </div>
         )}
-
-        {/* Product Detail Dialog */}
-        <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              {selectedProduct && (
-                <ProductImageCarousel
-                  mainImage={selectedProduct.image_url}
-                  additionalImages={selectedProduct.additional_images}
-                  productName={selectedProduct.name}
-                  category={selectedProduct.category}
-                />
-              )}
-              
-              <Badge variant="outline">{selectedProduct?.category}</Badge>
-              
-              <p className="text-muted-foreground">{selectedProduct?.description}</p>
-              
-              {selectedProduct && <ProductRating productId={selectedProduct.id} size="md" />}
-              
-              <div className="text-3xl font-bold text-primary">₹{selectedProduct?.price}</div>
-              
-              <ProductShippingInfo />
-              
-              <div>
-                <h3 className="font-semibold mb-2">Features:</h3>
-                <ul className="space-y-2">
-                  {selectedProduct?.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Star className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <Button 
-                  className="flex-1 bg-gradient-cosmic text-primary-foreground"
-                  onClick={() => {
-                    if (selectedProduct) handleBuyNow(selectedProduct);
-                    setSelectedProduct(null);
-                  }}
-                >
-                  Buy Now
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    if (selectedProduct) handleAddToCart(selectedProduct.id);
-                    setSelectedProduct(null);
-                  }}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart
-                </Button>
-              </div>
-
-              {/* Product Reviews */}
-              {selectedProduct && (
-                <ProductReviews 
-                  productId={selectedProduct.id} 
-                  productName={selectedProduct.name} 
-                />
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

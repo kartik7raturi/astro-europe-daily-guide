@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import FeatureGate from "@/components/FeatureGate";
 import { 
   Stars, 
   Sparkles, 
@@ -15,8 +17,8 @@ import {
   Target, 
   Calendar,
   LogOut,
-  User,
-  Settings
+  Settings,
+  Crown
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -49,6 +51,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { tier, tierLevel, isAdmin, hasActiveSubscription } = useFeatureAccess();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -202,7 +205,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="bg-background/80 backdrop-blur-sm border-b border-primary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="flex items-center space-x-4">
               <Stars className="h-8 w-8 text-primary" />
               <div>
@@ -210,7 +213,20 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground">Welcome back, {profile.full_name}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Subscription Badge */}
+              <Badge 
+                variant={hasActiveSubscription ? "default" : "secondary"}
+                className={`flex items-center gap-1 ${hasActiveSubscription ? 'bg-gradient-cosmic' : ''}`}
+              >
+                <Crown className="h-3 w-3" />
+                {isAdmin ? 'Admin' : tier.charAt(0).toUpperCase() + tier.slice(1)} Plan
+              </Badge>
+              {!hasActiveSubscription && !isAdmin && (
+                <Button variant="outline" size="sm" onClick={() => navigate("/pricing")}>
+                  Upgrade
+                </Button>
+              )}
               <Button variant="ghost" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
@@ -350,44 +366,48 @@ const Dashboard = () => {
 
           {/* Life & Career Tab */}
           <TabsContent value="life" className="space-y-6">
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle>Life & Career Analysis</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Get comprehensive insights into your life path, career opportunities, and future predictions
-                  based on numerology and your birth chart.
-                </p>
-                <Button 
-                  variant="cosmic"
-                  onClick={() => navigate("/life-career-analysis")}
-                >
-                  View Life & Career Analysis
-                </Button>
-              </CardContent>
-            </Card>
+            <FeatureGate minTier="explorer" showUpgradePrompt>
+              <Card className="bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle>Life & Career Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    Get comprehensive insights into your life path, career opportunities, and future predictions
+                    based on numerology and your birth chart.
+                  </p>
+                  <Button 
+                    variant="cosmic"
+                    onClick={() => navigate("/life-career-analysis")}
+                  >
+                    View Life & Career Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </FeatureGate>
           </TabsContent>
 
           {/* Soulmate Analysis Tab */}
           <TabsContent value="soulmate" className="space-y-6">
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle>Soulmate Compatibility</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Discover your perfect match using the ancient 36 Guna system from Hindu astrology. 
-                  Enter your partner's details to analyze compatibility across all aspects of life.
-                </p>
-                <Button 
-                  variant="cosmic" 
-                  onClick={() => navigate("/soulmate-analysis")}
-                >
-                  Start Compatibility Analysis
-                </Button>
-              </CardContent>
-            </Card>
+            <FeatureGate minTier="starter" showUpgradePrompt>
+              <Card className="bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle>Soulmate Compatibility</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    Discover your perfect match using the ancient 36 Guna system from Hindu astrology. 
+                    Enter your partner's details to analyze compatibility across all aspects of life.
+                  </p>
+                  <Button 
+                    variant="cosmic" 
+                    onClick={() => navigate("/soulmate-analysis")}
+                  >
+                    Start Compatibility Analysis
+                  </Button>
+                </CardContent>
+              </Card>
+            </FeatureGate>
           </TabsContent>
         </Tabs>
       </div>

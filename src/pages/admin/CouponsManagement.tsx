@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Plus, Edit, Trash2, Tag } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Plus, Edit, Trash2, Tag, Percent, IndianRupee } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +30,9 @@ interface Coupon {
   id: string;
   code: string;
   discount_percentage: number;
+  discount_type: string;
+  discount_amount: number;
+  applicable_to: string;
   max_uses: number;
   current_uses: number;
   is_active: boolean;
@@ -42,6 +46,8 @@ const CouponsManagement = () => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
+  const [discountType, setDiscountType] = useState<string>("percentage");
+  const [applicableTo, setApplicableTo] = useState<string>("all");
 
   useEffect(() => {
     checkAdmin();
@@ -59,9 +65,9 @@ const CouponsManagement = () => {
       .select("role")
       .eq("user_id", user.id)
       .eq("role", "admin")
-      .single();
+      .maybeSingle();
 
-    if (!data) {
+    if (!data && user.email !== "sankhobusiness@gmail.com") {
       navigate("/");
     }
   };
@@ -82,7 +88,12 @@ const CouponsManagement = () => {
     }
 
     if (data) {
-      setCoupons(data);
+      setCoupons(data.map(c => ({
+        ...c,
+        discount_type: c.discount_type || 'percentage',
+        discount_amount: c.discount_amount || 0,
+        applicable_to: c.applicable_to || 'all'
+      })));
     }
   };
 
@@ -92,7 +103,10 @@ const CouponsManagement = () => {
 
     const couponData = {
       code: (formData.get("code") as string).toUpperCase(),
-      discount_percentage: parseInt(formData.get("discount") as string),
+      discount_percentage: discountType === 'percentage' ? parseInt(formData.get("discountValue") as string) : 0,
+      discount_type: discountType,
+      discount_amount: discountType === 'fixed' ? parseFloat(formData.get("discountValue") as string) : 0,
+      applicable_to: applicableTo,
       max_uses: parseInt(formData.get("maxUses") as string),
       expires_at: (formData.get("expiresAt") as string) || null,
       is_active: true,
@@ -139,6 +153,8 @@ const CouponsManagement = () => {
 
     setIsDialogOpen(false);
     setEditingCoupon(null);
+    setDiscountType("percentage");
+    setApplicableTo("all");
     loadCoupons();
   };
 
@@ -185,6 +201,36 @@ const CouponsManagement = () => {
     loadCoupons();
   };
 
+  const getApplicableLabel = (type: string) => {
+    switch (type) {
+      case 'credits': return 'Credits Only';
+      case 'products': return 'Shop Products';
+      case 'all': return 'All';
+      default: return type;
+    }
+  };
+
+  const getDiscountDisplay = (coupon: Coupon) => {
+    if (coupon.discount_type === 'fixed') {
+      return `₹${coupon.discount_amount}`;
+    }
+    return `${coupon.discount_percentage}%`;
+  };
+
+  const openEditDialog = (coupon: Coupon) => {
+    setEditingCoupon(coupon);
+    setDiscountType(coupon.discount_type || 'percentage');
+    setApplicableTo(coupon.applicable_to || 'all');
+    setIsDialogOpen(true);
+  };
+
+  const openCreateDialog = () => {
+    setEditingCoupon(null);
+    setDiscountType("percentage");
+    setApplicableTo("all");
+    setIsDialogOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
       <div className="max-w-7xl mx-auto">
@@ -199,22 +245,19 @@ const CouponsManagement = () => {
 
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-4">
               <CardTitle className="flex items-center gap-2">
                 <Tag className="w-5 h-5" />
                 All Coupons
               </CardTitle>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="cosmic"
-                    onClick={() => setEditingCoupon(null)}
-                  >
+                  <Button variant="cosmic" onClick={openCreateDialog}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Coupon
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>
                       {editingCoupon ? "Edit Coupon" : "Add New Coupon"}
@@ -231,18 +274,66 @@ const CouponsManagement = () => {
                         required
                       />
                     </div>
+                    
                     <div>
-                      <Label htmlFor="discount">Discount Percentage</Label>
+                      <Label>Discount Type</Label>
+                      <Select value={discountType} onValueChange={setDiscountType}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="percentage">
+                            <div className="flex items-center gap-2">
+                              <Percent className="w-4 h-4" />
+                              Percentage Discount
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="fixed">
+                            <div className="flex items-center gap-2">
+                              <IndianRupee className="w-4 h-4" />
+                              Fixed Amount (₹)
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="discountValue">
+                        {discountType === 'percentage' ? 'Discount Percentage' : 'Discount Amount (₹)'}
+                      </Label>
                       <Input
-                        id="discount"
-                        name="discount"
+                        id="discountValue"
+                        name="discountValue"
                         type="number"
                         min="0"
-                        max="100"
-                        defaultValue={editingCoupon?.discount_percentage}
+                        max={discountType === 'percentage' ? 100 : undefined}
+                        step={discountType === 'fixed' ? '0.01' : '1'}
+                        defaultValue={
+                          editingCoupon 
+                            ? (discountType === 'percentage' 
+                                ? editingCoupon.discount_percentage 
+                                : editingCoupon.discount_amount)
+                            : ''
+                        }
                         required
                       />
                     </div>
+
+                    <div>
+                      <Label>Applicable To</Label>
+                      <Select value={applicableTo} onValueChange={setApplicableTo}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All (Credits & Products)</SelectItem>
+                          <SelectItem value="credits">Credits Only</SelectItem>
+                          <SelectItem value="products">Shop Products Only</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div>
                       <Label htmlFor="maxUses">Max Uses</Label>
                       <Input
@@ -250,7 +341,7 @@ const CouponsManagement = () => {
                         name="maxUses"
                         type="number"
                         min="1"
-                        defaultValue={editingCoupon?.max_uses || 1}
+                        defaultValue={editingCoupon?.max_uses || 100}
                         required
                       />
                     </div>
@@ -277,12 +368,14 @@ const CouponsManagement = () => {
               </Dialog>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Code</TableHead>
                   <TableHead>Discount</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Applicable To</TableHead>
                   <TableHead>Uses</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Expires</TableHead>
@@ -295,17 +388,29 @@ const CouponsManagement = () => {
                     <TableCell className="font-mono font-bold">
                       {coupon.code}
                     </TableCell>
-                    <TableCell>{coupon.discount_percentage}%</TableCell>
+                    <TableCell className="font-semibold text-primary">
+                      {getDiscountDisplay(coupon)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {coupon.discount_type === 'fixed' ? 'Fixed' : 'Percentage'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {getApplicableLabel(coupon.applicable_to)}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       {coupon.current_uses} / {coupon.max_uses}
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={
+                        className={`cursor-pointer ${
                           coupon.is_active
-                            ? "bg-green-500"
-                            : "bg-gray-500"
-                        }
+                            ? "bg-green-500 hover:bg-green-600"
+                            : "bg-gray-500 hover:bg-gray-600"
+                        }`}
                         onClick={() => toggleActive(coupon)}
                       >
                         {coupon.is_active ? "Active" : "Inactive"}
@@ -321,10 +426,7 @@ const CouponsManagement = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
-                            setEditingCoupon(coupon);
-                            setIsDialogOpen(true);
-                          }}
+                          onClick={() => openEditDialog(coupon)}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -339,6 +441,13 @@ const CouponsManagement = () => {
                     </TableCell>
                   </TableRow>
                 ))}
+                {coupons.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                      No coupons found. Create your first coupon!
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
