@@ -24,7 +24,7 @@ const UpdatesManagement = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [sendResult, setSendResult] = useState<{ sent: number; failed: number } | null>(null);
+  const [sendResult, setSendResult] = useState<{ sent: number; failed: number; results?: any[] } | null>(null);
 
   // Email fields
   const [subject, setSubject] = useState("");
@@ -193,10 +193,19 @@ const UpdatesManagement = () => {
 
       if (error) throw error;
 
-      setSendResult({ sent: data.sent, failed: data.failed });
+      setSendResult({ sent: data.sent, failed: data.failed, results: data.results });
+      
+      const failedEmails = data.results?.filter((r: any) => !r.success) || [];
+      const failedDetails = failedEmails.length > 0 
+        ? failedEmails.map((r: any) => `${r.email}: ${r.error}`).join('\n') 
+        : '';
+      
       toast({
         title: `Emails sent: ${data.sent}/${selected.length}`,
-        description: data.failed > 0 ? `${data.failed} failed` : "All sent successfully!",
+        description: data.failed > 0 
+          ? `${data.failed} failed. ${failedDetails.slice(0, 200)}` 
+          : "All sent successfully!",
+        variant: data.failed > 0 ? "destructive" : "default",
       });
     } catch (err: any) {
       toast({ title: "Error sending emails", description: err.message, variant: "destructive" });
