@@ -54,6 +54,7 @@ import Affiliate from "./pages/Affiliate";
 import AffiliateManagement from "./pages/admin/AffiliateManagement";
 import CustomerSupportManagement from "./pages/admin/CustomerSupportManagement";
 import SponsorsManagement from "./pages/admin/SponsorsManagement";
+import UpdatesManagement from "./pages/admin/UpdatesManagement";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -103,6 +104,7 @@ const App = () => (
               <Route path="/admin/affiliates" element={<AffiliateManagement />} />
               <Route path="/admin/support" element={<CustomerSupportManagement />} />
               <Route path="/admin/sponsors" element={<SponsorsManagement />} />
+              <Route path="/admin/updates" element={<UpdatesManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

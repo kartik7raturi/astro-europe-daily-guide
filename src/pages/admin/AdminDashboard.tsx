@@ -154,6 +154,13 @@ const AdminDashboard = () => {
       path: "/admin/sponsors",
       color: "text-amber-500",
     },
+    {
+      title: "Email Updates",
+      description: "Send bulk emails to customers",
+      icon: MessageCircle,
+      path: "/admin/updates",
+      color: "text-teal-500",
+    },
   ];
 
   return (

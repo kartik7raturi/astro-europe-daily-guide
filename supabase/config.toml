@@ -41,6 +41,9 @@ verify_jwt = false
 [functions.create-razorpay-order]
 verify_jwt = false
 
+[functions.send-bulk-email]
+verify_jwt = false
+
 [db]
 port = 54322
 
