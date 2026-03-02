@@ -447,6 +447,13 @@ const Shop = () => {
                     {addingToCart === product.id ? "Adding..." : "Add to Cart"}
                   </Button>
                 </div>
+
+                {/* Product Description */}
+                {product.description && (
+                  <p className="text-xs text-muted-foreground mt-3 line-clamp-3 border-t pt-3">
+                    {product.description}
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -55,7 +55,7 @@ const Home = () => {
     },
     {
       question: "How often should I check my astro insights?",
-      answer: "Daily readings are updated every day at midnight CET. Many users find checking their reading each morning helps set a positive intention for the day, but use them as often as feels right for you."
+      answer: "Our readings are updated every day at midnight IST. Many users find checking their reading each morning helps set a positive intention for the day, but use them as often as feels right for you."
     },
     {
       question: "Do you offer personalized consultations?",
@@ -371,7 +371,7 @@ const Home = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      {new Date(post.date).toLocaleDateString('en-EU', { 
+                      {new Date(post.date).toLocaleDateString('en-IN', { 
                         year: 'numeric', 
                         month: 'long', 
                         day: 'numeric' 
@@ -410,7 +410,7 @@ const Home = () => {
               Weekly Cosmic Newsletter
             </h2>
             <p className="text-primary-foreground/90 mb-8 text-lg max-w-2xl mx-auto">
-              Get exclusive weekly insights, cosmic forecasts, and premium astrological content delivered directly to your inbox. Join our community of cosmic seekers across Europe.
+              Get exclusive weekly insights, cosmic forecasts, and premium astrological content delivered directly to your inbox. Join our community of cosmic seekers across India.
             </p>
             
             <form onSubmit={handleNewsletterSignup} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
@@ -502,8 +502,8 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">What Our Users Say</h2>
-            <p className="text-muted-foreground text-lg">
-              Discover how astrovibe.online has transformed lives across Europe
+           <p className="text-muted-foreground text-lg">
+              See how astrovibe.online is changing lives across India
             </p>
           </div>
 
@@ -511,20 +511,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The daily horoscope readings are incredibly accurate and insightful. I've been using astrovibe.online for 6 months and it's helped me make better decisions in my career and relationships."
+                  "Bahut sahi predictions milti hain yahan pe! Maine 6 mahine se use kar raha hoon aur career mein bahut help mili. Daily horoscope padhna ab meri aadat ban gayi hai."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    M
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">R</div>
                   <div>
-                    <p className="font-semibold">Maria Schmidt</p>
-                    <p className="text-sm text-muted-foreground">Berlin, Germany</p>
+                    <p className="font-semibold">Rahul Sharma</p>
+                    <p className="text-sm text-muted-foreground">Mumbai, Maharashtra</p>
                   </div>
                 </div>
               </CardContent>
@@ -533,20 +529,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The love forecasts feature helped me understand my relationship patterns better. I met my soulmate just as the app predicted - at an art gallery during spring!"
+                  "Love forecast feature ne meri life change kar di! Soulmate sketch bilkul accurate tha. Mujhe apna partner mil gaya exactly jaisa app ne bataya tha. Thank you astrovibe!"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    A
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">P</div>
                   <div>
-                    <p className="font-semibold">Alessandro Rossi</p>
-                    <p className="text-sm text-muted-foreground">Milan, Italy</p>
+                    <p className="font-semibold">Priya Patel</p>
+                    <p className="text-sm text-muted-foreground">Ahmedabad, Gujarat</p>
                   </div>
                 </div>
               </CardContent>
@@ -555,20 +547,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The numerology reports gave me such clarity about my life path. The detailed analysis helped me choose the right career direction and I couldn't be happier!"
+                  "Numerology report ne mujhe clarity di ki mera life path kya hai. Career direction samajh mein aa gayi aur ab main bahut khush hoon apne decisions se."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    S
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">A</div>
                   <div>
-                    <p className="font-semibold">Sophie Dubois</p>
-                    <p className="text-sm text-muted-foreground">Paris, France</p>
+                    <p className="font-semibold">Ankit Verma</p>
+                    <p className="text-sm text-muted-foreground">Delhi, NCR</p>
                   </div>
                 </div>
               </CardContent>
@@ -577,20 +565,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "I was skeptical at first, but the daily affirmations and cosmic guidance have genuinely improved my mindset and brought more positivity into my life."
+                  "Pehle mujhe believe nahi tha astrology pe, lekin daily affirmations aur guidance ne meri soch badal di. Ab har subah app check karna mera routine hai. Bohot positive feel hota hai!"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    L
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">S</div>
                   <div>
-                    <p className="font-semibold">Lars Andersen</p>
-                    <p className="text-sm text-muted-foreground">Copenhagen, Denmark</p>
+                    <p className="font-semibold">Sneha Reddy</p>
+                    <p className="text-sm text-muted-foreground">Hyderabad, Telangana</p>
                   </div>
                 </div>
               </CardContent>
@@ -599,20 +583,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The astro journal feature has become part of my daily routine. Tracking my mood with planetary influences has helped me understand myself so much better."
+                  "Astro journal feature meri daily routine ka hissa ban gayi hai. Mood tracking with planets wala concept bahut unique hai. Apne aap ko samajhna easy ho gaya hai."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    E
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">D</div>
                   <div>
-                    <p className="font-semibold">Elena Petrov</p>
-                    <p className="text-sm text-muted-foreground">Prague, Czech Republic</p>
+                    <p className="font-semibold">Deepak Kumar</p>
+                    <p className="text-sm text-muted-foreground">Bangalore, Karnataka</p>
                   </div>
                 </div>
               </CardContent>
@@ -621,20 +601,16 @@ const Home = () => {
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="flex text-accent text-lg">
-                    ★★★★★
-                  </div>
+                  <div className="flex text-accent text-lg">★★★★★</div>
                 </div>
                 <p className="text-foreground mb-4 italic">
-                  "The crush analyzer was surprisingly accurate! It helped me understand compatibility patterns and gave me confidence to pursue meaningful connections."
+                  "Crush analyzer sach mein kaam karta hai! Compatibility patterns samajh aaye aur mujhe confidence mila apne crush se baat karne ka. Ab hum saath mein hain! 😊"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                    J
-                  </div>
+                  <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">M</div>
                   <div>
-                    <p className="font-semibold">James Thompson</p>
-                    <p className="text-sm text-muted-foreground">London, UK</p>
+                    <p className="font-semibold">Meera Iyer</p>
+                    <p className="text-sm text-muted-foreground">Chennai, Tamil Nadu</p>
                   </div>
                 </div>
               </CardContent>
@@ -643,7 +619,7 @@ const Home = () => {
 
           <div className="text-center mt-12">
             <p className="text-muted-foreground">
-              Join over 50,000+ satisfied users across Europe
+              Join 50,000+ happy users across India
             </p>
           </div>
         </div>

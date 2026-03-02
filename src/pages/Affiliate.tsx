@@ -129,8 +129,8 @@ const Affiliate = () => {
         .insert({
           user_id: user.id,
           affiliate_code: affiliateCode,
-          commission_rate: 10.00,
-          status: "pending",
+        commission_rate: 25.00,
+          status: "approved",
         })
         .select()
         .single();
@@ -142,8 +142,8 @@ const Affiliate = () => {
         payment_details: null
       });
       toast({
-        title: "Registration Submitted!",
-        description: "Your affiliate application is under review.",
+        title: "Welcome, Affiliate Partner! 🎉",
+        description: "You're approved! Start sharing your link and earn 25% commission.",
       });
     } catch (error: any) {
       console.error("Error registering:", error);
@@ -202,17 +202,17 @@ const Affiliate = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-starlight py-12 px-4">
+      <div className="min-h-screen bg-gradient-starlight py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Gift className="w-20 h-20 mx-auto text-primary mb-6" />
-          <h1 className="text-4xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-            Join Our Affiliate Program
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
+            Earn 25% Commission — Join Free!
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Earn commissions by sharing our astrology products with your audience
+            Share astrology products and earn ₹25 on every ₹100 sale. Sign in to get started instantly!
           </p>
           <Button variant="cosmic" size="lg" onClick={() => navigate("/auth")}>
-            Sign In to Get Started
+            Sign In to Start Earning
           </Button>
         </div>
       </div>
@@ -229,70 +229,175 @@ const Affiliate = () => {
 
   if (!affiliate) {
     return (
-      <div className="min-h-screen bg-gradient-starlight py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <Gift className="w-20 h-20 mx-auto text-primary mb-6" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-              Become an Affiliate Partner
+      <div className="min-h-screen bg-gradient-starlight">
+        {/* Hero Section */}
+        <section className="relative py-20 px-4 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-cosmic opacity-10"></div>
+          <div className="max-w-5xl mx-auto text-center relative z-10">
+            <Badge variant="outline" className="mb-4 text-sm px-4 py-1 border-primary/40">
+              💰 India's Best Affiliate Program
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-6">
+              Earn ₹25 on Every ₹100 Sale
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join our affiliate program and earn 10% commission on every sale you refer
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-4">
+              Join AstroVibe's affiliate program and earn <span className="text-primary font-bold">25% commission</span> on every sale. 
+              No approval wait — start earning instantly!
             </p>
+            <p className="text-lg text-muted-foreground mb-8">
+              Share your link → Someone buys → You get paid. It's that simple! 🚀
+            </p>
+            <Button
+              variant="cosmic"
+              size="lg"
+              className="text-xl px-10 py-6 h-auto"
+              onClick={registerAsAffiliate}
+              disabled={registering}
+            >
+              {registering ? "Setting Up..." : "Start Earning Now — It's Free!"}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-3">✅ Instant approval • No fees • No minimum payout</p>
           </div>
+        </section>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Share2 className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-2">Share Your Link</h3>
-                <p className="text-sm text-muted-foreground">
-                  Get your unique referral link and share it with your audience
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-2">Refer Customers</h3>
-                <p className="text-sm text-muted-foreground">
-                  When someone makes a purchase through your link, you earn commission
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <DollarSign className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-2">Get Paid</h3>
-                <p className="text-sm text-muted-foreground">
-                  Receive 10% commission on every successful referral
-                </p>
-              </CardContent>
-            </Card>
+        {/* Commission Calculator */}
+        <section className="py-16 px-4 bg-card/30">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-8">See How Much You Can Earn 💸</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="border-primary/30 bg-card/80">
+                <CardContent className="pt-6 text-center">
+                  <p className="text-muted-foreground mb-2">5 sales/month</p>
+                  <p className="text-4xl font-bold text-primary">₹625+</p>
+                  <p className="text-sm text-muted-foreground mt-1">per month</p>
+                </CardContent>
+              </Card>
+              <Card className="border-primary shadow-cosmic bg-card/80">
+                <CardContent className="pt-6 text-center">
+                  <Badge className="mb-2">Most Common</Badge>
+                  <p className="text-muted-foreground mb-2">20 sales/month</p>
+                  <p className="text-4xl font-bold text-primary">₹2,500+</p>
+                  <p className="text-sm text-muted-foreground mt-1">per month</p>
+                </CardContent>
+              </Card>
+              <Card className="border-primary/30 bg-card/80">
+                <CardContent className="pt-6 text-center">
+                  <p className="text-muted-foreground mb-2">50 sales/month</p>
+                  <p className="text-4xl font-bold text-primary">₹6,250+</p>
+                  <p className="text-sm text-muted-foreground mt-1">per month</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
+        </section>
 
-          <Card className="max-w-md mx-auto">
-            <CardContent className="pt-6 text-center">
-              <Button
-                variant="cosmic"
-                size="lg"
-                onClick={registerAsAffiliate}
-                disabled={registering}
-              >
-                {registering ? "Registering..." : "Apply Now"}
-              </Button>
-              <p className="text-xs text-muted-foreground mt-4">
-                By registering, you agree to our affiliate terms and conditions
-              </p>
-            </CardContent>
+        {/* How It Works */}
+        <section className="py-16 px-4">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-12">Sirf 3 Steps Mein Shuru Karo</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-12 h-12 bg-gradient-cosmic flex items-center justify-center text-primary-foreground font-bold text-xl rounded-br-2xl">1</div>
+                <CardContent className="pt-14 text-center">
+                  <Share2 className="w-12 h-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Sign Up Free</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Click the button, get your unique link instantly. No wait, no approval needed!
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-12 h-12 bg-gradient-cosmic flex items-center justify-center text-primary-foreground font-bold text-xl rounded-br-2xl">2</div>
+                <CardContent className="pt-14 text-center">
+                  <Users className="w-12 h-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Share Your Link</h3>
+                  <p className="text-sm text-muted-foreground">
+                    WhatsApp, Instagram, YouTube, blog — share anywhere! Jab koi buy kare, aapko commission mile.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-12 h-12 bg-gradient-cosmic flex items-center justify-center text-primary-foreground font-bold text-xl rounded-br-2xl">3</div>
+                <CardContent className="pt-14 text-center">
+                  <DollarSign className="w-12 h-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Get Paid ₹₹₹</h3>
+                  <p className="text-sm text-muted-foreground">
+                    25% commission seedha aapke UPI ya bank account mein. Track everything in real-time dashboard.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Join Us */}
+        <section className="py-16 px-4 bg-card/30">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-12">Kyun AstroVibe Affiliate Best Hai?</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { icon: "💰", title: "25% Commission — Highest in Industry", desc: "Dusre platforms 5-10% dete hain, hum dete hain 25%! Har sale pe maximum earning." },
+                { icon: "⚡", title: "Instant Approval", desc: "Koi wait nahi, koi rejection nahi. Sign up karo aur turant sharing shuru karo." },
+                { icon: "📊", title: "Real-time Analytics Dashboard", desc: "Apni sales, clicks, aur earnings track karo live dashboard pe. Full transparency." },
+                { icon: "🏦", title: "Easy Payout via UPI/Bank", desc: "Commission seedha aapke UPI ID ya bank account mein. No minimum payout limit." },
+                { icon: "🔗", title: "Lifetime Cookie Tracking", desc: "Ek baar koi aapke link se aaye, toh unki future purchases pe bhi commission milega." },
+                { icon: "🎯", title: "High Conversion Products", desc: "Astrology products ki demand bahut zyada hai India mein. Conversion rate bahut acha hai!" },
+              ].map((item, idx) => (
+                <Card key={idx} className="bg-card/80">
+                  <CardContent className="p-6 flex items-start gap-4">
+                    <span className="text-3xl">{item.icon}</span>
+                    <div>
+                      <h3 className="font-bold mb-1">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-16 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-12">Hamare Affiliates Kya Kehte Hain</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="bg-card/50 border-primary/20">
+                <CardContent className="p-6">
+                  <p className="italic text-foreground mb-4">"Maine pehle mahine mein hi ₹3,000+ kama liye sirf WhatsApp pe link share karke. Best side income!"</p>
+                  <p className="font-semibold">— Vikash K., Patna</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-card/50 border-primary/20">
+                <CardContent className="p-6">
+                  <p className="italic text-foreground mb-4">"25% commission bahut acha hai. Mere Instagram followers ko astrology pasand hai toh conversion bahut easy hai."</p>
+                  <p className="font-semibold">— Nisha M., Jaipur</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-20 px-4">
+          <Card className="max-w-3xl mx-auto bg-gradient-cosmic border-none p-10 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+              Abhi Join Karo, Abhi Kamana Shuru Karo!
+            </h2>
+            <p className="text-primary-foreground/90 text-lg mb-8">
+              Free signup • 25% commission • Instant approval • No risk
+            </p>
+            <Button
+              variant="gold"
+              size="lg"
+              className="text-xl px-10 py-6 h-auto"
+              onClick={registerAsAffiliate}
+              disabled={registering}
+            >
+              {registering ? "Setting Up..." : "Join Free — Start Earning 25% 🚀"}
+            </Button>
           </Card>
-        </div>
+        </section>
       </div>
     );
   }
