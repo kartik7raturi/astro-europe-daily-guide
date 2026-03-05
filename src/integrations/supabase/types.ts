@@ -246,43 +246,61 @@ export type Database = {
       }
       astrologers: {
         Row: {
+          availability: Json | null
           bio: string | null
+          consultation_types: string[] | null
           created_at: string
           experience_years: number | null
           hourly_rate: number | null
           id: string
           image_url: string | null
+          intro_video_url: string | null
           is_available: boolean | null
+          languages: string[] | null
           name: string
           rating: number | null
           specialization: string | null
+          status: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
+          availability?: Json | null
           bio?: string | null
+          consultation_types?: string[] | null
           created_at?: string
           experience_years?: number | null
           hourly_rate?: number | null
           id?: string
           image_url?: string | null
+          intro_video_url?: string | null
           is_available?: boolean | null
+          languages?: string[] | null
           name: string
           rating?: number | null
           specialization?: string | null
+          status?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          availability?: Json | null
           bio?: string | null
+          consultation_types?: string[] | null
           created_at?: string
           experience_years?: number | null
           hourly_rate?: number | null
           id?: string
           image_url?: string | null
+          intro_video_url?: string | null
           is_available?: boolean | null
+          languages?: string[] | null
           name?: string
           rating?: number | null
           specialization?: string | null
+          status?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -571,6 +589,112 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      consultation_bookings: {
+        Row: {
+          amount: number
+          astrologer_earning: number
+          astrologer_id: string
+          consultation_type: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          payment_id: string | null
+          payment_status: string
+          platform_commission: number
+          rating: number | null
+          review_text: string | null
+          scheduled_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          astrologer_earning?: number
+          astrologer_id: string
+          consultation_type?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          platform_commission?: number
+          rating?: number | null
+          review_text?: string | null
+          scheduled_at: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          astrologer_earning?: number
+          astrologer_id?: string
+          consultation_type?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          payment_id?: string | null
+          payment_status?: string
+          platform_commission?: number
+          rating?: number | null
+          review_text?: string | null
+          scheduled_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_bookings_astrologer_id_fkey"
+            columns: ["astrologer_id"]
+            isOneToOne: false
+            referencedRelation: "astrologers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_messages: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          message_type: string
+          sender_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          message_type?: string
+          sender_id: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          message_type?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultations: {
         Row: {
@@ -1127,6 +1251,30 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
         }
         Relationships: []
       }
@@ -1800,6 +1948,77 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          reference_id: string | null
+          type: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          total_earned: number
+          total_withdrawn: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_withdrawn?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_withdrawn?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wishlist: {
         Row: {
           created_at: string
@@ -1828,6 +2047,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          created_at: string
+          id: string
+          payment_details: Json | null
+          payment_method: string | null
+          processed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          payment_details?: Json | null
+          payment_method?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_details?: Json | null
+          payment_method?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

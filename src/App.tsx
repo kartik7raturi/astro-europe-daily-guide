@@ -55,6 +55,11 @@ import AffiliateManagement from "./pages/admin/AffiliateManagement";
 import CustomerSupportManagement from "./pages/admin/CustomerSupportManagement";
 import SponsorsManagement from "./pages/admin/SponsorsManagement";
 import UpdatesManagement from "./pages/admin/UpdatesManagement";
+import AstrologerRegistration from "./pages/AstrologerRegistration";
+import AstrologerDashboard from "./pages/AstrologerDashboard";
+import AstrologerProfile from "./pages/AstrologerProfile";
+import ConsultationChat from "./pages/ConsultationChat";
+import ConsultationManagement from "./pages/admin/ConsultationManagement";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -92,6 +97,10 @@ const App = () => (
                 <Route path="/order-tracking" element={<OrderTracking />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/affiliate" element={<Affiliate />} />
+                <Route path="/astrologer-register" element={<AstrologerRegistration />} />
+                <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
+                <Route path="/astrologer/:id" element={<AstrologerProfile />} />
+                <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/plans" element={<PlansManagement />} />
               <Route path="/admin/products" element={<ProductsManagement />} />
@@ -105,6 +114,7 @@ const App = () => (
               <Route path="/admin/support" element={<CustomerSupportManagement />} />
               <Route path="/admin/sponsors" element={<SponsorsManagement />} />
               <Route path="/admin/updates" element={<UpdatesManagement />} />
+              <Route path="/admin/consultations" element={<ConsultationManagement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
