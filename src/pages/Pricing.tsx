@@ -245,7 +245,7 @@ const Pricing = () => {
             title: "Payment Successful!",
             description: `Welcome to ${plan.name}! ${plan.credits ? `${plan.credits} credits added to your account.` : ''} Payment ID: ${response.razorpay_payment_id}`,
           });
-          window.location.href = '/dashboard';
+          window.location.href = `/thank-you?plan=${encodeURIComponent(plan.name)}`;
         },
         prefill: {
           name: '',
