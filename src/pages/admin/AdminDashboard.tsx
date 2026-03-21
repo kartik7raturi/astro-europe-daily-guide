@@ -161,6 +161,13 @@ const AdminDashboard = () => {
       path: "/admin/updates",
       color: "text-teal-500",
     },
+    {
+      title: "Manage Pages",
+      description: "Customize Thank You page and other pages",
+      icon: Layout,
+      path: "/admin/pages",
+      color: "text-violet-500",
+    },
   ];
 
   return (

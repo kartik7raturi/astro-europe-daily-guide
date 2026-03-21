@@ -37,6 +37,7 @@ import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 import ComboOffersManagement from "./pages/admin/ComboOffersManagement";
 import BlogManagement from "./pages/admin/BlogManagement";
 import PlansManagement from "./pages/admin/PlansManagement";
+import ManagePages from "./pages/admin/ManagePages";
 import Numerology from "./pages/Numerology";
 import AstroCalendar from "./pages/AstroCalendar";
 import LuckyElements from "./pages/LuckyElements";
@@ -60,6 +61,9 @@ import AstrologerDashboard from "./pages/AstrologerDashboard";
 import AstrologerProfile from "./pages/AstrologerProfile";
 import ConsultationChat from "./pages/ConsultationChat";
 import ConsultationManagement from "./pages/admin/ConsultationManagement";
+import TarotReading from "./pages/TarotReading";
+import ThankYou from "./pages/ThankYou";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -76,7 +80,6 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/horoscope" element={<HoroscopeForm />} />
                 <Route path="/daily-reading" element={<DailyReading />} />
-                
                 <Route path="/numerology" element={<Numerology />} />
                 <Route path="/astro-calendar" element={<AstroCalendar />} />
                 <Route path="/lucky-elements" element={<LuckyElements />} />
@@ -101,20 +104,23 @@ const App = () => (
                 <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
                 <Route path="/astrologer/:id" element={<AstrologerProfile />} />
                 <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/plans" element={<PlansManagement />} />
-              <Route path="/admin/products" element={<ProductsManagement />} />
-              <Route path="/admin/astrologers" element={<AstrologersManagement />} />
-              <Route path="/admin/orders" element={<OrdersManagement />} />
-              <Route path="/admin/coupons" element={<CouponsManagement />} />
-              <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
-              <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
-              <Route path="/admin/blog" element={<BlogManagement />} />
-              <Route path="/admin/affiliates" element={<AffiliateManagement />} />
-              <Route path="/admin/support" element={<CustomerSupportManagement />} />
-              <Route path="/admin/sponsors" element={<SponsorsManagement />} />
-              <Route path="/admin/updates" element={<UpdatesManagement />} />
-              <Route path="/admin/consultations" element={<ConsultationManagement />} />
+                <Route path="/tarot-reading" element={<TarotReading />} />
+                <Route path="/thank-you" element={<ThankYou />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/plans" element={<PlansManagement />} />
+                <Route path="/admin/products" element={<ProductsManagement />} />
+                <Route path="/admin/astrologers" element={<AstrologersManagement />} />
+                <Route path="/admin/orders" element={<OrdersManagement />} />
+                <Route path="/admin/coupons" element={<CouponsManagement />} />
+                <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+                <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
+                <Route path="/admin/blog" element={<BlogManagement />} />
+                <Route path="/admin/affiliates" element={<AffiliateManagement />} />
+                <Route path="/admin/support" element={<CustomerSupportManagement />} />
+                <Route path="/admin/sponsors" element={<SponsorsManagement />} />
+                <Route path="/admin/updates" element={<UpdatesManagement />} />
+                <Route path="/admin/consultations" element={<ConsultationManagement />} />
+                <Route path="/admin/pages" element={<ManagePages />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
