@@ -54,24 +54,19 @@ const Navigation = () => {
 
   const navCategories: NavCategory[] = [
     {
-      name: "Shop",
-      items: [
-        { name: "Browse Products", href: "/shop" },
-      ]
-    },
-    {
       name: "Daily Insights",
       items: [
         { name: "Daily Horoscope", href: "/dashboard" },
         { name: "Daily Reading", href: "/daily-reading" },
         { name: "Daily Affirmations", href: "/daily-affirmations" },
         { name: "Astro Calendar", href: "/astro-calendar" },
+        { name: "Tarot Reading", href: "/tarot-reading" },
       ]
     },
     {
       name: "Love & Compatibility",
       items: [
-        { name: "Love Forecasts", href: "/love-forecasts" },
+        { name: "Soulmate Sketch", href: "/love-forecasts" },
         { name: "Soulmate Analysis", href: "/soulmate-analysis" },
         { name: "Twin Flame Analysis", href: "/twin-flame" },
         { name: "Karmic Bonds", href: "/karmic-bonds" },
