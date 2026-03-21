@@ -54,24 +54,19 @@ const Navigation = () => {
 
   const navCategories: NavCategory[] = [
     {
-      name: "Shop",
-      items: [
-        { name: "Browse Products", href: "/shop" },
-      ]
-    },
-    {
       name: "Daily Insights",
       items: [
         { name: "Daily Horoscope", href: "/dashboard" },
         { name: "Daily Reading", href: "/daily-reading" },
         { name: "Daily Affirmations", href: "/daily-affirmations" },
         { name: "Astro Calendar", href: "/astro-calendar" },
+        { name: "Tarot Reading", href: "/tarot-reading" },
       ]
     },
     {
       name: "Love & Compatibility",
       items: [
-        { name: "Love Forecasts", href: "/love-forecasts" },
+        { name: "Soulmate Sketch", href: "/love-forecasts" },
         { name: "Soulmate Analysis", href: "/soulmate-analysis" },
         { name: "Twin Flame Analysis", href: "/twin-flame" },
         { name: "Karmic Bonds", href: "/karmic-bonds" },
@@ -190,46 +185,90 @@ const Navigation = () => {
                 Home
               </Link>
 
-              {/* Categories with Dropdown */}
-              {navCategories.map((category) => (
-                <div key={category.name} className="border-b border-border/50 last:border-0">
-                  <button
-                    onClick={() => toggleCategory(category.name)}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-sm font-semibold transition-colors rounded-md ${
-                      isCategoryActive(category) 
-                        ? "text-primary bg-primary/5" 
-                        : "text-foreground hover:bg-accent/30"
-                    }`}
-                  >
-                    <span>{category.name}</span>
-                    {expandedCategories.includes(category.name) ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </button>
-                  
-                  {expandedCategories.includes(category.name) && (
-                    <div className="pl-4 pb-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                      {category.items.map((item) => (
-                        <Link
-                          key={item.href}
-                          to={item.href}
-                          className={`block px-3 py-2 rounded-md text-sm transition-colors ${
-                            isActive(item.href)
-                              ? "text-primary bg-primary/10"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                          }`}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+              <Link
+                to="/shop"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActive("/shop") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Shop
+              </Link>
 
+              <Link
+                to="/love-forecasts"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActive("/love-forecasts") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Soulmate Sketch
+              </Link>
+
+              {/* Free Tools with subcategories */}
+              <div className="border-b border-border/50">
+                <button
+                  onClick={() => toggleCategory("Free Tools")}
+                  className="w-full flex items-center justify-between px-3 py-2 text-sm font-semibold transition-colors rounded-md text-foreground hover:bg-accent/30"
+                >
+                  <span>Free Tools</span>
+                  {expandedCategories.includes("Free Tools") ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+                {expandedCategories.includes("Free Tools") && (
+                  <div className="pl-2 pb-2 space-y-1">
+                    {navCategories.map((category) => (
+                      <div key={category.name}>
+                        <button
+                          onClick={() => toggleCategory(category.name)}
+                          className={`w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold transition-colors rounded-md ${
+                            isCategoryActive(category) ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          <span>{category.name}</span>
+                          {expandedCategories.includes(category.name) ? (
+                            <ChevronUp className="h-3 w-3" />
+                          ) : (
+                            <ChevronDown className="h-3 w-3" />
+                          )}
+                        </button>
+                        {expandedCategories.includes(category.name) && (
+                          <div className="pl-4 pb-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                            {category.items.map((item) => (
+                              <Link
+                                key={item.href}
+                                to={item.href}
+                                className={`block px-3 py-1.5 rounded-md text-sm transition-colors ${
+                                  isActive(item.href) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                }`}
+                                onClick={() => setIsOpen(false)}
+                              >
+                                {item.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Link
+                to="/contact"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  isActive("/contact") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Contact
+              </Link>
+
+              {/* Remove old category dropdown, replaced above */}
+              {/* Old categories with dropdown removed */}
               <div className="pt-2 border-t border-border">
                 {user ? (
                   <div className="space-y-2">

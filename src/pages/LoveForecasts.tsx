@@ -497,10 +497,10 @@ const LoveForecasts = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-            Love Forecast
+            Soulmate Sketch
           </h1>
           <p className="text-muted-foreground text-lg">
-            Your personalized daily love, career, and finance predictions
+            Your personalized soulmate sketch, love, career & finance predictions
           </p>
         </div>
 

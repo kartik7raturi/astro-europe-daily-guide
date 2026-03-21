@@ -19,10 +19,11 @@ const NavigationMenuDemo = () => {
     { title: "Daily Reading", href: "/daily-reading", description: "Comprehensive daily guidance" },
     { title: "Daily Affirmations", href: "/daily-affirmations", description: "Positive affirmations for your day" },
     { title: "Astro Calendar", href: "/astro-calendar", description: "Planetary transits and events" },
+    { title: "Tarot Reading", href: "/tarot-reading", description: "Get your daily tarot card guidance" },
   ];
 
   const loveCompatibility = [
-    { title: "Love Forecasts", href: "/love-forecasts", description: "Daily love and relationship predictions" },
+    { title: "Soulmate Sketch", href: "/love-forecasts", description: "AI-powered soulmate sketch & predictions" },
     { title: "Soulmate Analysis", href: "/soulmate-analysis", description: "Find your perfect match" },
     { title: "Twin Flame Analysis", href: "/twin-flame", description: "Discover your twin flame connection" },
     { title: "Karmic Bonds", href: "/karmic-bonds", description: "Understand past life connections" },
@@ -40,25 +41,26 @@ const NavigationMenuDemo = () => {
   const services = [
     { title: "Consultation", href: "/consultations", description: "Book a personal consultation" },
     { title: "Astro Journal", href: "/astro-journal", description: "Track your cosmic journey" },
-  ];
-
-  const resources = [
     { title: "About", href: "/about", description: "Learn about us" },
     { title: "Blog", href: "/blog", description: "Read our articles" },
     { title: "Pricing", href: "/pricing", description: "View our plans" },
   ];
+
+  const freeToolsSubcategories = [
+    { label: "Daily Insights", items: dailyInsights },
+    { label: "Love & Compatibility", items: loveCompatibility },
+    { label: "Personal Guidance", items: personalGuidance },
+    { label: "Services & More", items: services },
+  ];
+
+  const linkClass = "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground";
 
   return (
     <NavigationMenu className="hidden lg:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link to="/">
-            <NavigationMenuLink
-              className={cn(
-                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                isActive("/") && "bg-accent text-accent-foreground"
-              )}
-            >
+            <NavigationMenuLink className={cn(linkClass, isActive("/") && "bg-accent text-accent-foreground")}>
               Home
             </NavigationMenuLink>
           </Link>
@@ -66,115 +68,53 @@ const NavigationMenuDemo = () => {
 
         <NavigationMenuItem>
           <Link to="/shop">
-            <NavigationMenuLink
-              className={cn(
-                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                isActive("/shop") && "bg-accent text-accent-foreground"
-              )}
-            >
+            <NavigationMenuLink className={cn(linkClass, isActive("/shop") && "bg-accent text-accent-foreground")}>
               Shop
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Daily Insights</NavigationMenuTrigger>
+          <Link to="/love-forecasts">
+            <NavigationMenuLink className={cn(linkClass, isActive("/love-forecasts") && "bg-accent text-accent-foreground")}>
+              Soulmate Sketch
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Free Tools</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {dailyInsights.map((item) => (
-                <li key={item.title}>
-                  <Link to={item.href}>
-                    <NavigationMenuLink
-                      className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        isActive(item.href) && "bg-accent"
-                      )}
-                    >
-                      <div className="text-sm font-medium leading-none">{item.title}</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
+            <div className="w-[500px] md:w-[600px] lg:w-[700px] p-4 max-h-[70vh] overflow-y-auto">
+              {freeToolsSubcategories.map((sub) => (
+                <div key={sub.label} className="mb-4">
+                  <h4 className="text-sm font-semibold text-primary mb-2 px-3">{sub.label}</h4>
+                  <ul className="grid md:grid-cols-2 gap-1">
+                    {sub.items.map((item) => (
+                      <li key={item.title}>
+                        <Link to={item.href}>
+                          <NavigationMenuLink className={cn(linkClass, isActive(item.href) && "bg-accent")}>
+                            <div className="text-sm font-medium leading-none">{item.title}</div>
+                            <p className="line-clamp-1 text-xs leading-snug text-muted-foreground mt-1">
+                              {item.description}
+                            </p>
+                          </NavigationMenuLink>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Love & Compatibility</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {loveCompatibility.map((item) => (
-                <li key={item.title}>
-                  <Link to={item.href}>
-                    <NavigationMenuLink
-                      className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        isActive(item.href) && "bg-accent"
-                      )}
-                    >
-                      <div className="text-sm font-medium leading-none">{item.title}</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Personal Guidance</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {personalGuidance.map((item) => (
-                <li key={item.title}>
-                  <Link to={item.href}>
-                    <NavigationMenuLink
-                      className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        isActive(item.href) && "bg-accent"
-                      )}
-                    >
-                      <div className="text-sm font-medium leading-none">{item.title}</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Services & More</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {[...services, ...resources].map((item) => (
-                <li key={item.title}>
-                  <Link to={item.href}>
-                    <NavigationMenuLink
-                      className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                        isActive(item.href) && "bg-accent"
-                      )}
-                    >
-                      <div className="text-sm font-medium leading-none">{item.title}</div>
-                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </NavigationMenuContent>
+          <Link to="/contact">
+            <NavigationMenuLink className={cn(linkClass, isActive("/contact") && "bg-accent text-accent-foreground")}>
+              Contact
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
