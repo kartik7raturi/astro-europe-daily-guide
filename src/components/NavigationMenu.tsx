@@ -75,7 +75,7 @@ const NavigationMenuDemo = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link to="/love-forecasts" className="text-sm font-light">
+          <Link to="/love-forecasts" className="text-sm font-medium">
             <NavigationMenuLink className={cn(linkClass, isActive("/love-forecasts") && "bg-accent text-accent-foreground")}>
               Soulmate Sketch
             </NavigationMenuLink>
