@@ -1454,12 +1454,14 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          external_checkout_url: string | null
           features: Json | null
           id: string
           image_url: string | null
           is_active: boolean | null
           name: string
           price: number
+          quantity_pricing: Json | null
           updated_at: string
         }
         Insert: {
@@ -1467,12 +1469,14 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          external_checkout_url?: string | null
           features?: Json | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name: string
           price: number
+          quantity_pricing?: Json | null
           updated_at?: string
         }
         Update: {
@@ -1480,12 +1484,14 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          external_checkout_url?: string | null
           features?: Json | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name?: string
           price?: number
+          quantity_pricing?: Json | null
           updated_at?: string
         }
         Relationships: []
