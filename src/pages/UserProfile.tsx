@@ -518,18 +518,10 @@ const UserProfile = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="wishlist">
               <Heart className="h-4 w-4 mr-2" />
               Wishlist
-            </TabsTrigger>
-            <TabsTrigger value="cart">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart
-            </TabsTrigger>
-            <TabsTrigger value="orders">
-              <Package className="h-4 w-4 mr-2" />
-              Orders
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
