@@ -63,6 +63,9 @@ import ConsultationChat from "./pages/ConsultationChat";
 import ConsultationManagement from "./pages/admin/ConsultationManagement";
 import TarotReading from "./pages/TarotReading";
 import ThankYou from "./pages/ThankYou";
+import InitialPricing from "./pages/InitialPricing";
+import Upsell from "./pages/Upsell";
+import Imprint from "./pages/Imprint";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +96,9 @@ const App = () => (
                 <Route path="/astro-journal" element={<AstroJournal />} />
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/initial-pricing" element={<InitialPricing />} />
+                <Route path="/upsell" element={<Upsell />} />
+                <Route path="/imprint" element={<Imprint />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/ai-chat" element={<AIChat />} />

@@ -107,7 +107,7 @@ const UserProfile = () => {
     // Update active tab from URL when it changes
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    if (tab && ['wishlist', 'cart', 'orders', 'settings', 'support'].includes(tab)) {
+    if (tab && ['wishlist', 'settings', 'support'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [user, navigate]);
