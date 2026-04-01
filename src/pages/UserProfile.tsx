@@ -94,7 +94,7 @@ const UserProfile = () => {
   // Get initial tab from URL
   const params = new URLSearchParams(window.location.search);
   const urlTab = params.get('tab');
-  const [activeTab, setActiveTab] = useState(urlTab || 'wishlist');
+  const [activeTab, setActiveTab] = useState(urlTab || 'settings');
 
   useEffect(() => {
     if (!user) {
@@ -107,7 +107,7 @@ const UserProfile = () => {
     // Update active tab from URL when it changes
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    if (tab && ['wishlist', 'cart', 'orders', 'settings', 'support'].includes(tab)) {
+    if (tab && ['wishlist', 'settings', 'support'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [user, navigate]);
@@ -518,18 +518,10 @@ const UserProfile = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="wishlist">
               <Heart className="h-4 w-4 mr-2" />
               Wishlist
-            </TabsTrigger>
-            <TabsTrigger value="cart">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart
-            </TabsTrigger>
-            <TabsTrigger value="orders">
-              <Package className="h-4 w-4 mr-2" />
-              Orders
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
