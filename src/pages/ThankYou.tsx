@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Heart, Sparkles, ArrowRight } from "lucide-react";
+import { CheckCircle, Heart, Sparkles, ArrowRight, SkipForward } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const ThankYou = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get("plan") || "Soulmate Sketch";
+  const skipped = searchParams.get("skipped") === "true";
   const [thankYouContent, setThankYouContent] = useState<{
     title: string;
     message: string;
@@ -31,9 +32,13 @@ const ThankYou = () => {
     }
   };
 
-  const title = thankYouContent?.title || "Thank You for Your Purchase! 🎉";
-  const message = thankYouContent?.message || 
-    `Your ${plan} credits have been activated. You can now access all the premium features included in your plan. Start exploring your cosmic insights right away!`;
+  const title = skipped 
+    ? "You're All Set! 🌟" 
+    : (thankYouContent?.title || "Thank You for Your Purchase! 🎉");
+  const message = skipped
+    ? "You can explore our free features now. Upgrade anytime to unlock your full soulmate sketch and premium cosmic insights."
+    : (thankYouContent?.message || 
+      `Your ${plan} has been activated. You can now access all the features included in your plan. Start exploring your cosmic insights right away!`);
   const ctaText = thankYouContent?.cta_text || "Start Your Reading";
   const ctaLink = thankYouContent?.cta_link || "/love-forecasts";
 
@@ -44,7 +49,7 @@ const ThankYou = () => {
           <CardHeader className="pb-4">
             <div className="flex justify-center mb-4">
               <div className="relative">
-                <CheckCircle className="h-20 w-20 text-green-500" />
+                <CheckCircle className="h-20 w-20 text-primary" />
                 <Sparkles className="h-8 w-8 text-primary absolute -top-2 -right-2 animate-sparkle" />
               </div>
             </div>
@@ -55,15 +60,17 @@ const ThankYou = () => {
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-lg">{message}</p>
 
-            <div className="bg-primary/5 rounded-lg p-4 space-y-2">
-              <div className="flex items-center justify-center gap-2 text-primary">
-                <Heart className="h-5 w-5" />
-                <span className="font-semibold">Plan: {plan}</span>
+            {!skipped && (
+              <div className="bg-primary/5 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-center gap-2 text-primary">
+                  <Heart className="h-5 w-5" />
+                  <span className="font-semibold">Plan: {plan}</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your features are ready to use immediately
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Your credits are ready to use immediately
-              </p>
-            </div>
+            )}
 
             <div className="flex flex-col gap-3">
               <Link to={ctaLink}>
@@ -71,8 +78,15 @@ const ThankYou = () => {
                   {ctaText} <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
+              {skipped && (
+                <Link to="/upsell">
+                  <Button variant="outline" className="w-full gap-2">
+                    View Premium Plans <Sparkles className="h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
               <Link to="/dashboard">
-                <Button variant="outline" className="w-full">
+                <Button variant="ghost" className="w-full">
                   Go to Dashboard
                 </Button>
               </Link>
