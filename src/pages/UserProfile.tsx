@@ -94,7 +94,7 @@ const UserProfile = () => {
   // Get initial tab from URL
   const params = new URLSearchParams(window.location.search);
   const urlTab = params.get('tab');
-  const [activeTab, setActiveTab] = useState(urlTab || 'wishlist');
+  const [activeTab, setActiveTab] = useState(urlTab || 'settings');
 
   useEffect(() => {
     if (!user) {
