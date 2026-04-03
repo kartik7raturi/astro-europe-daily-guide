@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Helmet } from "react-helmet-lite";
+
 
 const ThankYouVip = () => {
   const [urls, setUrls] = useState({ supplement_url: "", dashboard_url: "/dashboard" });
