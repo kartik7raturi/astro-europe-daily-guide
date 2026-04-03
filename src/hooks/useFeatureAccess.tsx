@@ -4,21 +4,19 @@ import { useAuth } from '@/contexts/AuthContext';
 
 // Define which features are available at each tier
 const TIER_FEATURES: Record<string, string[]> = {
-  // Freemium features available to all users
   freemium: [
     'basic_horoscope',
     'love_calculator',
     'basic_numerology',
     'limited_compatibility',
   ],
-  // Starter plan (₹49) features
   starter: [
     'soulmate_sketch',
     'basic_soulmate_reading',
     'meeting_place_prediction',
-    '30_day_access',
+    'basic_love_compatibility',
+    'numerology_report',
   ],
-  // Explorer plan (₹199) features
   explorer: [
     'detailed_soulmate_analysis',
     'advanced_love_readings',
@@ -28,13 +26,11 @@ const TIER_FEATURES: Record<string, string[]> = {
     'love_forecasts',
     'daily_affirmations',
     'crush_analyzer',
-    '90_day_access',
+    'tarot_reading',
   ],
-  // Master plan (₹299) features - includes everything
   master: [
     'full_soulmate_analysis',
     'all_premium_features',
-    'lifetime_predictions',
     'priority_support',
     'daily_guidance',
     'lucky_numbers',
@@ -43,17 +39,15 @@ const TIER_FEATURES: Record<string, string[]> = {
     'life_career_analysis',
     'personal_readings',
     'ai_chat_unlimited',
-    '180_day_access',
   ],
 };
 
-// Map subscription tiers to their level
 const TIER_LEVELS: Record<string, number> = {
   freemium: 0,
   starter: 1,
   explorer: 2,
   master: 3,
-  admin: 99, // Admin has access to everything
+  admin: 99,
 };
 
 interface FeatureAccessState {
@@ -95,7 +89,6 @@ export const useFeatureAccess = () => {
     if (!user) return;
 
     try {
-      // Check admin status
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -105,14 +98,12 @@ export const useFeatureAccess = () => {
 
       const isAdmin = !!roleData || user.email === 'sankhobusiness@gmail.com';
 
-      // Get subscription data
       const { data: subData } = await supabase
         .from('subscribers')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      // Get credits
       const { data: creditsData } = await supabase
         .from('user_credits')
         .select('credits_remaining')
@@ -126,9 +117,16 @@ export const useFeatureAccess = () => {
         const now = new Date();
         const subscriptionEnd = subData.subscription_end ? new Date(subData.subscription_end) : null;
         
-        if (subData.subscribed && subscriptionEnd && now < subscriptionEnd) {
-          hasActiveSubscription = true;
-          tier = subData.subscription_tier || 'starter';
+        // Check if subscribed and has active period
+        if (subData.subscribed) {
+          if (subscriptionEnd && now < subscriptionEnd) {
+            hasActiveSubscription = true;
+            tier = subData.subscription_tier || 'starter';
+          } else if (!subscriptionEnd && subData.subscription_tier) {
+            // No end date but has tier = active (e.g. one-time purchase)
+            hasActiveSubscription = true;
+            tier = subData.subscription_tier;
+          }
         }
       }
 
@@ -146,32 +144,22 @@ export const useFeatureAccess = () => {
     }
   };
 
-  // Check if user can access a specific feature
   const canAccess = (feature: string): boolean => {
     if (state.isAdmin) return true;
-
-    // Check if feature is in user's tier or lower tiers
     const userTierLevel = state.tierLevel;
-    
-    // Freemium features available to everyone
     if (TIER_FEATURES.freemium?.includes(feature)) return true;
-    
-    // Check each tier up to user's level
     if (userTierLevel >= 1 && TIER_FEATURES.starter?.includes(feature)) return true;
     if (userTierLevel >= 2 && TIER_FEATURES.explorer?.includes(feature)) return true;
     if (userTierLevel >= 3 && TIER_FEATURES.master?.includes(feature)) return true;
-    
     return false;
   };
 
-  // Check if user's tier meets minimum requirement
   const hasMinimumTier = (minTier: string): boolean => {
     if (state.isAdmin) return true;
     const minLevel = TIER_LEVELS[minTier] || 0;
     return state.tierLevel >= minLevel;
   };
 
-  // Check if user has enough credits for an action
   const hasCredits = (required: number): boolean => {
     if (state.isAdmin) return true;
     return state.credits >= required;

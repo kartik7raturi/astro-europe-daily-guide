@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Sparkles, ArrowRight, Crown } from "lucide-react";
+import { CheckCircle, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const ThankYou = () => {
-  const [searchParams] = useSearchParams();
-  const skipped = searchParams.get("skipped") === "true";
-  const [urls, setUrls] = useState({ vip_url: "/upsell", dashboard_url: "/dashboard" });
+
+const ThankYouVip = () => {
+  const [urls, setUrls] = useState({ supplement_url: "", dashboard_url: "/dashboard" });
 
   useEffect(() => {
     loadSettings();
@@ -29,17 +28,17 @@ const ThankYou = () => {
     if (data?.value) {
       const val = data.value as any;
       setUrls({
-        vip_url: val.thankyou_vip_url || "/upsell",
-        dashboard_url: val.thankyou_dashboard_url || "/dashboard",
+        supplement_url: val.thankyou_vip_supplement_url || "",
+        dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
       });
     }
   };
 
-  const handleVipUpgrade = () => {
-    if (urls.vip_url.startsWith("http")) {
-      window.open(urls.vip_url, "_blank");
+  const handleSupplement = () => {
+    if (urls.supplement_url) {
+      window.open(urls.supplement_url, "_blank");
     } else {
-      window.location.href = urls.vip_url;
+      window.location.href = "/shop";
     }
   };
 
@@ -55,41 +54,37 @@ const ThankYou = () => {
               </div>
             </div>
             <CardTitle className="text-3xl bg-gradient-cosmic bg-clip-text text-transparent">
-              {skipped ? "You're All Set! 🌟" : "Thank You for Your Purchase! 🎉"}
+              Welcome to VIP! 🌟
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-lg">
-              {skipped
-                ? "You can explore your basic features now. Upgrade anytime to unlock your full cosmic experience."
-                : "Your Soulmate Sketch package is now active. Unlock even more with our VIP upgrade!"}
+              Congratulations! Your VIP upgrade is now active. You now have full access to all premium features and cosmic insights.
             </p>
 
-            {!skipped && (
-              <div className="bg-primary/5 rounded-lg p-4 space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  ✨ Your basic features are ready to use immediately
-                </p>
-              </div>
-            )}
+            <div className="bg-primary/5 rounded-lg p-4 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                ✨ All premium features unlocked
+              </p>
+            </div>
+
+            <div className="border rounded-lg p-4 bg-card/50">
+              <h3 className="font-semibold mb-2 text-foreground">🧴 Enhance Your Journey</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Discover our curated wellness supplements designed to align your body with cosmic energy.
+              </p>
+            </div>
 
             <div className="flex flex-col gap-3">
-              {!skipped && (
-                <Button variant="cosmic" size="lg" className="w-full gap-2" onClick={handleVipUpgrade}>
-                  <Crown className="h-5 w-5" /> Upgrade to VIP
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              )}
+              <Button variant="cosmic" size="lg" className="w-full gap-2" onClick={handleSupplement}>
+                <ShoppingBag className="h-5 w-5" /> Browse Supplements
+                <ArrowRight className="h-5 w-5" />
+              </Button>
               <Link to={urls.dashboard_url}>
-                <Button variant={skipped ? "cosmic" : "outline"} size="lg" className="w-full">
+                <Button variant="outline" className="w-full">
                   Go to Dashboard
                 </Button>
               </Link>
-              {skipped && (
-                <Button variant="outline" className="w-full gap-2" onClick={handleVipUpgrade}>
-                  <Sparkles className="h-4 w-4" /> View Premium Plans
-                </Button>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -98,4 +93,4 @@ const ThankYou = () => {
   );
 };
 
-export default ThankYou;
+export default ThankYouVip;

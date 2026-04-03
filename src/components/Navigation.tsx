@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Stars, Sparkles, LogOut, User, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,23 +13,9 @@ interface NavCategory {
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasProfile, setHasProfile] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const location = useLocation();
-  const navigate = useNavigate();
   const { user, signOut } = useAuth();
-
-  useEffect(() => {
-    checkUserProfile();
-  }, [user]);
-
-  const checkUserProfile = async () => {
-    if (!user) { setHasProfile(false); return; }
-    try {
-      const { data } = await supabase.from("profiles").select("id").eq("user_id", user.id).single();
-      setHasProfile(!!data);
-    } catch { setHasProfile(false); }
-  };
 
   const navCategories: NavCategory[] = [
     {
@@ -69,7 +55,6 @@ const Navigation = () => {
         { name: "Astro Journal", href: "/astro-journal" },
         { name: "About", href: "/about" },
         { name: "Blog", href: "/blog" },
-        { name: "Pricing", href: "/pricing" },
       ]
     }
   ];
@@ -124,12 +109,6 @@ const Navigation = () => {
           </div>
 
           <div className="md:hidden flex items-center gap-2">
-            {user && (
-              <Button variant="ghost" size="sm" className="gap-2">
-                <User className="h-4 w-4" />
-                {user.email?.split('@')[0]}
-              </Button>
-            )}
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -172,9 +151,15 @@ const Navigation = () => {
                 )}
               </div>
 
-              <Link to="/initial-pricing" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/initial-pricing") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
-                Pricing
+              <Link to="/shop" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/shop") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
+                Shop
               </Link>
+
+              {!user && (
+                <Link to="/initial-pricing" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/initial-pricing") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
+                  Pricing
+                </Link>
+              )}
 
               <Link to="/contact" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/contact") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
                 Contact

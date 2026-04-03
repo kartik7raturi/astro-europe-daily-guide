@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart, Mail, Phone } from "lucide-react";
+import { Heart, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -22,7 +22,6 @@ const Footer = () => {
               <li><Link to="/initial-pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
               <li><Link to="/love-forecasts" className="text-sm text-muted-foreground hover:text-primary transition-colors">Soulmate Sketch</Link></li>
               <li><Link to="/shop" className="text-sm text-muted-foreground hover:text-primary transition-colors">Shop</Link></li>
-              <li><Link to="/affiliate" className="text-sm text-muted-foreground hover:text-primary transition-colors">Become an Affiliate</Link></li>
             </ul>
           </div>
 

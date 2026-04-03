@@ -2,19 +2,21 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Mail, BookOpen, HelpCircle, ChevronDown, ChevronUp, Check, ArrowRight, Star, Shield, Zap, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Stars, Sparkles, Moon, Sun, Heart, Target, Palette, Hash, Mail, HelpCircle, ChevronDown, ChevronUp, Check, ArrowRight, Star, Shield, Zap, Eye } from "lucide-react";
 import cosmicHero from "@/assets/cosmic-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import SponsorBanner from "@/components/SponsorBanner";
 import TrustBadges from "@/components/TrustBadges";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Home = () => {
   const [email, setEmail] = useState("");
   const [subscribing, setSubscribing] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleNewsletterSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ const Home = () => {
   };
 
   const features = [
-    { icon: Heart, title: "Soulmate Sketch", description: "AI-powered soulmate portrait based on your birth chart and cosmic alignments." },
+    { icon: Heart, title: "AI Soulmate Sketch", description: "Get an AI-generated portrait of your soulmate based on your birth chart and cosmic alignments." },
     { icon: Sun, title: "Daily Horoscope", description: "Personalised daily predictions to guide your decisions and plan your day." },
     { icon: Target, title: "Love Compatibility", description: "Deep compatibility analysis with twin flame, karmic bond & crush insights." },
     { icon: Hash, title: "Numerology Reports", description: "Discover your life path, destiny number, and hidden personality traits." },
@@ -49,12 +51,12 @@ const Home = () => {
   ];
 
   const faqs = [
-    { question: "How accurate are the soulmate sketches?", answer: "Our AI-powered soulmate sketches combine astrological birth chart analysis with advanced image generation. Many users report striking resemblances to their eventual partners. Results are based on cosmic alignments and should be used as spiritual guidance." },
-    { question: "Can I get a refund if I'm not satisfied?", answer: "Yes! We offer a 30-day money-back guarantee on all plans. If you're not completely satisfied with your readings, contact our support team for a full refund." },
-    { question: "How many soulmate sketches can I generate?", answer: "It depends on your plan. The Starter plan includes 1 sketch, Explorer includes 5, and Master includes 10 sketches. Each sketch provides unique cosmic insights." },
+    { question: "What is a soulmate sketch?", answer: "Our AI analyses your birth chart, planetary positions, and cosmic alignments to generate a portrait of the person the stars have destined for you. It includes physical characteristics, personality traits, and where you might meet them." },
+    { question: "How does it work?", answer: "Simply enter your birth details (date, time, place of birth) and our AI engine processes your astrological data to create a personalised soulmate portrait along with compatibility insights and meeting predictions." },
+    { question: "Can I get a refund if I'm not satisfied?", answer: "Yes! We offer a 30-day money-back guarantee on all purchases. If you're not completely satisfied, contact our support team for a full refund." },
     { question: "What payment methods do you accept?", answer: "We accept all major credit cards, PayPal, and other payment methods through our secure Digistore24 checkout. All transactions are protected with SSL encryption." },
     { question: "Is my personal data safe?", answer: "Absolutely. We use enterprise-grade security and are fully GDPR compliant. Your birth data and readings are encrypted and stored securely. We never sell or share your personal information." },
-    { question: "Do you offer personalised consultations?", answer: "Yes! We provide one-on-one consultations with experienced astrologers. You can book video, audio, or chat consultations directly through your dashboard." },
+    { question: "What's included in the VIP plan?", answer: "VIP members get unlimited soulmate sketches, full twin flame & karmic bond analysis, daily love forecasts, AI personal guidance chat, lucky elements, life & career analysis, and priority support." },
   ];
 
   const testimonials = [
@@ -63,7 +65,7 @@ const Home = () => {
     { name: "Emma W.", location: "London, UK", text: "The twin flame analysis gave me goosebumps — it described my relationship dynamic perfectly. I've recommended AstroVibe to all my friends!", initial: "E" },
     { name: "Marco R.", location: "Milan, Italy", text: "I love the numerology reports! Understanding my life path number gave me so much clarity about my purpose. The AI chat is also incredibly helpful.", initial: "M" },
     { name: "Anna K.", location: "Vienna, Austria", text: "The crush analyser was so much fun and surprisingly accurate! It gave me the confidence to reach out, and now we're happily dating. Thank you AstroVibe!", initial: "A" },
-    { name: "Thomas B.", location: "Zürich, Switzerland", text: "The premium plan is absolutely worth it. Having unlimited AI chat and daily personalised guidance has become an essential part of my morning routine.", initial: "T" },
+    { name: "Thomas B.", location: "Zürich, Switzerland", text: "The VIP plan is absolutely worth it. Having unlimited AI chat and daily personalised guidance has become an essential part of my morning routine.", initial: "T" },
   ];
 
   return (
@@ -82,26 +84,28 @@ const Home = () => {
               </div>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-6">
-              Meet Your Soulmate Through the Stars
+              Discover Your Soulmate Through AI & Astrology
             </h1>
             <p className="text-xl text-muted-foreground mb-4 max-w-2xl mx-auto">
-              Get an AI-powered soulmate sketch based on your birth chart. Discover who the cosmos has destined for you — with love predictions, compatibility scores & more.
+              Get an AI-generated soulmate portrait based on your birth chart. See who the cosmos has destined for you — with love predictions, compatibility scores & personalised insights.
             </p>
             <p className="text-lg text-primary font-semibold mb-8">
               ⭐ Trusted by 50,000+ users across Europe
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/initial-pricing">
+              <Link to="/quiz">
                 <Button variant="cosmic" size="lg" className="w-full sm:w-auto gap-2">
-                  Get Your Soulmate Sketch — $19.99
+                  Get Your Free Astrology Report
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/auth">
-                <Button variant="mystical" size="lg" className="w-full sm:w-auto">
-                  Try Free Features
-                </Button>
-              </Link>
+              {!user && (
+                <Link to="/auth">
+                  <Button variant="mystical" size="lg" className="w-full sm:w-auto">
+                    Sign In
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -112,6 +116,45 @@ const Home = () => {
         <TrustBadges />
       </div>
 
+      {/* What We Offer — Clarity Section */}
+      <section className="py-20 bg-card/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What Is AstroVibe?
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              AstroVibe uses <strong>AI-powered astrology</strong> to create a personalised portrait of your soulmate. 
+              Based on your birth chart, planetary positions, and cosmic alignments, we generate a detailed sketch of the 
+              person destined for you — along with predictions about where and when you'll meet.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <span className="text-3xl">1️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Enter Your Birth Details</h3>
+              <p className="text-sm text-muted-foreground">Provide your date, time, and place of birth for accurate cosmic analysis.</p>
+            </div>
+            <div>
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <span className="text-3xl">2️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">AI Analyses Your Chart</h3>
+              <p className="text-sm text-muted-foreground">Our AI processes your astrological data to identify your soulmate's cosmic blueprint.</p>
+            </div>
+            <div>
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <span className="text-3xl">3️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Receive Your Sketch</h3>
+              <p className="text-sm text-muted-foreground">Get your personalised soulmate portrait with compatibility insights and meeting predictions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Why AstroVibe Section */}
       <section className="py-20 bg-background/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,9 +162,6 @@ const Home = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why 50,000+ People Trust AstroVibe
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              We combine ancient astrological wisdom with cutting-edge AI technology to deliver the most accurate cosmic guidance available.
-            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {whyUs.map((item, index) => {
@@ -147,17 +187,14 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Everything You Need for Cosmic Guidance
+              Everything You Get With AstroVibe
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From soulmate sketches to daily horoscopes — explore the full range of features designed to illuminate your path.
-            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <Card key={index} className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300 group">
+                <Card key={index} className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors duration-300">
                   <CardHeader className="text-center">
                     <div className="flex justify-center mb-4">
                       <Icon className="h-12 w-12 text-primary" />
@@ -174,27 +211,23 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Pricing CTA */}
+      {/* CTA — Get Free Report */}
       <section className="py-16 bg-card/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Card className="bg-gradient-cosmic p-8 md:p-12 border-none">
             <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Start Your Cosmic Journey Today
+              Ready to Meet Your Soulmate?
             </h2>
-            <p className="text-primary-foreground/90 mb-4 text-lg">
-              Get your personalised AI soulmate sketch and discover who the stars have destined for you.
+            <p className="text-primary-foreground/90 mb-6 text-lg">
+              Take our free astrology quiz and get your personalised numerology report — then unlock your full soulmate sketch.
             </p>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <span className="text-2xl line-through text-primary-foreground/60">$39.99</span>
-              <span className="text-5xl font-bold text-primary-foreground">$19.99</span>
-            </div>
-            <Link to="/initial-pricing">
+            <Link to="/quiz">
               <Button variant="gold" size="lg" className="text-lg gap-2">
-                Get My Soulmate Sketch Now
+                Get Your Free Report
                 <ArrowRight className="h-5 w-5" />
               </Button>
             </Link>
-            <p className="text-xs text-primary-foreground/60 mt-4">🔒 Secure checkout • 30-day money-back guarantee</p>
+            <p className="text-xs text-primary-foreground/60 mt-4">No credit card required for the free report</p>
           </Card>
         </div>
       </section>
