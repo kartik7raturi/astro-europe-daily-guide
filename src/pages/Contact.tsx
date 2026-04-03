@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Clock, Stars, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [customContent, setCustomContent] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,36 +18,43 @@ const Contact = () => {
     message: ""
   });
 
+  useEffect(() => {
+    loadContent();
+  }, []);
+
+  const loadContent = async () => {
+    const { data } = await supabase
+      .from("platform_settings")
+      .select("value")
+      .eq("key", "page_content")
+      .maybeSingle();
+    if (data?.value) {
+      const val = data.value as any;
+      if (val.contact_content) setCustomContent(val.contact_content);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simulate form submission
     toast({
       title: "Message Sent!",
       description: "Thank you for reaching out. We'll respond within 24 hours.",
     });
-    
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: ""
-    });
+    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   const contactInfo = [
     {
       icon: Mail,
       title: "Email Us",
-      details: "sankhobusiness@gmail.com",
+      details: "support@astrovibe.online",
       description: "We respond to all inquiries within 24 hours"
     },
     {
       icon: MapPin,
       title: "Our Reach",
-      details: "Serving All of India",
-      description: "Culturally-aware readings for all Indian states and regions"
+      details: "Serving Europe & Worldwide",
+      description: "Personalised readings for users across the globe"
     },
     {
       icon: Clock,
@@ -58,7 +67,6 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gradient-starlight py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <Stars className="h-12 w-12 text-primary animate-glow" />
@@ -67,12 +75,19 @@ const Contact = () => {
             Get in Touch
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Have questions about your cosmic journey? We're here to help with thoughtful, personalized support.
+            Have questions about your cosmic journey? We're here to help with thoughtful, personalised support.
           </p>
         </div>
 
+        {customContent && (
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <div className="whitespace-pre-wrap text-muted-foreground">{customContent}</div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
           <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -85,64 +100,28 @@ const Contact = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="Your full name"
-                      className="bg-background/50"
-                      required
-                    />
+                    <Input id="name" type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Your full name" className="bg-background/50" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder="your.email@example.com"
-                      className="bg-background/50"
-                      required
-                    />
+                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="your.email@example.com" className="bg-background/50" required />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Input
-                    id="subject"
-                    type="text"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                    placeholder="How can we help you?"
-                    className="bg-background/50"
-                    required
-                  />
+                  <Input id="subject" type="text" value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} placeholder="How can we help you?" className="bg-background/50" required />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    placeholder="Tell us about your question or how we can assist you..."
-                    className="bg-background/50 min-h-[150px]"
-                    required
-                  />
+                  <Textarea id="message" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} placeholder="Tell us about your question..." className="bg-background/50 min-h-[150px]" required />
                 </div>
-
                 <Button type="submit" variant="cosmic" className="w-full">
-                  Send Message
-                  <Send className="ml-2 h-4 w-4" />
+                  Send Message <Send className="ml-2 h-4 w-4" />
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Contact Information */}
           <div className="space-y-6">
             {contactInfo.map((info, index) => {
               const Icon = info.icon;
@@ -151,7 +130,7 @@ const Contact = () => {
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-primary/10 rounded-lg">
-                        <Icon className="h-6 w-6 text-primary group-hover:animate-float" />
+                        <Icon className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-foreground mb-1">{info.title}</h3>
@@ -164,7 +143,6 @@ const Contact = () => {
               );
             })}
 
-            {/* FAQ Section */}
             <Card className="bg-gradient-cosmic/10 border-primary/30">
               <CardHeader>
                 <CardTitle className="text-accent">Frequently Asked Questions</CardTitle>
@@ -172,15 +150,15 @@ const Contact = () => {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="font-medium text-foreground mb-1">How accurate are the readings?</h4>
-                  <p className="text-muted-foreground text-sm">Our readings combine traditional Indian astrological methods with personalized birth data to provide the most relevant insights for your unique cosmic profile.</p>
+                  <p className="text-muted-foreground text-sm">Our readings combine astrological methods with AI to provide personalised cosmic guidance based on your unique birth chart.</p>
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-1">Is my personal information safe?</h4>
-                  <p className="text-muted-foreground text-sm">Yes, we respect your privacy completely. Birth data is used only for generating your reading and is not stored permanently or shared.</p>
+                  <p className="text-muted-foreground text-sm">Yes, we are fully GDPR compliant. Your birth data is encrypted and never shared with third parties.</p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-foreground mb-1">Can I get readings in other languages?</h4>
-                  <p className="text-muted-foreground text-sm">Currently, we provide readings in English, but our cultural insights are tailored for all Indian backgrounds and traditions.</p>
+                  <h4 className="font-medium text-foreground mb-1">Can I get a refund?</h4>
+                  <p className="text-muted-foreground text-sm">Yes, we offer a 30-day money-back guarantee on all purchases. Contact us for details.</p>
                 </div>
               </CardContent>
             </Card>

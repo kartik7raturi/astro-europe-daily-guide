@@ -51,8 +51,6 @@ import ProfileSetup from "./pages/ProfileSetup";
 import Pricing from "./pages/Pricing";
 import OrderTracking from "./pages/OrderTracking";
 import Wishlist from "./pages/Wishlist";
-import Affiliate from "./pages/Affiliate";
-import AffiliateManagement from "./pages/admin/AffiliateManagement";
 import CustomerSupportManagement from "./pages/admin/CustomerSupportManagement";
 import SponsorsManagement from "./pages/admin/SponsorsManagement";
 import UpdatesManagement from "./pages/admin/UpdatesManagement";
@@ -63,9 +61,12 @@ import ConsultationChat from "./pages/ConsultationChat";
 import ConsultationManagement from "./pages/admin/ConsultationManagement";
 import TarotReading from "./pages/TarotReading";
 import ThankYou from "./pages/ThankYou";
+import ThankYouVip from "./pages/ThankYouVip";
 import InitialPricing from "./pages/InitialPricing";
 import Upsell from "./pages/Upsell";
 import Imprint from "./pages/Imprint";
+import Quiz from "./pages/Quiz";
+import FreeReport from "./pages/FreeReport";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,8 @@ const App = () => (
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/free-report" element={<FreeReport />} />
                 <Route path="/horoscope" element={<HoroscopeForm />} />
                 <Route path="/daily-reading" element={<DailyReading />} />
                 <Route path="/numerology" element={<Numerology />} />
@@ -105,13 +108,13 @@ const App = () => (
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/order-tracking" element={<OrderTracking />} />
                 <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/affiliate" element={<Affiliate />} />
                 <Route path="/astrologer-register" element={<AstrologerRegistration />} />
                 <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
                 <Route path="/astrologer/:id" element={<AstrologerProfile />} />
                 <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
                 <Route path="/tarot-reading" element={<TarotReading />} />
                 <Route path="/thank-you" element={<ThankYou />} />
+                <Route path="/thank-you-vip" element={<ThankYouVip />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/plans" element={<PlansManagement />} />
                 <Route path="/admin/products" element={<ProductsManagement />} />
@@ -121,7 +124,6 @@ const App = () => (
                 <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
                 <Route path="/admin/blog" element={<BlogManagement />} />
-                <Route path="/admin/affiliates" element={<AffiliateManagement />} />
                 <Route path="/admin/support" element={<CustomerSupportManagement />} />
                 <Route path="/admin/sponsors" element={<SponsorsManagement />} />
                 <Route path="/admin/updates" element={<UpdatesManagement />} />
