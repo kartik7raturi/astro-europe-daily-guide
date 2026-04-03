@@ -2,45 +2,46 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Heart, Sparkles, ArrowRight, SkipForward } from "lucide-react";
+import { CheckCircle, Sparkles, ArrowRight, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const ThankYou = () => {
   const [searchParams] = useSearchParams();
-  const plan = searchParams.get("plan") || "Soulmate Sketch";
   const skipped = searchParams.get("skipped") === "true";
-  const [thankYouContent, setThankYouContent] = useState<{
-    title: string;
-    message: string;
-    cta_text: string;
-    cta_link: string;
-  } | null>(null);
+  const [urls, setUrls] = useState({ vip_url: "/upsell", dashboard_url: "/dashboard" });
 
   useEffect(() => {
-    loadThankYouContent();
+    loadSettings();
+    // Load Digistore24 trusted badge
+    const script = document.createElement("script");
+    script.src = "https://www.digistore24.com/trusted-badge/45152/URbvNfHBuUCF7uC/thankyoupage";
+    script.type = "text/javascript";
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
   }, []);
 
-  const loadThankYouContent = async () => {
+  const loadSettings = async () => {
     const { data } = await supabase
       .from("platform_settings")
       .select("value")
-      .eq("key", "thank_you_page")
+      .eq("key", "funnel_settings")
       .maybeSingle();
-    
     if (data?.value) {
-      setThankYouContent(data.value as any);
+      const val = data.value as any;
+      setUrls({
+        vip_url: val.thankyou_vip_url || "/upsell",
+        dashboard_url: val.thankyou_dashboard_url || "/dashboard",
+      });
     }
   };
 
-  const title = skipped 
-    ? "You're All Set! 🌟" 
-    : (thankYouContent?.title || "Thank You for Your Purchase! 🎉");
-  const message = skipped
-    ? "You can explore our free features now. Upgrade anytime to unlock your full soulmate sketch and premium cosmic insights."
-    : (thankYouContent?.message || 
-      `Your ${plan} has been activated. You can now access all the features included in your plan. Start exploring your cosmic insights right away!`);
-  const ctaText = thankYouContent?.cta_text || "Start Your Reading";
-  const ctaLink = thankYouContent?.cta_link || "/love-forecasts";
+  const handleVipUpgrade = () => {
+    if (urls.vip_url.startsWith("http")) {
+      window.open(urls.vip_url, "_blank");
+    } else {
+      window.location.href = urls.vip_url;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-starlight flex items-center justify-center py-12 px-4">
@@ -54,42 +55,41 @@ const ThankYou = () => {
               </div>
             </div>
             <CardTitle className="text-3xl bg-gradient-cosmic bg-clip-text text-transparent">
-              {title}
+              {skipped ? "You're All Set! 🌟" : "Thank You for Your Purchase! 🎉"}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p className="text-muted-foreground text-lg">{message}</p>
+            <p className="text-muted-foreground text-lg">
+              {skipped
+                ? "You can explore your basic features now. Upgrade anytime to unlock your full cosmic experience."
+                : "Your Soulmate Sketch package is now active. Unlock even more with our VIP upgrade!"}
+            </p>
 
             {!skipped && (
               <div className="bg-primary/5 rounded-lg p-4 space-y-2">
-                <div className="flex items-center justify-center gap-2 text-primary">
-                  <Heart className="h-5 w-5" />
-                  <span className="font-semibold">Plan: {plan}</span>
-                </div>
                 <p className="text-sm text-muted-foreground">
-                  Your features are ready to use immediately
+                  ✨ Your basic features are ready to use immediately
                 </p>
               </div>
             )}
 
             <div className="flex flex-col gap-3">
-              <Link to={ctaLink}>
-                <Button variant="cosmic" size="lg" className="w-full gap-2">
-                  {ctaText} <ArrowRight className="h-5 w-5" />
+              {!skipped && (
+                <Button variant="cosmic" size="lg" className="w-full gap-2" onClick={handleVipUpgrade}>
+                  <Crown className="h-5 w-5" /> Upgrade to VIP
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
-              </Link>
-              {skipped && (
-                <Link to="/upsell">
-                  <Button variant="outline" className="w-full gap-2">
-                    View Premium Plans <Sparkles className="h-4 w-4" />
-                  </Button>
-                </Link>
               )}
-              <Link to="/dashboard">
-                <Button variant="ghost" className="w-full">
+              <Link to={urls.dashboard_url}>
+                <Button variant={skipped ? "cosmic" : "outline"} size="lg" className="w-full">
                   Go to Dashboard
                 </Button>
               </Link>
+              {skipped && (
+                <Button variant="outline" className="w-full gap-2" onClick={handleVipUpgrade}>
+                  <Sparkles className="h-4 w-4" /> View Premium Plans
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
