@@ -3,7 +3,7 @@ import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, Crown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface FeatureGateProps {
   children: ReactNode;
@@ -22,7 +22,7 @@ const FeatureGate = ({
   fallback,
   showUpgradePrompt = true,
 }: FeatureGateProps) => {
-  const { loading, isAdmin, canAccess, hasMinimumTier, hasCredits } = useFeatureAccess();
+  const { loading, isAdmin, canAccess, hasMinimumTier, hasCredits, tier } = useFeatureAccess();
 
   // Admin always has access
   if (isAdmin) return <>{children}</>;
@@ -50,6 +50,11 @@ const FeatureGate = ({
     return <>{fallback}</>;
   }
 
+  // Determine upgrade target based on user's current tier
+  const isStarter = tier === 'starter';
+  const upgradePath = isStarter ? "/upsell" : "/initial-pricing";
+  const upgradeLabel = isStarter ? "Upgrade to VIP" : "Upgrade Now";
+
   // Show upgrade prompt
   if (showUpgradePrompt) {
     return (
@@ -58,18 +63,22 @@ const FeatureGate = ({
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-cosmic flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-xl">Premium Feature</CardTitle>
+          <CardTitle className="text-xl">
+            {isStarter ? "VIP Feature" : "Premium Feature"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-muted-foreground">
             {requiredCredits && !hasSufficientCredits
               ? `This feature requires ${requiredCredits} credits. Please purchase more credits.`
-              : `This feature is available on the ${minTier.charAt(0).toUpperCase() + minTier.slice(1)} plan and above.`}
+              : isStarter
+                ? "This feature is available with the VIP plan. Upgrade to unlock all premium features."
+                : `This feature requires a paid plan. Get started with our Soulmate Sketch package.`}
           </p>
-          <Link to="/pricing">
+          <Link to={upgradePath}>
             <Button className="gap-2" variant="cosmic">
               <Crown className="w-4 h-4" />
-              Upgrade Now
+              {upgradeLabel}
             </Button>
           </Link>
         </CardContent>
