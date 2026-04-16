@@ -1,23 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, ArrowRight, SkipForward } from "lucide-react";
+import { Check, Crown, ArrowRight, SkipForward, Shield, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import SalesPageChrome from "@/components/SalesPageChrome";
+import DigistoreBadge from "@/components/DigistoreBadge";
 
 const Upsell = () => {
   const navigate = useNavigate();
-  const [urls, setUrls] = useState({ monthly: "", annual: "", skip: "" });
+  const [urls, setUrls] = useState({ silver: "", gold: "", skip: "" });
 
   useEffect(() => {
     loadSettings();
-    // Load Digistore24 trusted badge
-    const script = document.createElement("script");
-    script.src = "https://www.digistore24.com/trusted-badge/45148/s7e2aWO7TB1vImg/salespage";
-    script.type = "text/javascript";
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
   }, []);
 
   const loadSettings = async () => {
@@ -29,8 +25,8 @@ const Upsell = () => {
     if (data?.value) {
       const val = data.value as any;
       setUrls({
-        monthly: val.vip_monthly_url || "",
-        annual: val.vip_annual_url || "",
+        silver: val.vip_silver_url || val.vip_monthly_url || "",
+        gold: val.vip_gold_url || val.vip_annual_url || "",
         skip: val.vip_skip_url || "",
       });
     }
@@ -39,123 +35,156 @@ const Upsell = () => {
   const handleBuy = (url: string) => {
     if (url) {
       window.open(url, "_blank");
+    } else {
+      navigate("/thank-you-vip");
     }
   };
 
-  const vipFeatures = [
-    "Unlimited AI Soulmate Sketches",
+  const handleSkip = () => {
+    if (urls.skip) {
+      window.open(urls.skip, "_blank");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const silverFeatures = [
+    "4 AI Soulmate Sketches (4 credits)",
     "Full Soulmate & Twin Flame Analysis",
     "Karmic Bond Reading",
-    "Daily Love Forecasts & Predictions",
+    "Daily Love Forecasts",
+    "Personal Tarot Readings",
+    "Email Support",
+  ];
+
+  const goldFeatures = [
+    "10 AI Soulmate Sketches (10 credits)",
+    "Everything in Silver",
     "AI Personal Guidance Chat (Unlimited)",
     "Lucky Numbers, Colours & Gemstones",
     "Life & Career Analysis",
     "Daily Affirmations & Horoscope",
-    "Personal Tarot Readings",
+    "Meeting Time Predictions",
     "Priority Support",
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-starlight py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
+    <div className="min-h-screen bg-gradient-starlight py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Inline horizontal badge */}
+        <div className="flex justify-center mb-6">
+          <DigistoreBadge type="salespage" />
+        </div>
+
+        <div className="text-center mb-10">
           <Badge variant="outline" className="mb-4 text-sm px-4 py-1 border-primary/40">
             🎉 EXCLUSIVE VIP UPGRADE
           </Badge>
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-            Unlock All Premium Features
+            Unlock Your Full Cosmic Experience
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Upgrade to VIP and get unlimited access to all cosmic insights, soulmate sketches, and personalised readings.
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+            Get more soulmate sketches, deeper insights, and access to all of our premium tools — choose the membership that fits you.
           </p>
         </div>
 
-        {/* Features List */}
-        <Card className="max-w-2xl mx-auto mb-8 border-primary/20">
-          <CardContent className="pt-6">
-            <h3 className="font-semibold text-lg mb-4 text-center">Everything included in VIP:</h3>
-            <ul className="grid md:grid-cols-2 gap-3">
-              {vipFeatures.map((feature, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="text-sm text-foreground">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Monthly */}
+        {/* Pricing Cards: Silver & Gold */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-10">
+          {/* Silver */}
           <Card className="border-2 border-border hover:border-primary/50 transition-all">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-xl">Monthly VIP</CardTitle>
-              <div className="pt-3">
-                <span className="text-4xl font-bold text-primary">$45</span>
-                <span className="text-muted-foreground">/month</span>
+              <div className="flex justify-center mb-3">
+                <Sparkles className="h-10 w-10 text-muted-foreground" />
               </div>
+              <CardTitle className="text-xl">Silver Membership</CardTitle>
+              <div className="pt-3">
+                <span className="text-4xl font-bold text-primary">$49</span>
+                <span className="text-muted-foreground"> one-time</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">4 sketches included</p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <ul className="space-y-2">
+                {silverFeatures.map((f, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground">{f}</span>
+                  </li>
+                ))}
+              </ul>
               <Button
                 variant="outline"
                 size="lg"
                 className="w-full gap-2"
-                onClick={() => handleBuy(urls.monthly)}
+                onClick={() => handleBuy(urls.silver)}
               >
-                Start Monthly VIP
+                Get Silver — $49
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
 
-          {/* Annual - Best Value */}
+          {/* Gold - Best Value */}
           <Card className="border-2 border-primary shadow-cosmic relative overflow-hidden">
             <div className="bg-gradient-cosmic text-primary-foreground text-center py-2 text-sm font-semibold">
-              ⭐ BEST VALUE — SAVE 63%
+              ⭐ BEST VALUE
             </div>
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-xl">Annual VIP</CardTitle>
-              <div className="pt-3">
-                <span className="text-4xl font-bold text-primary">$199</span>
-                <span className="text-muted-foreground">/year</span>
-                <p className="text-xs text-muted-foreground mt-1">That's only $16.58/month</p>
+              <div className="flex justify-center mb-3">
+                <Crown className="h-10 w-10 text-primary" />
               </div>
+              <CardTitle className="text-xl">Gold Membership</CardTitle>
+              <div className="pt-3">
+                <span className="text-4xl font-bold text-primary">$99</span>
+                <span className="text-muted-foreground"> one-time</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">10 sketches + all features</p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <ul className="space-y-2">
+                {goldFeatures.map((f, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground">{f}</span>
+                  </li>
+                ))}
+              </ul>
               <Button
                 variant="cosmic"
                 size="lg"
                 className="w-full gap-2"
-                onClick={() => handleBuy(urls.annual)}
+                onClick={() => handleBuy(urls.gold)}
               >
-                <Crown className="h-4 w-4" /> Get Annual VIP
+                <Crown className="h-4 w-4" /> Get Gold — $99
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        <div className="text-center mt-8">
+        {/* Guarantee */}
+        <div className="max-w-md mx-auto mb-6">
+          <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <Shield className="h-5 w-5 text-green-600" />
+            <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+              60-Day Money-Back Guarantee
+            </p>
+          </div>
+        </div>
+
+        {/* Skip */}
+        <div className="text-center mb-6">
           <Button
             variant="ghost"
             className="text-muted-foreground gap-2"
-            onClick={() => {
-              if (urls.skip) {
-                window.open(urls.skip, "_blank");
-              } else {
-                navigate("/thank-you?skipped=true");
-              }
-            }}
+            onClick={handleSkip}
           >
             <SkipForward className="h-4 w-4" />
             No thanks, skip for now
           </Button>
         </div>
 
-        <div className="text-center mt-4">
-          <p className="text-xs text-muted-foreground">🔒 Secure checkout • Cancel anytime • Powered by Digistore24</p>
-        </div>
+        <SalesPageChrome badgeType="salespage" />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, ExternalLink } from "lucide-react";
+import { ArrowLeft, Save, ExternalLink, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ManagePages = () => {
@@ -15,20 +15,10 @@ const ManagePages = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const [thankYou, setThankYou] = useState({
-    vip_url: "/upsell",
-    dashboard_url: "/dashboard",
-  });
-
-  const [thankYouVip, setThankYouVip] = useState({
-    supplement_url: "",
-    dashboard_url: "/dashboard",
-  });
-
   const [funnel, setFunnel] = useState({
     initial_buy_url: "",
-    vip_monthly_url: "",
-    vip_annual_url: "",
+    vip_silver_url: "",
+    vip_gold_url: "",
     vip_skip_url: "",
     thankyou_vip_url: "/upsell",
     thankyou_dashboard_url: "/dashboard",
@@ -36,16 +26,12 @@ const ManagePages = () => {
     thankyou_vip_dashboard_url: "/dashboard",
   });
 
-  const [shopUrls, setShopUrls] = useState({
-    shop_buy1_url: "",
-    shop_buy2_url: "",
-    shop_buy3_url: "",
-  });
-
   const [pageContent, setPageContent] = useState({
     contact_content: "",
     imprint_content: "",
     cancellation_content: "",
+    privacy_content: "",
+    terms_content: "",
   });
 
   useEffect(() => {
@@ -53,9 +39,8 @@ const ManagePages = () => {
   }, []);
 
   const loadSettings = async () => {
-    const [funnelRes, shopRes, contentRes] = await Promise.all([
+    const [funnelRes, contentRes] = await Promise.all([
       supabase.from("platform_settings").select("*").eq("key", "funnel_settings").maybeSingle(),
-      supabase.from("platform_settings").select("*").eq("key", "shop_urls").maybeSingle(),
       supabase.from("platform_settings").select("*").eq("key", "page_content").maybeSingle(),
     ]);
 
@@ -63,30 +48,14 @@ const ManagePages = () => {
       const val = funnelRes.data.value as any;
       setFunnel({
         initial_buy_url: val.initial_buy_url || "",
-        vip_monthly_url: val.vip_monthly_url || "",
-        vip_annual_url: val.vip_annual_url || "",
+        // Backwards-compat: read silver/gold first, fall back to old monthly/annual keys
+        vip_silver_url: val.vip_silver_url || val.vip_monthly_url || "",
+        vip_gold_url: val.vip_gold_url || val.vip_annual_url || "",
         vip_skip_url: val.vip_skip_url || "",
         thankyou_vip_url: val.thankyou_vip_url || "/upsell",
         thankyou_dashboard_url: val.thankyou_dashboard_url || "/dashboard",
         thankyou_vip_supplement_url: val.thankyou_vip_supplement_url || "",
         thankyou_vip_dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
-      });
-      setThankYou({
-        vip_url: val.thankyou_vip_url || "/upsell",
-        dashboard_url: val.thankyou_dashboard_url || "/dashboard",
-      });
-      setThankYouVip({
-        supplement_url: val.thankyou_vip_supplement_url || "",
-        dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
-      });
-    }
-
-    if (shopRes.data?.value) {
-      const val = shopRes.data.value as any;
-      setShopUrls({
-        shop_buy1_url: val.shop_buy1_url || "",
-        shop_buy2_url: val.shop_buy2_url || "",
-        shop_buy3_url: val.shop_buy3_url || "",
       });
     }
 
@@ -96,6 +65,8 @@ const ManagePages = () => {
         contact_content: val.contact_content || "",
         imprint_content: val.imprint_content || "",
         cancellation_content: val.cancellation_content || "",
+        privacy_content: val.privacy_content || "",
+        terms_content: val.terms_content || "",
       });
     }
   };
@@ -103,9 +74,16 @@ const ManagePages = () => {
   const saveSetting = async (key: string, value: any) => {
     setLoading(true);
     try {
-      const { data: existing } = await supabase.from("platform_settings").select("id").eq("key", key).maybeSingle();
+      const { data: existing } = await supabase
+        .from("platform_settings")
+        .select("id")
+        .eq("key", key)
+        .maybeSingle();
       if (existing) {
-        await supabase.from("platform_settings").update({ value: value as any, updated_at: new Date().toISOString() }).eq("key", key);
+        await supabase
+          .from("platform_settings")
+          .update({ value: value as any, updated_at: new Date().toISOString() })
+          .eq("key", key);
       } else {
         await supabase.from("platform_settings").insert({ key, value: value as any });
       }
@@ -117,13 +95,25 @@ const ManagePages = () => {
     }
   };
 
-  const saveFunnel = () => {
-    saveSetting("funnel_settings", funnel);
-  };
+  const saveFunnel = () => saveSetting("funnel_settings", funnel);
+  const saveContent = () => saveSetting("page_content", pageContent);
+
+  // Quick directory of every public page in the funnel for at-a-glance management
+  const pageDirectory = [
+    { name: "Initial Sales Page ($19.99)", path: "/initial-pricing", buttons: ["Get My Soulmate Sketch — $19.99"] },
+    { name: "VIP Upgrade Sales Page", path: "/upsell", buttons: ["Silver $49", "Gold $99", "No thanks (skip)"] },
+    { name: "Thank You (after Initial)", path: "/thank-you", buttons: ["Upgrade to VIP", "Go to Dashboard"] },
+    { name: "Thank You (after VIP)", path: "/thank-you-vip", buttons: ["Browse Supplements", "Go to Dashboard"] },
+    { name: "Imprint (Impressum)", path: "/imprint", buttons: [] },
+    { name: "Contact", path: "/contact", buttons: [] },
+    { name: "Cancellation & Refund", path: "/cancellation-refund", buttons: [] },
+    { name: "Privacy", path: "/privacy", buttons: [] },
+    { name: "Terms", path: "/terms", buttons: [] },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-starlight py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <Button variant="ghost" onClick={() => navigate("/admin")} className="mb-4 gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Admin
         </Button>
@@ -132,15 +122,55 @@ const ManagePages = () => {
           Manage Pages & Funnel
         </h1>
 
-        <Tabs defaultValue="funnel" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="funnel">Sales Funnel</TabsTrigger>
-            <TabsTrigger value="thankyou">Thank You Pages</TabsTrigger>
-            <TabsTrigger value="shop">Shop URLs</TabsTrigger>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsTrigger value="overview">All Pages</TabsTrigger>
+            <TabsTrigger value="funnel">Sales Buttons</TabsTrigger>
+            <TabsTrigger value="thankyou">Thank You</TabsTrigger>
             <TabsTrigger value="content">Page Content</TabsTrigger>
           </TabsList>
 
-          {/* Sales Funnel Tab */}
+          {/* Overview: every public page with edit links */}
+          <TabsContent value="overview">
+            <Card>
+              <CardHeader>
+                <CardTitle>All Pages</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Open any page in a new tab, or jump to the matching settings tab to edit it.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pageDirectory.map((p) => (
+                  <div
+                    key={p.path}
+                    className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 border border-border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-semibold">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.path}</p>
+                      {p.buttons.length > 0 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Buttons: {p.buttons.join(" · ")}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(p.path, "_blank")}
+                        className="gap-1"
+                      >
+                        <ExternalLink className="h-3 w-3" /> Open
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Sales button URLs */}
           <TabsContent value="funnel">
             <div className="space-y-6">
               <Card>
@@ -151,7 +181,7 @@ const ManagePages = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>Buy Button URL (Get My Soulmate Sketch — $19.99)</Label>
+                    <Label>Buy Button URL — "Get My Soulmate Sketch — $19.99"</Label>
                     <Input
                       placeholder="https://www.digistore24.com/product/..."
                       value={funnel.initial_buy_url}
@@ -169,23 +199,23 @@ const ManagePages = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>Monthly VIP ($45/month) Button URL</Label>
+                    <Label>Silver Membership ($49) Button URL</Label>
                     <Input
                       placeholder="https://www.digistore24.com/product/..."
-                      value={funnel.vip_monthly_url}
-                      onChange={(e) => setFunnel({ ...funnel, vip_monthly_url: e.target.value })}
+                      value={funnel.vip_silver_url}
+                      onChange={(e) => setFunnel({ ...funnel, vip_silver_url: e.target.value })}
                     />
                   </div>
                   <div>
-                    <Label>Annual VIP ($199/year) Button URL</Label>
+                    <Label>Gold Membership ($99) Button URL</Label>
                     <Input
                       placeholder="https://www.digistore24.com/product/..."
-                      value={funnel.vip_annual_url}
-                      onChange={(e) => setFunnel({ ...funnel, vip_annual_url: e.target.value })}
+                      value={funnel.vip_gold_url}
+                      onChange={(e) => setFunnel({ ...funnel, vip_gold_url: e.target.value })}
                     />
                   </div>
                   <div>
-                    <Label>"No Thanks, Skip" Button URL (leave empty for default)</Label>
+                    <Label>"No Thanks, Skip" Button URL (leave empty → goes to /dashboard)</Label>
                     <Input
                       placeholder="https://... or leave empty"
                       value={funnel.vip_skip_url}
@@ -196,17 +226,17 @@ const ManagePages = () => {
               </Card>
 
               <Button onClick={saveFunnel} disabled={loading} className="gap-2">
-                <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Funnel Settings"}
+                <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Sales Button URLs"}
               </Button>
             </div>
           </TabsContent>
 
-          {/* Thank You Pages Tab */}
+          {/* Thank You URLs */}
           <TabsContent value="thankyou">
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Thank You Page (After Initial $19.99 Purchase)</CardTitle>
+                  <CardTitle>Thank You (after Initial $19.99)</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -230,15 +260,17 @@ const ManagePages = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Thank You Page (After VIP Purchase)</CardTitle>
+                  <CardTitle>Thank You (after VIP Purchase)</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>"Browse Supplements" Button URL</Label>
+                    <Label>"Browse Supplements" Button URL (optional)</Label>
                     <Input
-                      placeholder="https://... or /shop"
+                      placeholder="https://... (leave empty to hide section)"
                       value={funnel.thankyou_vip_supplement_url}
-                      onChange={(e) => setFunnel({ ...funnel, thankyou_vip_supplement_url: e.target.value })}
+                      onChange={(e) =>
+                        setFunnel({ ...funnel, thankyou_vip_supplement_url: e.target.value })
+                      }
                     />
                   </div>
                   <div>
@@ -246,112 +278,51 @@ const ManagePages = () => {
                     <Input
                       placeholder="/dashboard"
                       value={funnel.thankyou_vip_dashboard_url}
-                      onChange={(e) => setFunnel({ ...funnel, thankyou_vip_dashboard_url: e.target.value })}
+                      onChange={(e) =>
+                        setFunnel({ ...funnel, thankyou_vip_dashboard_url: e.target.value })
+                      }
                     />
                   </div>
                 </CardContent>
               </Card>
 
               <Button onClick={saveFunnel} disabled={loading} className="gap-2">
-                <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Thank You Settings"}
+                <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Thank You URLs"}
               </Button>
             </div>
           </TabsContent>
 
-          {/* Shop URLs Tab */}
-          <TabsContent value="shop">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shop Product Pricing Button URLs</CardTitle>
-                <p className="text-sm text-muted-foreground">Set external checkout URLs for each pricing tier on the shop product page.</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Buy 1 Button URL</Label>
-                  <Input
-                    placeholder="https://www.digistore24.com/product/..."
-                    value={shopUrls.shop_buy1_url}
-                    onChange={(e) => setShopUrls({ ...shopUrls, shop_buy1_url: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>Buy 2 Button URL</Label>
-                  <Input
-                    placeholder="https://www.digistore24.com/product/..."
-                    value={shopUrls.shop_buy2_url}
-                    onChange={(e) => setShopUrls({ ...shopUrls, shop_buy2_url: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>Buy 3 Button URL</Label>
-                  <Input
-                    placeholder="https://www.digistore24.com/product/..."
-                    value={shopUrls.shop_buy3_url}
-                    onChange={(e) => setShopUrls({ ...shopUrls, shop_buy3_url: e.target.value })}
-                  />
-                </div>
-                <Button onClick={() => saveSetting("shop_urls", shopUrls)} disabled={loading} className="gap-2">
-                  <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Shop URLs"}
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Page Content Tab */}
+          {/* Page text content */}
           <TabsContent value="content">
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contact Us Page</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Custom Content (leave empty for default)</Label>
+              {[
+                { key: "contact_content", label: "Contact Page", rows: 6 },
+                { key: "imprint_content", label: "Imprint (Impressum)", rows: 10 },
+                { key: "cancellation_content", label: "Cancellation & Refund", rows: 8 },
+                { key: "privacy_content", label: "Privacy Policy", rows: 8 },
+                { key: "terms_content", label: "Terms of Service", rows: 8 },
+              ].map((p) => (
+                <Card key={p.key}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" /> {p.label}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Label>Custom content (leave empty to use default)</Label>
                     <Textarea
-                      value={pageContent.contact_content}
-                      onChange={(e) => setPageContent({ ...pageContent, contact_content: e.target.value })}
-                      rows={6}
-                      placeholder="Enter custom contact page text..."
+                      value={(pageContent as any)[p.key]}
+                      onChange={(e) =>
+                        setPageContent({ ...pageContent, [p.key]: e.target.value })
+                      }
+                      rows={p.rows}
+                      placeholder={`Enter custom ${p.label.toLowerCase()} text...`}
                     />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Imprint (Impressum) Page</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Custom Imprint Content (leave empty for default)</Label>
-                    <Textarea
-                      value={pageContent.imprint_content}
-                      onChange={(e) => setPageContent({ ...pageContent, imprint_content: e.target.value })}
-                      rows={10}
-                      placeholder="Enter your company details, address, registration info..."
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Cancellation & Refund Page</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Custom Content (leave empty for default)</Label>
-                    <Textarea
-                      value={pageContent.cancellation_content}
-                      onChange={(e) => setPageContent({ ...pageContent, cancellation_content: e.target.value })}
-                      rows={6}
-                      placeholder="Enter custom cancellation/refund policy text..."
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button onClick={() => saveSetting("page_content", pageContent)} disabled={loading} className="gap-2">
+              <Button onClick={saveContent} disabled={loading} className="gap-2">
                 <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Page Content"}
               </Button>
             </div>

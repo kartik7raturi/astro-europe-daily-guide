@@ -151,9 +151,6 @@ const Navigation = () => {
                 )}
               </div>
 
-              <Link to="/shop" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/shop") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
-                Shop
-              </Link>
 
               {!user && (
                 <Link to="/initial-pricing" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/initial-pricing") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>

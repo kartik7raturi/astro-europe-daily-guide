@@ -21,7 +21,6 @@ const Footer = () => {
               <li><Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">Home</Link></li>
               <li><Link to="/initial-pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
               <li><Link to="/love-forecasts" className="text-sm text-muted-foreground hover:text-primary transition-colors">Soulmate Sketch</Link></li>
-              <li><Link to="/shop" className="text-sm text-muted-foreground hover:text-primary transition-colors">Shop</Link></li>
             </ul>
           </div>
 
@@ -31,7 +30,6 @@ const Footer = () => {
               <li><Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">Daily Horoscope</Link></li>
               <li><Link to="/numerology" className="text-sm text-muted-foreground hover:text-primary transition-colors">Numerology</Link></li>
               <li><Link to="/tarot-reading" className="text-sm text-muted-foreground hover:text-primary transition-colors">Tarot Reading</Link></li>
-              <li><Link to="/consultations" className="text-sm text-muted-foreground hover:text-primary transition-colors">Consultation</Link></li>
               <li><Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
             </ul>
           </div>
@@ -54,7 +52,7 @@ const Footer = () => {
               <Mail className="h-4 w-4 mr-2" /> support@astrovibe.online
             </a>
           </div>
-          <p className="text-sm text-muted-foreground">© 2024 AstroVibe. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} AstroVibe. All rights reserved.</p>
         </div>
       </div>
     </footer>
