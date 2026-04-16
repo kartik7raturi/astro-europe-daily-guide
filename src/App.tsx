@@ -23,8 +23,6 @@ import SoulmateAnalysis from "./pages/SoulmateAnalysis";
 import TwinFlameAnalysis from "./pages/TwinFlameAnalysis";
 import KarmicBonds from "./pages/KarmicBonds";
 import MeetingPrediction from "./pages/MeetingPrediction";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
 import Checkout from "./pages/Checkout";
 import AIChat from "./pages/AIChat";
 import UserProfile from "./pages/UserProfile";
@@ -102,8 +100,6 @@ const App = () => (
                 <Route path="/initial-pricing" element={<InitialPricing />} />
                 <Route path="/upsell" element={<Upsell />} />
                 <Route path="/imprint" element={<Imprint />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/order-tracking" element={<OrderTracking />} />
