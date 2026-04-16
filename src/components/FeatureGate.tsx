@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, Crown } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface FeatureGateProps {
   children: ReactNode;
@@ -11,9 +10,15 @@ interface FeatureGateProps {
   minTier?: 'freemium' | 'starter' | 'explorer' | 'master';
   requiredCredits?: number;
   fallback?: ReactNode;
+  /** When true (default), gated content renders blurred behind an upgrade overlay. */
   showUpgradePrompt?: boolean;
 }
 
+/**
+ * Gates a feature by tier. Visitors with no plan see blurred content + a
+ * "Get Started" overlay → /initial-pricing. Starter users see a "VIP" overlay
+ * → /upsell. Paid users with sufficient access see the content.
+ */
 const FeatureGate = ({
   children,
   feature,
@@ -22,71 +27,70 @@ const FeatureGate = ({
   fallback,
   showUpgradePrompt = true,
 }: FeatureGateProps) => {
-  const { loading, isAdmin, canAccess, hasMinimumTier, hasCredits, tier } = useFeatureAccess();
+  const { loading, isAdmin, canAccess, hasMinimumTier, hasCredits, tier, hasActiveSubscription } = useFeatureAccess();
 
-  // Admin always has access
   if (isAdmin) return <>{children}</>;
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
-  // Check feature access
   const hasAccess = feature ? canAccess(feature) : hasMinimumTier(minTier);
-  
-  // Check credits if required
   const hasSufficientCredits = requiredCredits ? hasCredits(requiredCredits) : true;
 
   if (hasAccess && hasSufficientCredits) {
     return <>{children}</>;
   }
 
-  // Show custom fallback if provided
-  if (fallback) {
-    return <>{fallback}</>;
-  }
+  if (fallback) return <>{fallback}</>;
 
-  // Determine upgrade target based on user's current tier
-  const isStarter = tier === 'starter';
-  const upgradePath = isStarter ? "/upsell" : "/initial-pricing";
-  const upgradeLabel = isStarter ? "Upgrade to VIP" : "Upgrade Now";
+  // Visitors who haven't bought anything go to the $19.99 initial offer.
+  // Starter users (bought $19.99) trying to access VIP-only features go to /upsell.
+  const goesToUpsell = hasActiveSubscription && tier === 'starter';
+  const upgradePath = goesToUpsell ? '/upsell' : '/initial-pricing';
+  const upgradeLabel = goesToUpsell ? 'Upgrade to VIP' : 'Unlock for $19.99';
+  const headline = goesToUpsell ? 'VIP Feature' : 'Premium Feature';
+  const description = requiredCredits && !hasSufficientCredits
+    ? `This feature requires ${requiredCredits} credits.`
+    : goesToUpsell
+      ? 'Available with the VIP upgrade. Unlock all premium tools.'
+      : 'Get started with our Soulmate Sketch package to unlock this.';
 
-  // Show upgrade prompt
-  if (showUpgradePrompt) {
-    return (
-      <Card className="border-2 border-dashed border-primary/50 bg-primary/5">
-        <CardHeader className="text-center">
+  if (!showUpgradePrompt) return null;
+
+  return (
+    <div className="relative rounded-lg overflow-hidden border border-primary/30">
+      {/* Blurred preview of the actual content */}
+      <div className="blur-md select-none pointer-events-none opacity-60">
+        {children}
+      </div>
+
+      {/* Overlay with upgrade CTA */}
+      <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-[2px] p-6">
+        <div className="text-center max-w-sm">
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-cosmic flex items-center justify-center mb-4">
-            <Lock className="w-8 h-8 text-primary-foreground" />
+            {goesToUpsell ? (
+              <Crown className="w-8 h-8 text-primary-foreground" />
+            ) : (
+              <Lock className="w-8 h-8 text-primary-foreground" />
+            )}
           </div>
-          <CardTitle className="text-xl">
-            {isStarter ? "VIP Feature" : "Premium Feature"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <p className="text-muted-foreground">
-            {requiredCredits && !hasSufficientCredits
-              ? `This feature requires ${requiredCredits} credits. Please purchase more credits.`
-              : isStarter
-                ? "This feature is available with the VIP plan. Upgrade to unlock all premium features."
-                : `This feature requires a paid plan. Get started with our Soulmate Sketch package.`}
-          </p>
+          <h3 className="text-xl font-bold mb-2">{headline}</h3>
+          <p className="text-sm text-muted-foreground mb-4">{description}</p>
           <Link to={upgradePath}>
-            <Button className="gap-2" variant="cosmic">
-              <Crown className="w-4 h-4" />
+            <Button variant="cosmic" className="gap-2">
+              {goesToUpsell ? <Crown className="w-4 h-4" /> : null}
               {upgradeLabel}
             </Button>
           </Link>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return null;
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default FeatureGate;

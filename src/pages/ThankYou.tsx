@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Sparkles, ArrowRight, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import SalesPageChrome from "@/components/SalesPageChrome";
 
 const ThankYou = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const skipped = searchParams.get("skipped") === "true";
   const [urls, setUrls] = useState({ vip_url: "/upsell", dashboard_url: "/dashboard" });
 
   useEffect(() => {
     loadSettings();
-    // Load Digistore24 trusted badge
-    const script = document.createElement("script");
-    script.src = "https://www.digistore24.com/trusted-badge/45152/URbvNfHBuUCF7uC/thankyoupage";
-    script.type = "text/javascript";
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
   }, []);
 
   const loadSettings = async () => {
@@ -39,13 +35,21 @@ const ThankYou = () => {
     if (urls.vip_url.startsWith("http")) {
       window.open(urls.vip_url, "_blank");
     } else {
-      window.location.href = urls.vip_url;
+      navigate(urls.vip_url);
+    }
+  };
+
+  const handleSkipToDashboard = () => {
+    if (urls.dashboard_url.startsWith("http")) {
+      window.open(urls.dashboard_url, "_blank");
+    } else {
+      navigate(urls.dashboard_url);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-starlight flex items-center justify-center py-12 px-4">
-      <div className="max-w-lg w-full">
+    <div className="min-h-screen bg-gradient-starlight py-12 px-4">
+      <div className="max-w-lg w-full mx-auto">
         <Card className="border-primary/30 text-center">
           <CardHeader className="pb-4">
             <div className="flex justify-center mb-4">
@@ -59,16 +63,16 @@ const ThankYou = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-base md:text-lg">
               {skipped
-                ? "You can explore your basic features now. Upgrade anytime to unlock your full cosmic experience."
+                ? "You can explore your basic features now. Upgrade anytime to unlock the full cosmic experience."
                 : "Your Soulmate Sketch package is now active. Unlock even more with our VIP upgrade!"}
             </p>
 
             {!skipped && (
-              <div className="bg-primary/5 rounded-lg p-4 space-y-2">
+              <div className="bg-primary/5 rounded-lg p-4">
                 <p className="text-sm text-muted-foreground">
-                  ✨ Your basic features are ready to use immediately
+                  ✨ Your Soulmate Sketch features are ready to use
                 </p>
               </div>
             )}
@@ -80,19 +84,24 @@ const ThankYou = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               )}
-              <Link to={urls.dashboard_url}>
-                <Button variant={skipped ? "cosmic" : "outline"} size="lg" className="w-full">
-                  Go to Dashboard
-                </Button>
-              </Link>
-              {skipped && (
-                <Button variant="outline" className="w-full gap-2" onClick={handleVipUpgrade}>
-                  <Sparkles className="h-4 w-4" /> View Premium Plans
-                </Button>
-              )}
+              <Button
+                variant={skipped ? "cosmic" : "outline"}
+                size="lg"
+                className="w-full"
+                onClick={handleSkipToDashboard}
+              >
+                {skipped ? "Go to Dashboard" : "No thanks, go to Dashboard"}
+              </Button>
             </div>
+
+            {/* Bank statement note */}
+            <p className="text-xs text-muted-foreground border-t border-border pt-4">
+              The debit will appear as <strong>Digistore24 GmbH (Germany)</strong> on your bank or card statement.
+            </p>
           </CardContent>
         </Card>
+
+        <SalesPageChrome badgeType="thankyoupage" />
       </div>
     </div>
   );
