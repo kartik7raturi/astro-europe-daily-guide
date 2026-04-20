@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Stars, Sparkles, LogOut, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Menu, X, Stars, Sparkles, LogOut, User, ChevronDown, ChevronUp, Crown, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import NavigationMenuDemo from "./NavigationMenu";
 
 interface NavCategory {
@@ -16,6 +16,10 @@ const Navigation = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { tier, isAdmin } = useFeatureAccess();
+
+  // VIP badge: locked unless user has master tier (or admin).
+  const hasVip = isAdmin || tier === "master";
 
   const navCategories: NavCategory[] = [
     {
@@ -85,7 +89,21 @@ const Navigation = () => {
             <NavigationMenuDemo />
             {user ? (
               <div className="flex items-center gap-2">
-                {user.email === "sankhobusiness@gmail.com" && (
+                {/* VIP upgrade chip — locked icon for non-VIP, crown for VIP */}
+                <Link
+                  to={hasVip ? "/dashboard" : "/vip-upgrade"}
+                  title={hasVip ? "VIP member" : "Upgrade to VIP"}
+                >
+                  <Button
+                    variant={hasVip ? "cosmic" : "outline"}
+                    size="sm"
+                    className="gap-1.5"
+                  >
+                    {hasVip ? <Crown className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                    VIP
+                  </Button>
+                </Link>
+                {isAdmin && (
                   <Link to="/admin">
                     <Button variant="outline" size="sm" className="gap-2">
                       <User className="h-4 w-4" /> Admin
@@ -153,8 +171,18 @@ const Navigation = () => {
 
 
               {!user && (
-                <Link to="/initial-pricing" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/initial-pricing") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
+                <Link to="/pricing" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/pricing") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
                   Pricing
+                </Link>
+              )}
+
+              <Link to="/shop" className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive("/shop") ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`} onClick={() => setIsOpen(false)}>
+                Shop
+              </Link>
+
+              {user && (
+                <Link to={hasVip ? "/dashboard" : "/vip-upgrade"} className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-accent/50" onClick={() => setIsOpen(false)}>
+                  {hasVip ? "👑 VIP Member" : "🔒 Upgrade to VIP"}
                 </Link>
               )}
 
@@ -166,7 +194,7 @@ const Navigation = () => {
                 {user ? (
                   <div className="space-y-2">
                     <div className="px-3 py-2 text-sm text-muted-foreground">{user.email}</div>
-                    {user.email === "sankhobusiness@gmail.com" && (
+                    {isAdmin && (
                       <Link to="/admin" onClick={() => setIsOpen(false)}>
                         <Button variant="outline" size="sm" className="w-full gap-2"><User className="h-4 w-4" /> Admin Dashboard</Button>
                       </Link>
