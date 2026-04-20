@@ -65,6 +65,9 @@ import Upsell from "./pages/Upsell";
 import Imprint from "./pages/Imprint";
 import Quiz from "./pages/Quiz";
 import FreeReport from "./pages/FreeReport";
+import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
+import AuthRedirect from "./components/AuthRedirect";
 
 const queryClient = new QueryClient();
 
@@ -79,9 +82,11 @@ const App = () => (
             <Navigation />
             <main className="flex-1">
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<AuthRedirect><Home /></AuthRedirect>} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/free-report" element={<FreeReport />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/shop/:id" element={<ProductDetail />} />
                 <Route path="/horoscope" element={<HoroscopeForm />} />
                 <Route path="/daily-reading" element={<DailyReading />} />
                 <Route path="/numerology" element={<Numerology />} />
@@ -99,6 +104,7 @@ const App = () => (
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/initial-pricing" element={<InitialPricing />} />
                 <Route path="/upsell" element={<Upsell />} />
+                <Route path="/vip-upgrade" element={<Upsell />} />
                 <Route path="/imprint" element={<Imprint />} />
                 <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/profile" element={<UserProfile />} />
