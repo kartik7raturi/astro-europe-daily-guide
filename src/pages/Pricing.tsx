@@ -1,7 +1,8 @@
-import { Navigate } from "react-router-dom";
+import InitialPricing from "./InitialPricing";
 
-// /pricing now redirects to the canonical $19.99 sales page.
-// All previous freemium/49/199/299 pricing has been removed.
-const Pricing = () => <Navigate to="/initial-pricing" replace />;
+// /pricing IS the canonical sales page. We render the same component as
+// /initial-pricing here so admins can link to either URL interchangeably
+// and we don't double-bounce users with a Navigate redirect.
+const Pricing = () => <InitialPricing />;
 
 export default Pricing;

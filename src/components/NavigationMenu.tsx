@@ -94,13 +94,21 @@ const NavigationMenuDemo = () => {
 
         {!user && (
           <NavigationMenuItem>
-            <Link to="/initial-pricing">
-              <NavigationMenuLink className={cn(linkClass, isActive("/initial-pricing") && "bg-accent text-accent-foreground")}>
+            <Link to="/pricing">
+              <NavigationMenuLink className={cn(linkClass, isActive("/pricing") && "bg-accent text-accent-foreground")}>
                 Pricing
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
         )}
+
+        <NavigationMenuItem>
+          <Link to="/shop">
+            <NavigationMenuLink className={cn(linkClass, isActive("/shop") && "bg-accent text-accent-foreground")}>
+              Shop
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
 
         {user && (
           <NavigationMenuItem>
