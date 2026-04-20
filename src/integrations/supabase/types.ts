@@ -930,6 +930,42 @@ export type Database = {
         }
         Relationships: []
       }
+      digistore_webhook_logs: {
+        Row: {
+          buyer_email: string | null
+          created_at: string
+          error_message: string | null
+          event: string | null
+          id: string
+          order_id: string | null
+          processed: boolean
+          product_id: string | null
+          raw_payload: Json
+        }
+        Insert: {
+          buyer_email?: string | null
+          created_at?: string
+          error_message?: string | null
+          event?: string | null
+          id?: string
+          order_id?: string | null
+          processed?: boolean
+          product_id?: string | null
+          raw_payload: Json
+        }
+        Update: {
+          buyer_email?: string | null
+          created_at?: string
+          error_message?: string | null
+          event?: string | null
+          id?: string
+          order_id?: string | null
+          processed?: boolean
+          product_id?: string | null
+          raw_payload?: Json
+        }
+        Relationships: []
+      }
       life_career_analysis: {
         Row: {
           analysis_date: string
