@@ -94,8 +94,6 @@ const App = () => (
                 <Route path="/astro-calendar" element={<AstroCalendar />} />
                 <Route path="/lucky-elements" element={<LuckyElements />} />
                 <Route path="/consultations" element={<Consultations />} />
-                <Route path="/life-career" element={<LifeCareerAnalysis />} />
-                <Route path="/life-career-analysis" element={<LifeCareerAnalysis />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/daily-affirmations" element={<FeatureGate minTier="explorer"><DailyAffirmations /></FeatureGate>} />
                 <Route path="/love-forecasts" element={<FeatureGate minTier="explorer"><LoveForecasts /></FeatureGate>} />
