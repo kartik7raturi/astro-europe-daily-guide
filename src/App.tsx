@@ -68,6 +68,7 @@ import FreeReport from "./pages/FreeReport";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import AuthRedirect from "./components/AuthRedirect";
+import FeatureGate from "./components/FeatureGate";
 
 const queryClient = new QueryClient();
 
@@ -96,9 +97,9 @@ const App = () => (
                 <Route path="/life-career" element={<LifeCareerAnalysis />} />
                 <Route path="/life-career-analysis" element={<LifeCareerAnalysis />} />
                 <Route path="/blog" element={<Blog />} />
-                <Route path="/daily-affirmations" element={<DailyAffirmations />} />
-                <Route path="/love-forecasts" element={<LoveForecasts />} />
-                <Route path="/crush-analyzer" element={<CrushAnalyzer />} />
+                <Route path="/daily-affirmations" element={<FeatureGate minTier="explorer"><DailyAffirmations /></FeatureGate>} />
+                <Route path="/love-forecasts" element={<FeatureGate minTier="explorer"><LoveForecasts /></FeatureGate>} />
+                <Route path="/crush-analyzer" element={<FeatureGate minTier="explorer"><CrushAnalyzer /></FeatureGate>} />
                 <Route path="/astro-journal" element={<AstroJournal />} />
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
@@ -106,7 +107,7 @@ const App = () => (
                 <Route path="/upsell" element={<Upsell />} />
                 <Route path="/vip-upgrade" element={<Upsell />} />
                 <Route path="/imprint" element={<Imprint />} />
-                <Route path="/ai-chat" element={<AIChat />} />
+                <Route path="/ai-chat" element={<FeatureGate minTier="master"><AIChat /></FeatureGate>} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/order-tracking" element={<OrderTracking />} />
                 <Route path="/wishlist" element={<Wishlist />} />
@@ -114,7 +115,7 @@ const App = () => (
                 <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
                 <Route path="/astrologer/:id" element={<AstrologerProfile />} />
                 <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
-                <Route path="/tarot-reading" element={<TarotReading />} />
+                <Route path="/tarot-reading" element={<FeatureGate minTier="explorer"><TarotReading /></FeatureGate>} />
                 <Route path="/thank-you" element={<ThankYou />} />
                 <Route path="/thank-you-vip" element={<ThankYouVip />} />
                 <Route path="/admin" element={<AdminDashboard />} />
@@ -139,10 +140,12 @@ const App = () => (
                 <Route path="/shipping-policy" element={<ShippingPolicy />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/soulmate-analysis" element={<SoulmateAnalysis />} />
-                <Route path="/twin-flame" element={<TwinFlameAnalysis />} />
-                <Route path="/karmic-bonds" element={<KarmicBonds />} />
-                <Route path="/meeting-prediction" element={<MeetingPrediction />} />
+                <Route path="/soulmate-analysis" element={<FeatureGate minTier="explorer"><SoulmateAnalysis /></FeatureGate>} />
+                <Route path="/twin-flame" element={<FeatureGate minTier="explorer"><TwinFlameAnalysis /></FeatureGate>} />
+                <Route path="/karmic-bonds" element={<FeatureGate minTier="explorer"><KarmicBonds /></FeatureGate>} />
+                <Route path="/meeting-prediction" element={<FeatureGate minTier="explorer"><MeetingPrediction /></FeatureGate>} />
+                <Route path="/life-career" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
+                <Route path="/life-career-analysis" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
