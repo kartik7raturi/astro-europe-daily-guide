@@ -81,10 +81,10 @@ const Upsell = () => {
             🎉 EXCLUSIVE VIP UPGRADE
           </Badge>
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-            Unlock Your Full Cosmic Experience
+            Wait! Unlock Your FULL Astrology Reading
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get more soulmate sketches, deeper insights, and access to all of our premium tools — choose the membership that fits you.
+            You've only seen a small part. Your current plan shows limited insights — upgrade now to unlock deep future predictions, relationship secrets and wealth opportunities inside your dashboard.
           </p>
         </div>
 
@@ -182,6 +182,12 @@ const Upsell = () => {
             <SkipForward className="h-4 w-4" />
             No thanks, skip for now
           </Button>
+        </div>
+
+        {/* Mandatory Digistore notes */}
+        <div className="max-w-2xl mx-auto mb-6 text-center text-[11px] text-muted-foreground leading-relaxed border-t border-border pt-4">
+          This is a digital membership upgrade. After purchase, VIP features unlock instantly inside your dashboard. No physical product will be shipped.<br/>
+          The withdrawal from your account will be done by Digistore24.
         </div>
 
         <SalesPageChrome badgeType="salespage" />

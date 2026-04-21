@@ -64,16 +64,17 @@ const ThankYou = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-base md:text-lg">
-              {skipped
-                ? "You can explore your basic features now. Upgrade anytime to unlock the full cosmic experience."
-                : "Your Soulmate Sketch package is now active. Unlock even more with our VIP upgrade!"}
+              Your astrology dashboard is ready. Your access is now active and you can log in below. You will also receive details by email — if you don't see it, please check your spam folder.
             </p>
 
             {!skipped && (
-              <div className="bg-primary/5 rounded-lg p-4">
-                <p className="text-sm text-muted-foreground">
-                  ✨ Your Soulmate Sketch features are ready to use
-                </p>
+              <div className="bg-primary/5 rounded-lg p-4 text-left">
+                <p className="text-sm font-semibold mb-1">📥 Access instructions</p>
+                <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
+                  <li>Your access is now active inside your dashboard</li>
+                  <li>Login email has been sent to your inbox</li>
+                  <li>Check spam folder if not received within 5 minutes</li>
+                </ul>
               </div>
             )}
 
@@ -94,10 +95,11 @@ const ThankYou = () => {
               </Button>
             </div>
 
-            {/* Bank statement note */}
-            <p className="text-xs text-muted-foreground border-t border-border pt-4">
-              The debit will appear as <strong>Digistore24 GmbH (Germany)</strong> on your bank or card statement.
-            </p>
+            {/* Mandatory notes */}
+            <div className="text-xs text-muted-foreground border-t border-border pt-4 space-y-1">
+              <p>This is a digital product. No physical item will be shipped.</p>
+              <p>The withdrawal from your account will be done by <strong>Digistore24</strong>.</p>
+            </div>
           </CardContent>
         </Card>
 

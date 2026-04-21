@@ -36,11 +36,11 @@ const InitialPricing = () => {
   };
 
   const features = [
-    { icon: Heart, text: "1 AI-Generated Soulmate Sketch" },
-    { icon: Star, text: "Personal Love Compatibility Score" },
-    { icon: MapPin, text: "Meeting Place Prediction" },
-    { icon: Hash, text: "Personalised Numerology Report" },
-    { icon: Sparkles, text: "Email Support" },
+    { icon: Heart, text: "Personalised astrology dashboard (instant digital access)" },
+    { icon: Star, text: "AI-generated Soulmate Sketch + compatibility score" },
+    { icon: MapPin, text: "Where & how you'll meet your soulmate" },
+    { icon: Hash, text: "Full numerology report based on your birth details" },
+    { icon: Sparkles, text: "Email support included" },
   ];
 
   const testimonials = [
@@ -50,10 +50,10 @@ const InitialPricing = () => {
   ];
 
   const benefits = [
-    "Discover the cosmic blueprint of your future partner",
-    "Understand where and how you're most likely to meet them",
-    "Get a clear, AI-rendered visual of their features",
-    "Receive your personal numerology breakdown",
+    "Personalised astrology dashboard — yours forever",
+    "Basic life, love & career predictions",
+    "AI-rendered visual of your future partner",
+    "Personal numerology breakdown",
   ];
 
   return (
@@ -70,19 +70,19 @@ const InitialPricing = () => {
             <Star className="h-14 w-14 text-primary" />
           </div>
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-cosmic bg-clip-text text-transparent mb-4">
-            Discover Your AI Soulmate Sketch
+            Unlock Your Personal Astrology Dashboard in 60 Seconds
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            See who the stars have destined for you with an AI-powered portrait based on your unique birth chart.
+            Get instant digital access to your AstroVibe member area with personalised predictions about your love life, career, money and future — based on your unique birth details.
           </p>
         </div>
 
-        {/* Description / What we offer */}
+        {/* What you get */}
         <Card className="mb-10 border-primary/20">
           <CardContent className="p-6 md:p-8 space-y-4">
-            <h2 className="text-2xl font-bold text-center">What You'll Get</h2>
+            <h2 className="text-2xl font-bold text-center">🎯 What You Get</h2>
             <p className="text-muted-foreground text-center max-w-2xl mx-auto">
-              Your personalised Soulmate Sketch package combines ancient astrology with modern AI to reveal the person the cosmos has aligned with you.
+              AstroVibe is a digital membership product. After purchase you receive instant access to your secure member dashboard where you can view your astrology insights anytime — no waiting, nothing shipped.
             </p>
             <ul className="grid md:grid-cols-2 gap-3 mt-4">
               {benefits.map((b, i) => (
@@ -143,6 +143,10 @@ const InitialPricing = () => {
 
             <p className="text-xs text-muted-foreground text-center">
               🔒 Secure Digistore24 checkout
+            </p>
+            <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
+              The withdrawal from your account will be done by Digistore24.<br/>
+              This is a digital product. No physical product will be shipped. Results are based on astrology interpretations and are not a substitute for professional advice.
             </p>
           </CardContent>
         </Card>

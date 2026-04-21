@@ -62,13 +62,17 @@ const ThankYouVip = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-base md:text-lg">
-              Congratulations! Your VIP upgrade is now active. You have access to all premium features and cosmic insights.
+              Your VIP astrology dashboard is now fully unlocked. Login details have been sent to your inbox — check your spam folder if you don't see them within 5 minutes.
             </p>
 
-            <div className="bg-primary/5 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">
-                ✨ All premium features unlocked
-              </p>
+            <div className="bg-primary/5 rounded-lg p-4 text-left">
+              <p className="text-sm font-semibold mb-1">✨ All VIP features unlocked</p>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
+                <li>Complete life predictions (past, present, future)</li>
+                <li>Full love & compatibility analysis</li>
+                <li>Wealth & career roadmap</li>
+                <li>Daily, weekly, monthly updates</li>
+              </ul>
             </div>
 
             {urls.supplement_url && (
@@ -88,9 +92,10 @@ const ThankYouVip = () => {
               {urls.supplement_url ? "No thanks, go to Dashboard" : "Go to Dashboard"}
             </Button>
 
-            <p className="text-xs text-muted-foreground border-t border-border pt-4">
-              The debit will appear as <strong>Digistore24 GmbH (Germany)</strong> on your bank or card statement.
-            </p>
+            <div className="text-xs text-muted-foreground border-t border-border pt-4 space-y-1">
+              <p>This is a digital membership upgrade. No physical item will be shipped.</p>
+              <p>The withdrawal from your account will be done by <strong>Digistore24</strong>.</p>
+            </div>
           </CardContent>
         </Card>
 
