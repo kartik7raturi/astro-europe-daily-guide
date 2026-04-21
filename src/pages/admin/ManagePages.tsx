@@ -24,6 +24,7 @@ const ManagePages = () => {
     thankyou_dashboard_url: "/dashboard",
     thankyou_vip_supplement_url: "",
     thankyou_vip_dashboard_url: "/dashboard",
+    money_magnet_url: "",
   });
 
   const [pageContent, setPageContent] = useState({
@@ -56,6 +57,7 @@ const ManagePages = () => {
         thankyou_dashboard_url: val.thankyou_dashboard_url || "/dashboard",
         thankyou_vip_supplement_url: val.thankyou_vip_supplement_url || "",
         thankyou_vip_dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
+        money_magnet_url: val.money_magnet_url || "",
       });
     }
 
@@ -221,6 +223,27 @@ const ManagePages = () => {
                       value={funnel.vip_skip_url}
                       onChange={(e) => setFunnel({ ...funnel, vip_skip_url: e.target.value })}
                     />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ExternalLink className="h-5 w-5" /> Shop — Money Magnet
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>"Get Money Magnet" Button URL (Digistore24 link)</Label>
+                    <Input
+                      placeholder="https://www.digistore24.com/product/..."
+                      value={funnel.money_magnet_url}
+                      onChange={(e) => setFunnel({ ...funnel, money_magnet_url: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      The CTA on /shop opens this URL in a new tab.
+                    </p>
                   </div>
                 </CardContent>
               </Card>
