@@ -7,12 +7,19 @@ import { supabase } from "@/integrations/supabase/client";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import DigistoreBadge from "@/components/DigistoreBadge";
 
+type FunnelSettings = {
+  initial_buy_url?: string;
+};
+
+type DigistorePromocodeFn = (params: { product_id: number; adjust_domain: boolean }) => void;
+
 const InitialPricing = () => {
   const navigate = useNavigate();
   const [buyUrl, setBuyUrl] = useState("");
 
   useEffect(() => {
     loadSettings();
+    initializeDigistorePromocode();
   }, []);
 
   const loadSettings = async () => {
@@ -22,9 +29,40 @@ const InitialPricing = () => {
       .eq("key", "funnel_settings")
       .maybeSingle();
     if (data?.value) {
-      const val = data.value as any;
+      const val = data.value as FunnelSettings;
       setBuyUrl(val.initial_buy_url || "");
     }
+  };
+
+  const initializeDigistorePromocode = () => {
+    const digistoreWindow = window as Window & { digistorePromocode?: DigistorePromocodeFn };
+
+    const runPromocode = () => {
+      const digistorePromocode = digistoreWindow.digistorePromocode;
+      if (typeof digistorePromocode === "function") {
+        digistorePromocode({ product_id: 685352, adjust_domain: true });
+      }
+    };
+
+    if (digistoreWindow.digistorePromocode) {
+      runPromocode();
+      return;
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      'script[src="https://www.digistore24-scripts.com/service/digistore.js"]'
+    );
+
+    if (existingScript) {
+      existingScript.addEventListener("load", runPromocode, { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://www.digistore24-scripts.com/service/digistore.js";
+    script.async = true;
+    script.addEventListener("load", runPromocode, { once: true });
+    document.body.appendChild(script);
   };
 
   const handleBuy = () => {

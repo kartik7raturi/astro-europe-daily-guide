@@ -120,6 +120,10 @@ const HoroscopeForm = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              <input type="hidden" name="ds24_affiliate" />
+              <input type="hidden" name="ds24_campaignkey" />
+              <input type="hidden" name="ds24_trackingkey" />
+
               {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-foreground">
