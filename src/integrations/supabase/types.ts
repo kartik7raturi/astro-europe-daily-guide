@@ -1199,6 +1199,7 @@ export type Database = {
           order_id: string | null
           order_type: string
           payment_id: string | null
+          payment_method: string | null
           payment_provider: string
           quantity: number
           shipping_address: Json | null
@@ -1221,6 +1222,7 @@ export type Database = {
           order_id?: string | null
           order_type: string
           payment_id?: string | null
+          payment_method?: string | null
           payment_provider?: string
           quantity?: number
           shipping_address?: Json | null
@@ -1243,6 +1245,7 @@ export type Database = {
           order_id?: string | null
           order_type?: string
           payment_id?: string | null
+          payment_method?: string | null
           payment_provider?: string
           quantity?: number
           shipping_address?: Json | null
@@ -2154,6 +2157,10 @@ export type Database = {
       }
     }
     Functions: {
+      grant_subscription: {
+        Args: { p_credits?: number; p_email: string; p_tier: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
