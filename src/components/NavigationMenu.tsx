@@ -102,14 +102,6 @@ const NavigationMenuDemo = () => {
           </NavigationMenuItem>
         )}
 
-        <NavigationMenuItem>
-          <Link to="/shop">
-            <NavigationMenuLink className={cn(linkClass, isActive("/shop") && "bg-accent text-accent-foreground")}>
-              Shop
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
         {user && (
           <NavigationMenuItem>
             <Link to="/love-forecasts">
