@@ -107,14 +107,39 @@ Deno.serve(async (req) => {
     .select()
     .single();
 
-    // TEMP: signature validation disabled per request
-    console.log("Skipping signature validation");
-
+    // Always allow connection_test through (Digistore validates the endpoint)
     if (event === "connection_test") {
       return new Response("OK", { status: 200, headers: corsHeaders });
     }
 
-    const grantingEvents = ["on_payment", "on_rebill", "paid", "completed"];
+    // Validate signature when passphrase is configured. We still respond 200
+    // and log the failure so Digistore doesn't retry forever, but we DO NOT
+    // grant access for unverified payloads.
+    const passphrase = Deno.env.get("DIGISTORE_IPN_PASSPHRASE") || "";
+    if (passphrase) {
+      const signatureOk = await verifyDigistoreSignature(params, passphrase);
+      if (!signatureOk) {
+        console.warn("Invalid Digistore signature for order", orderId);
+        await supabase
+          .from("digistore_webhook_logs")
+          .update({ error_message: "Invalid signature" })
+          .eq("id", log?.id);
+        return new Response("OK", { status: 200, headers: corsHeaders });
+      }
+    } else {
+      console.warn("DIGISTORE_IPN_PASSPHRASE not set — skipping signature check");
+    }
+
+    // Digistore sends "payment" / "rebill" (and historic "on_payment").
+    // Accept all common variants.
+    const grantingEvents = [
+      "payment",
+      "rebill",
+      "on_payment",
+      "on_rebill",
+      "paid",
+      "completed",
+    ];
     if (!grantingEvents.includes(event)) {
       console.log("Non-granting event, ignoring:", event);
       return new Response("OK", { status: 200, headers: corsHeaders });
