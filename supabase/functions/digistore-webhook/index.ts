@@ -107,8 +107,24 @@ Deno.serve(async (req) => {
     .select()
     .single();
 
-    // TEMP: signature validation disabled per request
-    console.log("Skipping signature validation");
+    // Validate signature when passphrase is configured. We still respond 200
+    // and log the failure so Digistore doesn't retry forever, but we DO NOT
+    // grant access for unverified payloads.
+    const passphrase = Deno.env.get("DIGISTORE_IPN_PASSPHRASE") || "";
+    let signatureOk = true;
+    if (passphrase) {
+      signatureOk = await verifyDigistoreSignature(params, passphrase);
+      if (!signatureOk) {
+        console.warn("Invalid Digistore signature for order", orderId);
+        await supabase
+          .from("digistore_webhook_logs")
+          .update({ error_message: "Invalid signature" })
+          .eq("id", log?.id);
+        return new Response("OK", { status: 200, headers: corsHeaders });
+      }
+    } else {
+      console.warn("DIGISTORE_IPN_PASSPHRASE not set — skipping signature check");
+    }
 
     if (event === "connection_test") {
       return new Response("OK", { status: 200, headers: corsHeaders });
