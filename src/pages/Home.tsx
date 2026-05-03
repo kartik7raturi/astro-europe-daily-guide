@@ -18,6 +18,17 @@ const Home = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  useEffect(() => {
+    const scriptSrc = "https://www.digistore24.com/track_info/620980/d6bfa7dcfba4ead86770c27dd0cbc36a15b586298d44d566fe28e36e37ff611d.js?affiliate=ds24_affiliate&campaignkey=ds24_campaignkey&trackingkey=ds24_trackingkey";
+    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${scriptSrc}"]`);
+    if (existingScript) return;
+
+    const script = document.createElement("script");
+    script.src = scriptSrc;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   const handleNewsletterSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
