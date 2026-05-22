@@ -1,13 +1,14 @@
-// Digistore24 IPN webhook
-// Validates the SHA512 signature, looks up product → tier mapping in
-// platform_settings, and grants the buyer the matching subscription tier
-// + credits. Logs every payload to digistore_webhook_logs.
+// WarriorPlus IPN webhook
+// Verifies the wp_signature using the vendor API key, looks up product →
+// tier mapping in platform_settings (key: warriorplus_product_map), and
+// grants the buyer the matching subscription tier + credits. Logs every
+// payload to digistore_webhook_logs (reused as generic IPN log table).
 //
-// Configure in Digistore24 dashboard:
-//   IPN URL: https://<project>.supabase.co/functions/v1/digistore-webhook
-//   IPN passphrase: stored as DIGISTORE_IPN_PASSPHRASE secret
+// Configure in WarriorPlus → Vendor Settings → Instant Notifications:
+//   Notification URL: https://<project>.supabase.co/functions/v1/warriorplus-webhook
+//   API Key: stored as WARRIORPLUS_API_KEY secret
 //
-// verify_jwt is disabled because Digistore signs the body itself.
+// verify_jwt is disabled because WarriorPlus signs the body itself.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -16,36 +17,39 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-async function sha512Hex(input: string): Promise<string> {
+async function sha1Hex(input: string): Promise<string> {
   const buf = new TextEncoder().encode(input);
-  const hash = await crypto.subtle.digest("SHA-512", buf);
+  const hash = await crypto.subtle.digest("SHA-1", buf);
   return Array.from(new Uint8Array(hash))
     .map((b) => b.toString(16).padStart(2, "0"))
-    .join("")
-    .toUpperCase();
+    .join("");
 }
 
-async function verifyDigistoreSignature(
+// WarriorPlus signature algorithm:
+//   1. Take all POSTed params except wp_signature
+//   2. Sort by key (case-insensitive)
+//   3. Concatenate the values (no separator)
+//   4. Append the vendor API key
+//   5. SHA1 the resulting string → compare to wp_signature
+async function verifyWarriorPlusSignature(
   params: Record<string, string>,
-  passphrase: string,
+  apiKey: string,
 ): Promise<boolean> {
-  const provided = (params["sha_sign"] || "").toUpperCase();
+  const provided = (params["wp_signature"] || "").toLowerCase();
   if (!provided) return false;
   const sortedKeys = Object.keys(params)
-    .filter((k) => k !== "sha_sign" && params[k] !== "" && params[k] != null)
-    .sort((a, b) => a.toUpperCase().localeCompare(b.toUpperCase()));
-  const parts = sortedKeys.map((k) => `${k}=${params[k]}`);
-  const signed = parts.join(passphrase) + passphrase;
-  return (await sha512Hex(signed)) === provided;
+    .filter((k) => k !== "wp_signature")
+    .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  const concatenated = sortedKeys.map((k) => params[k] ?? "").join("") + apiKey;
+  return (await sha1Hex(concatenated)) === provided;
 }
 
 Deno.serve(async (req) => {
-  // CRITICAL: Always respond 200 to Digistore — never 4xx/5xx — or they retry forever
-  // and may pause the seller account. Wrap EVERYTHING in try/catch.
+  // Always respond 200 to the IPN — never 4xx/5xx — to avoid retry storms.
   if (req.method === "OPTIONS") return new Response("ok", { status: 200, headers: corsHeaders });
 
   try {
-    console.log("Digistore webhook hit:", req.method, req.url);
+    console.log("WarriorPlus webhook hit:", req.method, req.url);
 
     if (req.method !== "POST") {
       return new Response("OK", { status: 200, headers: corsHeaders });
@@ -55,10 +59,6 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Accept all three transports Digistore can use:
-    //  1) application/json
-    //  2) application/x-www-form-urlencoded (default IPN)
-    //  3) multipart/form-data
     let params: Record<string, string> = {};
     const ct = (req.headers.get("content-type") || "").toLowerCase();
     try {
@@ -76,7 +76,6 @@ Deno.serve(async (req) => {
       console.error("Payload parse error:", e);
     }
 
-    // Also merge query string (Digistore "thank-you-page" can ping with GET-style data)
     try {
       const url = new URL(req.url);
       url.searchParams.forEach((v, k) => {
@@ -84,42 +83,46 @@ Deno.serve(async (req) => {
       });
     } catch {}
 
-    console.log("Webhook params:", JSON.stringify(params));
+    console.log("WarriorPlus params:", JSON.stringify(params));
 
-    const event = params["event"] || params["status"] || "unknown";
-    const productId = String(params["product_id"] || "");
-    const orderId = String(params["order_id"] || "");
+    // WarriorPlus uses action_type values like: sale, refund, chargeback,
+    // bill, rebill, cancel-rebill. Product is identified by wp_product_id
+    // (offer id) or wp_offer_id.
+    const event = params["action"] || params["action_type"] || "unknown";
+    const productId = String(
+      params["wp_product_id"] || params["product_id"] || params["wp_offer_id"] || "",
+    );
+    const orderId = String(
+      params["wp_sale_id"] || params["sale_id"] || params["transaction_id"] || "",
+    );
     const buyerEmail = String(
-      params["email"] || params["buyer_email"] || params["pay_email"] || ""
+      params["wp_buyer_email"] || params["buyer_email"] || params["email"] || "",
     )
       .toLowerCase()
       .trim();
 
     const { data: log } = await supabase
-    .from("digistore_webhook_logs")
-    .insert({
-      event,
-      product_id: productId,
-      order_id: orderId,
-      buyer_email: buyerEmail,
-      raw_payload: params,
-    })
-    .select()
-    .single();
+      .from("digistore_webhook_logs")
+      .insert({
+        event,
+        product_id: productId,
+        order_id: orderId,
+        buyer_email: buyerEmail,
+        raw_payload: params,
+      })
+      .select()
+      .single();
 
-    // Always allow connection_test through (Digistore validates the endpoint)
-    if (event === "connection_test") {
+    // Connection / test pings — WarriorPlus sometimes sends "test" action.
+    if (event === "test" || event === "connection_test") {
       return new Response("OK", { status: 200, headers: corsHeaders });
     }
 
-    // Validate signature when passphrase is configured. We still respond 200
-    // and log the failure so Digistore doesn't retry forever, but we DO NOT
-    // grant access for unverified payloads.
-    const passphrase = Deno.env.get("DIGISTORE_IPN_PASSPHRASE") || "";
-    if (passphrase) {
-      const signatureOk = await verifyDigistoreSignature(params, passphrase);
+    const apiKey = Deno.env.get("WARRIORPLUS_API_KEY") || "";
+    if (apiKey) {
+      const signatureOk = await verifyWarriorPlusSignature(params, apiKey);
       if (!signatureOk) {
-        console.warn("Invalid Digistore signature for order", orderId);
+        console.warn("Invalid WarriorPlus signature for order", orderId);
         await supabase
           .from("digistore_webhook_logs")
           .update({ error_message: "Invalid signature" })
@@ -127,29 +130,20 @@ Deno.serve(async (req) => {
         return new Response("OK", { status: 200, headers: corsHeaders });
       }
     } else {
-      console.warn("DIGISTORE_IPN_PASSPHRASE not set — skipping signature check");
+      console.warn("WARRIORPLUS_API_KEY not set — skipping signature check");
     }
 
-    // Digistore sends "payment" / "rebill" (and historic "on_payment").
-    // Accept all common variants.
-    const grantingEvents = [
-      "payment",
-      "rebill",
-      "on_payment",
-      "on_rebill",
-      "paid",
-      "completed",
-    ];
+    const grantingEvents = ["sale", "bill", "rebill", "test-sale"];
     if (!grantingEvents.includes(event)) {
       console.log("Non-granting event, ignoring:", event);
       return new Response("OK", { status: 200, headers: corsHeaders });
     }
 
     const { data: settings } = await supabase
-    .from("platform_settings")
-    .select("value")
-    .eq("key", "digistore_product_map")
-    .maybeSingle();
+      .from("platform_settings")
+      .select("value")
+      .eq("key", "warriorplus_product_map")
+      .maybeSingle();
 
     const map =
       (settings?.value as Record<string, { tier: string; credits: number }>) || {};
@@ -171,10 +165,10 @@ Deno.serve(async (req) => {
     }
 
     const { data: existingSub } = await supabase
-    .from("subscribers")
-    .select("*")
-    .eq("email", buyerEmail)
-    .maybeSingle();
+      .from("subscribers")
+      .select("*")
+      .eq("email", buyerEmail)
+      .maybeSingle();
 
     const TIER_RANK: Record<string, number> = {
       freemium: 0,
@@ -204,38 +198,37 @@ Deno.serve(async (req) => {
 
     if (existingSub?.user_id && mapping.credits > 0) {
       const { data: creditsRow } = await supabase
-      .from("user_credits")
-      .select("*")
-      .eq("user_id", existingSub.user_id)
-      .maybeSingle();
+        .from("user_credits")
+        .select("*")
+        .eq("user_id", existingSub.user_id)
+        .maybeSingle();
 
       if (creditsRow) {
         await supabase
-        .from("user_credits")
-        .update({
-          credits_remaining: (creditsRow.credits_remaining || 0) + mapping.credits,
-          total_credits_purchased:
-            (creditsRow.total_credits_purchased || 0) + mapping.credits,
-        })
-        .eq("user_id", existingSub.user_id);
+          .from("user_credits")
+          .update({
+            credits_remaining: (creditsRow.credits_remaining || 0) + mapping.credits,
+            total_credits_purchased:
+              (creditsRow.total_credits_purchased || 0) + mapping.credits,
+          })
+          .eq("user_id", existingSub.user_id);
       } else {
         await supabase.from("user_credits").insert({
-        user_id: existingSub.user_id,
-        credits_remaining: mapping.credits,
-        total_credits_purchased: mapping.credits,
-      });
+          user_id: existingSub.user_id,
+          credits_remaining: mapping.credits,
+          total_credits_purchased: mapping.credits,
+        });
       }
     }
 
     await supabase
-    .from("digistore_webhook_logs")
-    .update({ processed: true })
-    .eq("id", log?.id);
+      .from("digistore_webhook_logs")
+      .update({ processed: true })
+      .eq("id", log?.id);
 
     console.log("VIP/tier granted:", { buyerEmail, finalTier, credits: mapping.credits });
     return new Response("OK", { status: 200, headers: corsHeaders });
   } catch (err) {
-    // CRITICAL: never return 5xx — Digistore would retry forever
     console.error("Webhook fatal error:", err);
     return new Response("OK", { status: 200, headers: corsHeaders });
   }
