@@ -1,40 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Shield, ArrowRight, Sparkles, Heart, Hash, MapPin } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Check, Star, Shield, Sparkles, Heart, Hash, MapPin } from "lucide-react";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import DigistoreBadge from "@/components/DigistoreBadge";
+import WarriorPlusButton from "@/components/WarriorPlusButton";
 
 const InitialPricing = () => {
-  const navigate = useNavigate();
-  const [buyUrl, setBuyUrl] = useState("");
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    const { data } = await supabase
-      .from("platform_settings")
-      .select("value")
-      .eq("key", "funnel_settings")
-      .maybeSingle();
-    if (data?.value) {
-      const val = data.value as any;
-      setBuyUrl(val.initial_buy_url || "");
-    }
-  };
-
-  const handleBuy = () => {
-    if (buyUrl) {
-      window.open(buyUrl, "_blank");
-    } else {
-      navigate("/thank-you");
-    }
-  };
-
   const features = [
     { icon: Heart, text: "Personalised astrology dashboard (instant digital access)" },
     { icon: Star, text: "AI-generated Soulmate Sketch + compatibility score" },
@@ -100,14 +70,14 @@ const InitialPricing = () => {
           <div className="bg-gradient-cosmic p-3 text-center">
             <p className="text-primary-foreground font-semibold text-sm">⭐ MOST POPULAR STARTER OFFER</p>
           </div>
-          <CardHeader className="text-center pb-4">
+          <CardHeader className="text-center pb-4 px-4 md:px-6">
             <CardTitle className="text-2xl">Soulmate Sketch Package</CardTitle>
             <div className="pt-4">
-              <span className="text-5xl font-bold text-primary">$19.99</span>
+              <span className="text-4xl md:text-5xl font-bold text-primary">$19.99</span>
               <p className="text-sm text-muted-foreground mt-1">One-time payment • Instant access</p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 px-4 md:px-6">
             <div>
               <p className="text-sm font-semibold text-foreground mb-3">Includes:</p>
               <ul className="space-y-3">
@@ -123,15 +93,13 @@ const InitialPricing = () => {
               </ul>
             </div>
 
-            <Button
-              variant="cosmic"
-              size="lg"
-              className="w-full text-base md:text-lg h-14 gap-2"
-              onClick={handleBuy}
-            >
-              Get My Soulmate Sketch — $19.99
-              <ArrowRight className="h-5 w-5" />
-            </Button>
+            <WarriorPlusButton
+              scriptSrc="https://warriorplus.com/o2/js/kvc5tc"
+              buyHref="https://warriorplus.com/o2/buy/kgf6b4/kvc5tc/vbzdmk"
+              buttonImg="https://warriorplus.com/o2/btn/fn100011000/kgf6b4/kvc5tc/465278"
+              trackingUrl="https://warriorplus.com/o2/v/kgf6b4/kvc5tc"
+              alt="Get My Soulmate Sketch for $19.99"
+            />
 
             {/* 60-day guarantee */}
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -142,10 +110,10 @@ const InitialPricing = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              🔒 Secure Digistore24 checkout
+              🔒 Secure WarriorPlus checkout
             </p>
             <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-              The withdrawal from your account will be done by Digistore24.<br/>
+              The withdrawal from your account will be processed by WarriorPlus.<br/>
               This is a digital product. No physical product will be shipped. Results are based on astrology interpretations and are not a substitute for professional advice.
             </p>
           </CardContent>
