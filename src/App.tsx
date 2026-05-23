@@ -62,6 +62,8 @@ import ThankYou from "./pages/ThankYou";
 import ThankYouVip from "./pages/ThankYouVip";
 import InitialPricing from "./pages/InitialPricing";
 import Upsell from "./pages/Upsell";
+import PLRSales from "./pages/PLRSales";
+import PLRDownload from "./pages/PLRDownload";
 import Imprint from "./pages/Imprint";
 import Quiz from "./pages/Quiz";
 import FreeReport from "./pages/FreeReport";
@@ -104,6 +106,8 @@ const App = () => (
                 <Route path="/initial-pricing" element={<InitialPricing />} />
                 <Route path="/upsell" element={<Upsell />} />
                 <Route path="/vip-upgrade" element={<Upsell />} />
+                <Route path="/plr" element={<PLRSales />} />
+                <Route path="/plr-download" element={<PLRDownload />} />
                 <Route path="/imprint" element={<Imprint />} />
                 <Route path="/ai-chat" element={<FeatureGate minTier="master"><AIChat /></FeatureGate>} />
                 <Route path="/profile" element={<UserProfile />} />
