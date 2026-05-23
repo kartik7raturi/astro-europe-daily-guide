@@ -21,6 +21,8 @@ const Footer = () => {
               <li><Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">Home</Link></li>
               <li><Link to="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
               <li><Link to="/love-forecasts" className="text-sm text-muted-foreground hover:text-primary transition-colors">Soulmate Sketch</Link></li>
+              <li><Link to="/vip-upgrade" className="text-sm text-muted-foreground hover:text-primary transition-colors">VIP Upgrade</Link></li>
+              <li><Link to="/plr" className="text-sm text-muted-foreground hover:text-primary transition-colors">AstroVibe PLR ($999)</Link></li>
             </ul>
           </div>
 
