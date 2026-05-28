@@ -357,27 +357,6 @@ const Affiliate = () => {
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section className="py-16 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-12">Hamare Affiliates Kya Kehte Hain</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="bg-card/50 border-primary/20">
-                <CardContent className="p-6">
-                  <p className="italic text-foreground mb-4">"Maine pehle mahine mein hi ₹3,000+ kama liye sirf WhatsApp pe link share karke. Best side income!"</p>
-                  <p className="font-semibold">— Vikash K., Patna</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-card/50 border-primary/20">
-                <CardContent className="p-6">
-                  <p className="italic text-foreground mb-4">"25% commission bahut acha hai. Mere Instagram followers ko astrology pasand hai toh conversion bahut easy hai."</p>
-                  <p className="font-semibold">— Nisha M., Jaipur</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
         {/* Final CTA */}
         <section className="py-20 px-4">
           <Card className="max-w-3xl mx-auto bg-gradient-cosmic border-none p-10 text-center">

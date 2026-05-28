@@ -59,15 +59,6 @@ const Home = () => {
     { question: "What's included in the VIP plan?", answer: "VIP members get unlimited soulmate sketches, full twin flame & karmic bond analysis, daily love forecasts, AI personal guidance chat, lucky elements, life & career analysis, and priority support." },
   ];
 
-  const testimonials = [
-    { name: "Sophie M.", location: "Berlin, Germany", text: "The soulmate sketch was incredibly accurate! I met someone who looks remarkably similar just two months later. This service truly changed my perspective on cosmic connections.", initial: "S" },
-    { name: "Lucas H.", location: "Amsterdam, Netherlands", text: "I was sceptical at first, but the daily horoscope readings have been spot-on. The career guidance helped me make a major decision that turned out perfectly.", initial: "L" },
-    { name: "Emma W.", location: "London, UK", text: "The twin flame analysis gave me goosebumps — it described my relationship dynamic perfectly. I've recommended AstroVibe to all my friends!", initial: "E" },
-    { name: "Marco R.", location: "Milan, Italy", text: "I love the numerology reports! Understanding my life path number gave me so much clarity about my purpose. The AI chat is also incredibly helpful.", initial: "M" },
-    { name: "Anna K.", location: "Vienna, Austria", text: "The crush analyser was so much fun and surprisingly accurate! It gave me the confidence to reach out, and now we're happily dating. Thank you AstroVibe!", initial: "A" },
-    { name: "Thomas B.", location: "Zürich, Switzerland", text: "The VIP plan is absolutely worth it. Having unlimited AI chat and daily personalised guidance has become an essential part of my morning routine.", initial: "T" },
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-starlight">
       {/* Hero Section */}
@@ -229,38 +220,6 @@ const Home = () => {
             </Link>
             <p className="text-xs text-primary-foreground/60 mt-4">No credit card required for the free report</p>
           </Card>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-b from-background to-accent/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
-            <p className="text-muted-foreground text-lg">Real experiences from our community across Europe</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((t, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300">
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="flex text-accent text-lg">★★★★★</div>
-                  </div>
-                  <p className="text-foreground mb-4 italic">"{t.text}"</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground font-semibold">{t.initial}</div>
-                    <div>
-                      <p className="font-semibold">{t.name}</p>
-                      <p className="text-sm text-muted-foreground">{t.location}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground">Join 50,000+ happy users across Europe</p>
-          </div>
         </div>
       </section>
 

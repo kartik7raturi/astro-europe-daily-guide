@@ -13,12 +13,6 @@ const InitialPricing = () => {
     { icon: Sparkles, text: "Email support included" },
   ];
 
-  const testimonials = [
-    { name: "Sophie M.", location: "Berlin, Germany", text: "The soulmate sketch was incredibly accurate. Two months later I met someone who looked remarkably similar!", initial: "S" },
-    { name: "Lucas H.", location: "Amsterdam, Netherlands", text: "I was sceptical, but the report gave me real clarity about who I should be looking for.", initial: "L" },
-    { name: "Emma W.", location: "London, UK", text: "Worth every euro. The numerology report alone was eye-opening.", initial: "E" },
-  ];
-
   const benefits = [
     "Personalised astrology dashboard — yours forever",
     "Basic life, love & career predictions",
@@ -118,30 +112,6 @@ const InitialPricing = () => {
             </p>
           </CardContent>
         </Card>
-
-        {/* Testimonials */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-center mb-6">What Our Customers Say</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {testimonials.map((t, i) => (
-              <Card key={i} className="bg-card/50 border-primary/20">
-                <CardContent className="p-5">
-                  <div className="flex text-accent text-sm mb-2">★★★★★</div>
-                  <p className="text-sm text-foreground italic mb-4">"{t.text}"</p>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-cosmic rounded-full flex items-center justify-center text-primary-foreground text-xs font-semibold">
-                      {t.initial}
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold">{t.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{t.location}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
 
         <SalesPageChrome badgeType="salespage" />
       </div>
