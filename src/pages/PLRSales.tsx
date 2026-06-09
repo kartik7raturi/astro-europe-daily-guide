@@ -164,14 +164,12 @@ const PLRSales = () => {
           </CardHeader>
           <CardContent className="space-y-6 px-4 md:px-6">
             <Button
-              asChild
+              type="button"
               variant="cosmic"
               size="lg"
               className="w-full text-base md:text-lg font-bold py-6"
             >
-              <a href="https://warriorplus.com/o2/buy/kgf6b4/w0x1tv/dh0jyp">
-                Get PLR Master Licence — $999
-              </a>
+              Get PLR Master Licence — $999
             </Button>
 
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">

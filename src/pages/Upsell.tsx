@@ -67,14 +67,12 @@ const Upsell = () => {
                 ))}
               </ul>
               <Button
-                asChild
+                type="button"
                 variant="cosmic"
                 size="lg"
                 className="w-full text-base md:text-lg font-bold py-6"
               >
-                <a href="https://warriorplus.com/o2/buy/kgf6b4/t409kt/ggmgpc">
-                  Upgrade to Gold VIP — $99
-                </a>
+                Upgrade to Gold VIP — $99
               </Button>
             </CardContent>
           </Card>

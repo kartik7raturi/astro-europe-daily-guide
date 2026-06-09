@@ -89,14 +89,12 @@ const InitialPricing = () => {
             </div>
 
             <Button
-              asChild
+              type="button"
               variant="cosmic"
               size="lg"
               className="w-full text-base md:text-lg font-bold py-6"
             >
-              <a href="https://warriorplus.com/o2/buy/kgf6b4/kvc5tc/vbzdmk">
-                Get Instant Access — $19.99
-              </a>
+              Get Instant Access — $19.99
             </Button>
 
             {/* 60-day guarantee */}
