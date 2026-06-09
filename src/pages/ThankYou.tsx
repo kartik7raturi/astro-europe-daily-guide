@@ -70,16 +70,6 @@ const ThankYou = () => {
 
             <AccessInfoBlock />
 
-            {!skipped && (
-              <div className="bg-primary/5 rounded-lg p-4 text-left">
-                <p className="text-sm font-semibold mb-1">📥 Access instructions</p>
-                <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
-                  <li>Your access is now active inside your dashboard</li>
-                  <li>Login email has been sent to your inbox</li>
-                  <li>Check spam folder if not received within 5 minutes</li>
-                </ul>
-              </div>
-            )}
 
             <div className="flex flex-col gap-3">
               {!skipped && (

@@ -63,7 +63,7 @@ const ThankYouVip = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-base md:text-lg">
-              Your VIP astrology dashboard is now fully unlocked. Login details have been sent to your inbox — check your spam folder if you don't see them within 5 minutes.
+              Your VIP astrology dashboard is now fully unlocked.
             </p>
 
             <AccessInfoBlock />
