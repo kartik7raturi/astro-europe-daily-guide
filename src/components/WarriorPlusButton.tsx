@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 
 interface WarriorPlusButtonProps {
-  /** Script src, e.g. https://warriorplus.com/o2/js/kvc5tc */
+  /** Vendor script src. */
   scriptSrc: string;
-  /** Buy link, e.g. https://warriorplus.com/o2/buy/kgf6b4/kvc5tc/vbzdmk */
+  /** External buy link. */
   buyHref: string;
-  /** Button image src, e.g. https://warriorplus.com/o2/btn/fn100011000/kgf6b4/kvc5tc/465278 */
+  /** Button image src. */
   buttonImg: string;
-  /** Tracking pixel URL, e.g. https://warriorplus.com/o2/v/kgf6b4/kvc5tc */
+  /** Tracking pixel URL. */
   trackingUrl?: string;
   alt?: string;
 }
