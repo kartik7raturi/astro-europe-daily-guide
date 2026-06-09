@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Sparkles, ArrowRight, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SalesPageChrome from "@/components/SalesPageChrome";
+import AccessInfoBlock from "@/components/AccessInfoBlock";
 
 const ThankYou = () => {
   const navigate = useNavigate();
@@ -66,6 +67,8 @@ const ThankYou = () => {
             <p className="text-muted-foreground text-base md:text-lg">
               Your astrology dashboard is ready. Your access is now active and you can log in below. You will also receive details by email — if you don't see it, please check your spam folder.
             </p>
+
+            <AccessInfoBlock />
 
             {!skipped && (
               <div className="bg-primary/5 rounded-lg p-4 text-left">

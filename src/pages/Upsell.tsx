@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Crown, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import DigistoreBadge from "@/components/DigistoreBadge";
-import WarriorPlusButton from "@/components/WarriorPlusButton";
+import JVZooDisclaimer from "@/components/JVZooDisclaimer";
 
 const Upsell = () => {
   const goldFeatures = [
@@ -65,13 +66,16 @@ const Upsell = () => {
                   </li>
                 ))}
               </ul>
-              <WarriorPlusButton
-                scriptSrc="https://warriorplus.com/o2/js/t409kt"
-                buyHref="https://warriorplus.com/o2/buy/kgf6b4/t409kt/ggmgpc"
-                buttonImg="https://warriorplus.com/o2/btn/fn100011000/kgf6b4/t409kt/465280"
-                trackingUrl="https://warriorplus.com/o2/v/kgf6b4/t409kt"
-                alt="Get Gold VIP for $99"
-              />
+              <Button
+                asChild
+                variant="cosmic"
+                size="lg"
+                className="w-full text-base md:text-lg font-bold py-6"
+              >
+                <a href="https://warriorplus.com/o2/buy/kgf6b4/t409kt/ggmgpc">
+                  Upgrade to Gold VIP — $99
+                </a>
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -96,10 +100,7 @@ const Upsell = () => {
           </a>
         </div>
 
-        <div className="max-w-2xl mx-auto mb-6 text-center text-[11px] text-muted-foreground leading-relaxed border-t border-border pt-4 px-2">
-          This is a digital membership upgrade. After purchase, VIP features unlock instantly inside your dashboard. No physical product will be shipped.<br/>
-          The withdrawal from your account will be processed by WarriorPlus.
-        </div>
+        <JVZooDisclaimer />
 
         <SalesPageChrome badgeType="salespage" />
       </div>

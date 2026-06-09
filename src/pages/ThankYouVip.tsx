@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SalesPageChrome from "@/components/SalesPageChrome";
+import AccessInfoBlock from "@/components/AccessInfoBlock";
 
 const ThankYouVip = () => {
   const navigate = useNavigate();
@@ -64,6 +65,8 @@ const ThankYouVip = () => {
             <p className="text-muted-foreground text-base md:text-lg">
               Your VIP astrology dashboard is now fully unlocked. Login details have been sent to your inbox — check your spam folder if you don't see them within 5 minutes.
             </p>
+
+            <AccessInfoBlock />
 
             <div className="bg-primary/5 rounded-lg p-4 text-left">
               <p className="text-sm font-semibold mb-1">✨ All VIP features unlocked</p>
