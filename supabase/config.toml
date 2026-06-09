@@ -3,7 +3,7 @@ project_id = "xoslysosyomsteckufvn"
 [functions.process-cod-order]
 verify_jwt = false
 
-[functions.warriorplus-webhook]
+[functions.jvzoo-webhook]
 verify_jwt = false
 
 [api]

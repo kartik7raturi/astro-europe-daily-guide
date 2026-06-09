@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Check, Star, Shield, Sparkles, Heart, Hash, MapPin } from "lucide-react";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import DigistoreBadge from "@/components/DigistoreBadge";
-import WarriorPlusButton from "@/components/WarriorPlusButton";
+import JVZooDisclaimer from "@/components/JVZooDisclaimer";
 
 const InitialPricing = () => {
   const features = [
@@ -87,13 +88,16 @@ const InitialPricing = () => {
               </ul>
             </div>
 
-            <WarriorPlusButton
-              scriptSrc="https://warriorplus.com/o2/js/kvc5tc"
-              buyHref="https://warriorplus.com/o2/buy/kgf6b4/kvc5tc/vbzdmk"
-              buttonImg="https://warriorplus.com/o2/btn/fn100011000/kgf6b4/kvc5tc/465278"
-              trackingUrl="https://warriorplus.com/o2/v/kgf6b4/kvc5tc"
-              alt="Get My Soulmate Sketch for $19.99"
-            />
+            <Button
+              asChild
+              variant="cosmic"
+              size="lg"
+              className="w-full text-base md:text-lg font-bold py-6"
+            >
+              <a href="https://warriorplus.com/o2/buy/kgf6b4/kvc5tc/vbzdmk">
+                Get Instant Access — $19.99
+              </a>
+            </Button>
 
             {/* 60-day guarantee */}
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -103,13 +107,8 @@ const InitialPricing = () => {
               </p>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center">
-              🔒 Secure WarriorPlus checkout
-            </p>
-            <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-              The withdrawal from your account will be processed by WarriorPlus.<br/>
-              This is a digital product. No physical product will be shipped. Results are based on astrology interpretations and are not a substitute for professional advice.
-            </p>
+            <p className="text-xs text-muted-foreground text-center">🔒 Secure JVZoo checkout</p>
+            <JVZooDisclaimer />
           </CardContent>
         </Card>
 

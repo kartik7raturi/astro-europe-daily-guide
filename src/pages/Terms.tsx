@@ -102,6 +102,28 @@ const Terms = () => {
             </CardContent>
           </Card>
 
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle>60-Day Money-Back Refund Policy</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-muted-foreground">
+              <p>
+                We stand behind every AstroVibe purchase with a full <strong>60-day money-back guarantee</strong>.
+                If you are not satisfied with your purchase for any reason, simply email us within
+                60 days of your order date and we will process a complete refund — no questions asked.
+              </p>
+              <p>
+                Refund requests are honoured for all digital products, memberships and PLR packages
+                sold on astrovibe.online. Refunds are issued to your original payment method by our
+                retailer (JVZoo) and typically appear within 5–10 business days.
+              </p>
+              <p>
+                To request a refund, contact <strong>andrewjimmer692@gmail.com</strong> with your
+                order ID and the email used at checkout.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card className="bg-gradient-cosmic/10 border-primary/30">
             <CardContent className="p-6">
               <div className="text-center">

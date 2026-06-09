@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Shield, Crown, Package, FileText, Image as ImageIcon, Video, Mail, Sparkles, TrendingUp, Users, Zap, Award, Clock, DollarSign, Rocket } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import DigistoreBadge from "@/components/DigistoreBadge";
-import WarriorPlusButton from "@/components/WarriorPlusButton";
+import JVZooDisclaimer from "@/components/JVZooDisclaimer";
 
 const PLRSales = () => {
   const included = [
@@ -162,13 +163,16 @@ const PLRSales = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-6 px-4 md:px-6">
-            <WarriorPlusButton
-              scriptSrc="https://warriorplus.com/o2/js/w0x1tv"
-              buyHref="https://warriorplus.com/o2/buy/kgf6b4/w0x1tv/dh0jyp"
-              buttonImg="https://warriorplus.com/o2/btn/fn100011000/kgf6b4/w0x1tv/465281"
-              trackingUrl="https://warriorplus.com/o2/v/kgf6b4/w0x1tv"
-              alt="Get AstroVibe PLR for $999"
-            />
+            <Button
+              asChild
+              variant="cosmic"
+              size="lg"
+              className="w-full text-base md:text-lg font-bold py-6"
+            >
+              <a href="https://warriorplus.com/o2/buy/kgf6b4/w0x1tv/dh0jyp">
+                Get PLR Master Licence — $999
+              </a>
+            </Button>
 
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
               <Shield className="h-5 w-5 text-green-600" />
@@ -177,10 +181,8 @@ const PLRSales = () => {
               </p>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center">🔒 Secure WarriorPlus checkout</p>
-            <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-              The withdrawal will be processed by WarriorPlus. After payment you'll be redirected to your private download page with all files and your licence certificate.
-            </p>
+            <p className="text-xs text-muted-foreground text-center">🔒 Secure JVZoo checkout</p>
+            <JVZooDisclaimer />
             <div className="text-center pt-2">
               <a
                 href="https://warriorplus.com/o/nothanks/w0x1tv"
