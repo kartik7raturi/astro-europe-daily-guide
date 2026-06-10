@@ -54,7 +54,7 @@ const Home = () => {
     { question: "What is a soulmate sketch?", answer: "Our AI analyses your birth chart, planetary positions, and cosmic alignments to generate a portrait of the person the stars have destined for you. It includes physical characteristics, personality traits, and where you might meet them." },
     { question: "How does it work?", answer: "Simply enter your birth details (date, time, place of birth) and our AI engine processes your astrological data to create a personalised soulmate portrait along with compatibility insights and meeting predictions." },
     { question: "Can I get a refund if I'm not satisfied?", answer: "Yes! We offer a 30-day money-back guarantee on all purchases. If you're not completely satisfied, contact our support team for a full refund." },
-    { question: "What payment methods do you accept?", answer: "We accept all major credit cards, PayPal, and other payment methods through our secure Digistore24 checkout. All transactions are protected with SSL encryption." },
+    { question: "What payment methods do you accept?", answer: "We accept all major credit cards, PayPal, and other payment methods through our secure JVZoo checkout. All transactions are protected with SSL encryption." },
     { question: "Is my personal data safe?", answer: "Absolutely. We use enterprise-grade security and are fully GDPR compliant. Your birth data and readings are encrypted and stored securely. We never sell or share your personal information." },
     { question: "What's included in the VIP plan?", answer: "VIP members get unlimited soulmate sketches, full twin flame & karmic bond analysis, daily love forecasts, AI personal guidance chat, lucky elements, life & career analysis, and priority support." },
   ];

@@ -185,7 +185,7 @@ const ManagePages = () => {
                   <div>
                     <Label>Buy Button URL — "Get My Soulmate Sketch — $19.99"</Label>
                     <Input
-                      placeholder="https://www.digistore24.com/product/..."
+                      placeholder="https://www.jvzoo.com/b/..."
                       value={funnel.initial_buy_url}
                       onChange={(e) => setFunnel({ ...funnel, initial_buy_url: e.target.value })}
                     />
@@ -203,7 +203,7 @@ const ManagePages = () => {
                   <div>
                     <Label>Silver Membership ($49) Button URL</Label>
                     <Input
-                      placeholder="https://www.digistore24.com/product/..."
+                      placeholder="https://www.jvzoo.com/b/..."
                       value={funnel.vip_silver_url}
                       onChange={(e) => setFunnel({ ...funnel, vip_silver_url: e.target.value })}
                     />
@@ -211,7 +211,7 @@ const ManagePages = () => {
                   <div>
                     <Label>Gold Membership ($99) Button URL</Label>
                     <Input
-                      placeholder="https://www.digistore24.com/product/..."
+                      placeholder="https://www.jvzoo.com/b/..."
                       value={funnel.vip_gold_url}
                       onChange={(e) => setFunnel({ ...funnel, vip_gold_url: e.target.value })}
                     />
@@ -235,9 +235,9 @@ const ManagePages = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>"Get Money Magnet" Button URL (Digistore24 link)</Label>
+                    <Label>"Get Money Magnet" Button URL (JVZoo link)</Label>
                     <Input
-                      placeholder="https://www.digistore24.com/product/..."
+                      placeholder="https://www.jvzoo.com/b/..."
                       value={funnel.money_magnet_url}
                       onChange={(e) => setFunnel({ ...funnel, money_magnet_url: e.target.value })}
                     />

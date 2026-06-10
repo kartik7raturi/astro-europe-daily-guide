@@ -19,7 +19,7 @@ const SalesPageChrome = ({ badgeType = "salespage", showBankNote = false }: Sale
 
       {showBankNote && (
         <p className="text-xs text-muted-foreground max-w-2xl mx-auto px-4">
-          The debit will appear as <strong>Digistore24 GmbH (Germany)</strong> on your bank or card statement.
+          The debit will appear as <strong>JVZoo</strong> on your bank or card statement.
         </p>
       )}
 
@@ -32,7 +32,7 @@ const SalesPageChrome = ({ badgeType = "salespage", showBankNote = false }: Sale
       </div>
 
       <p className="text-[11px] text-muted-foreground/80 max-w-2xl mx-auto px-4">
-        Powered by Digistore24 — secure checkout. 60-day money-back guarantee.
+        Powered by JVZoo — secure checkout. 60-day money-back guarantee.
       </p>
     </div>
   );

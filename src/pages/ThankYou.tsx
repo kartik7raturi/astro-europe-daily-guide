@@ -65,7 +65,7 @@ const ThankYou = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-base md:text-lg">
-              Your astrology dashboard is ready. Your access is now active and you can log in below. You will also receive details by email — if you don't see it, please check your spam folder.
+              Your astrology dashboard is ready. Your access is now active and you can log in below.
             </p>
 
             <AccessInfoBlock />
@@ -91,7 +91,7 @@ const ThankYou = () => {
             {/* Mandatory notes */}
             <div className="text-xs text-muted-foreground border-t border-border pt-4 space-y-1">
               <p>This is a digital product. No physical item will be shipped.</p>
-              <p>The withdrawal from your account will be done by <strong>Digistore24</strong>.</p>
+              <p>The withdrawal from your account will be done by <strong>JVZoo</strong>.</p>
             </div>
           </CardContent>
         </Card>

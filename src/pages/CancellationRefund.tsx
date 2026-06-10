@@ -58,8 +58,8 @@ const CancellationRefund = () => {
                 </p>
                 <ul className="space-y-3 text-muted-foreground">
                   <li><strong>One-time access purchases:</strong> Cancellations within 60 days of purchase are eligible for a full refund.</li>
-                  <li><strong>Subscriptions:</strong> Cancel anytime through your Digistore24 account. You retain access until the end of your billing period.</li>
-                  <li><strong>How to cancel:</strong> Contact support@astrovibe.online or use your Digistore24 buyer account.</li>
+                  <li><strong>Subscriptions:</strong> Cancel anytime through your JVZoo account. You retain access until the end of your billing period.</li>
+                  <li><strong>How to cancel:</strong> Contact support@astrovibe.online or use your JVZoo buyer account.</li>
                 </ul>
               </CardContent>
             </Card>
@@ -98,7 +98,7 @@ const CancellationRefund = () => {
                   <li>3. Refunds are processed within 5–7 business days to your original payment method</li>
                 </ol>
                 <p className="text-xs text-muted-foreground border-t border-border pt-3 mt-3">
-                  All payments are processed by Digistore24 GmbH (Germany). Refunds appear from Digistore24 on your statement.
+                  All payments are processed by JVZoo. Refunds appear from JVZoo on your statement.
                 </p>
               </CardContent>
             </Card>

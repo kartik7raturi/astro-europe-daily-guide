@@ -121,7 +121,7 @@ const Shop = () => {
 
             <p className="text-[11px] text-muted-foreground text-center leading-relaxed border-t border-border pt-3">
               This is a digital product. No physical item will be shipped.<br/>
-              The withdrawal from your account will be done by Digistore24.
+              The withdrawal from your account will be done by JVZoo.
             </p>
           </CardContent>
         </Card>
