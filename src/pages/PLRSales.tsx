@@ -36,7 +36,7 @@ const PLRSales = () => {
     "Supabase backend schema + edge functions included",
     "AI Soulmate Sketch generator (Hugging Face integration)",
     "Numerology, Tarot, Horoscope & Daily Reading modules",
-    "Built-in Stripe / Razorpay / WarriorPlus payment integration",
+    "Built-in Stripe / Razorpay / JVZoo payment integration",
     "Admin dashboard for orders, users & analytics",
     "Mobile-responsive on every device",
     "SEO-optimized pages with schema markup",
@@ -181,14 +181,6 @@ const PLRSales = () => {
 
             <p className="text-xs text-muted-foreground text-center">🔒 Secure JVZoo checkout</p>
             <JVZooDisclaimer />
-            <div className="text-center pt-2">
-              <a
-                href="https://warriorplus.com/o/nothanks/w0x1tv"
-                className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                No thanks, I'll pass on this opportunity
-              </a>
-            </div>
           </CardContent>
         </Card>
 
