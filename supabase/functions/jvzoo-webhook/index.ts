@@ -41,14 +41,6 @@ async function verifyJvzooSignature(
     .sort();
   const concatenated = sortedKeys.map((k) => params[k] ?? "").join("|") + secretKey;
   const sha = (await sha1Hex(concatenated)).toUpperCase();
-  console.log("SIG DEBUG", JSON.stringify({
-    provided,
-    computed: sha.substring(0, 8),
-    sortedKeys,
-    joinedNoSecret: sortedKeys.map((k) => params[k] ?? "").join("|"),
-    secretLen: secretKey.length,
-    secretPrefix: secretKey.substring(0, 6),
-  }));
   return sha.substring(0, 8) === provided;
 }
 
@@ -100,7 +92,7 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    const secret = Deno.env.get("JVZOO_SECRET_KEY") || "";
+    const secret = (Deno.env.get("JVZOO_SECRET_KEY") || "").trim();
     if (!secret) {
       console.warn("JVZOO_SECRET_KEY not set — rejecting");
       await supabase
