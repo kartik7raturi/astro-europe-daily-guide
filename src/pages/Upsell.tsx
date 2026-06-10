@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Crown, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +9,10 @@ import DigistoreBadge from "@/components/DigistoreBadge";
 import JVZooDisclaimer from "@/components/JVZooDisclaimer";
 
 const Upsell = () => {
+  useEffect(() => {
+    document.title = "VIP Upgrade — AstroVibe";
+  }, []);
+
   const goldFeatures = [
     "10 AI Soulmate Sketches (10 credits)",
     "Full Soulmate & Twin Flame Analysis",
@@ -88,14 +94,13 @@ const Upsell = () => {
           </div>
         </div>
 
-        {/* WarriorPlus official "No Thanks" downsell link */}
         <div className="text-center mb-6">
-          <a
-            href="https://warriorplus.com/o/nothanks/t409kt"
+          <Link
+            to="/"
             className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
           >
             No thanks, skip for now
-          </a>
+          </Link>
         </div>
 
         <JVZooDisclaimer />
