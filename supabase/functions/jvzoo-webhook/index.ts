@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    const secret = Deno.env.get("JVZOO_SECRET_KEY") || "";
+    const secret = (Deno.env.get("JVZOO_SECRET_KEY") || "").trim();
     if (!secret) {
       console.warn("JVZOO_SECRET_KEY not set — rejecting");
       await supabase
