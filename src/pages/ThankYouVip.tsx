@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
+import { CheckCircle, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SalesPageChrome from "@/components/SalesPageChrome";
 import AccessInfoBlock from "@/components/AccessInfoBlock";
 
 const ThankYouVip = () => {
   const navigate = useNavigate();
-  const [urls, setUrls] = useState({ supplement_url: "", dashboard_url: "/dashboard" });
+  const [urls, setUrls] = useState({ dashboard_url: "/dashboard" });
 
   useEffect(() => {
     loadSettings();
@@ -24,17 +24,8 @@ const ThankYouVip = () => {
     if (data?.value) {
       const val = data.value as any;
       setUrls({
-        supplement_url: val.thankyou_vip_supplement_url || "",
         dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
       });
-    }
-  };
-
-  const handleSupplement = () => {
-    if (urls.supplement_url) {
-      window.open(urls.supplement_url, "_blank");
-    } else {
-      navigate("/dashboard");
     }
   };
 
