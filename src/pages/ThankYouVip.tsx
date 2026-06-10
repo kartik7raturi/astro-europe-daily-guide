@@ -78,26 +78,13 @@ const ThankYouVip = () => {
               </ul>
             </div>
 
-            {urls.supplement_url && (
-              <div className="border rounded-lg p-4 bg-card/50">
-                <h3 className="font-semibold mb-2 text-foreground">🧴 Enhance Your Journey</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Discover wellness supplements designed to align your body with cosmic energy.
-                </p>
-                <Button variant="cosmic" size="lg" className="w-full gap-2" onClick={handleSupplement}>
-                  <ShoppingBag className="h-5 w-5" /> Browse Supplements
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </div>
-            )}
-
-            <Button variant={urls.supplement_url ? "outline" : "cosmic"} size="lg" className="w-full" onClick={handleDashboard}>
-              {urls.supplement_url ? "No thanks, go to Dashboard" : "Go to Dashboard"}
+            <Button variant="cosmic" size="lg" className="w-full" onClick={handleDashboard}>
+              Go to Dashboard
             </Button>
 
             <div className="text-xs text-muted-foreground border-t border-border pt-4 space-y-1">
               <p>This is a digital membership upgrade. No physical item will be shipped.</p>
-              <p>The withdrawal from your account will be done by <strong>Digistore24</strong>.</p>
+              <p>The withdrawal from your account will be done by <strong>JVZoo</strong>.</p>
             </div>
           </CardContent>
         </Card>
