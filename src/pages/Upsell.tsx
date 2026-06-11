@@ -105,8 +105,6 @@ const Upsell = () => {
             to="/"
             className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
           >
-            No thanks, skip for now
-          </Link>
         </div>
 
         <JVZooDisclaimer />
