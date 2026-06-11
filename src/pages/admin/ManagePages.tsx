@@ -20,7 +20,7 @@ const ManagePages = () => {
     vip_silver_url: "",
     vip_gold_url: "",
     vip_skip_url: "",
-    thankyou_vip_url: "/upsell",
+    thankyou_vip_url: "/vip-upgrade",
     thankyou_dashboard_url: "/dashboard",
     thankyou_vip_supplement_url: "",
     thankyou_vip_dashboard_url: "/dashboard",
@@ -53,7 +53,7 @@ const ManagePages = () => {
         vip_silver_url: val.vip_silver_url || val.vip_monthly_url || "",
         vip_gold_url: val.vip_gold_url || val.vip_annual_url || "",
         vip_skip_url: val.vip_skip_url || "",
-        thankyou_vip_url: val.thankyou_vip_url || "/upsell",
+        thankyou_vip_url: val.thankyou_vip_url || "/vip-upgrade",
         thankyou_dashboard_url: val.thankyou_dashboard_url || "/dashboard",
         thankyou_vip_supplement_url: val.thankyou_vip_supplement_url || "",
         thankyou_vip_dashboard_url: val.thankyou_vip_dashboard_url || "/dashboard",
@@ -103,7 +103,7 @@ const ManagePages = () => {
   // Quick directory of every public page in the funnel for at-a-glance management
   const pageDirectory = [
     { name: "Initial Sales Page ($19.99)", path: "/initial-pricing", buttons: ["Get My Soulmate Sketch — $19.99"] },
-    { name: "VIP Upgrade Sales Page", path: "/upsell", buttons: ["Silver $49", "Gold $99", "No thanks (skip)"] },
+    { name: "VIP Upgrade Sales Page", path: "/vip-upgrade", buttons: ["Gold $99", "No thanks (skip)"] },
     { name: "Thank You (after Initial)", path: "/thank-you", buttons: ["Upgrade to VIP", "Go to Dashboard"] },
     { name: "Thank You (after VIP)", path: "/thank-you-vip", buttons: ["Browse Supplements", "Go to Dashboard"] },
     { name: "Imprint (Impressum)", path: "/imprint", buttons: [] },
@@ -265,7 +265,7 @@ const ManagePages = () => {
                   <div>
                     <Label>"Upgrade to VIP" Button URL</Label>
                     <Input
-                      placeholder="/upsell or https://..."
+                      placeholder="/vip-upgrade or https://..."
                       value={funnel.thankyou_vip_url}
                       onChange={(e) => setFunnel({ ...funnel, thankyou_vip_url: e.target.value })}
                     />

@@ -17,7 +17,7 @@ interface FeatureGateProps {
 /**
  * Gates a feature by tier. Visitors with no plan see blurred content + a
  * "Get Started" overlay → /initial-pricing. Starter users see a "VIP" overlay
- * → /upsell. Paid users with sufficient access see the content.
+ * → /vip-upgrade. Paid users with sufficient access see the content.
  */
 const FeatureGate = ({
   children,
@@ -49,9 +49,9 @@ const FeatureGate = ({
   if (fallback) return <>{fallback}</>;
 
   // Visitors who haven't bought anything go to the $19.99 initial offer.
-  // Starter users (bought $19.99) trying to access VIP-only features go to /upsell.
+  // Starter users (bought $19.99) trying to access VIP-only features go to /vip-upgrade.
   const goesToUpsell = hasActiveSubscription && tier === 'starter';
-  const upgradePath = goesToUpsell ? '/upsell' : '/initial-pricing';
+  const upgradePath = goesToUpsell ? '/vip-upgrade' : '/initial-pricing';
   const upgradeLabel = goesToUpsell ? 'Upgrade to VIP' : 'Unlock for $19.99';
   const headline = goesToUpsell ? 'VIP Feature' : 'Premium Feature';
   const description = requiredCredits && !hasSufficientCredits
