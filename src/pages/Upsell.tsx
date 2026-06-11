@@ -72,14 +72,20 @@ const Upsell = () => {
                   </li>
                 ))}
               </ul>
-              <Button
-                type="button"
-                variant="cosmic"
-                size="lg"
-                className="w-full text-base md:text-lg font-bold py-6"
-              >
-                Upgrade to Gold VIP — $99
-              </Button>
+              <div className="flex justify-center">
+                <a
+                  href="https://www.jvzoo.com/b/117121/443439/6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Upgrade to Gold VIP — $99"
+                >
+                  <img
+                    src="https://i.jvzoo.com/117121/443439/6"
+                    alt="Astrovibe vip upgrade | European Astrology & Daily Guidance"
+                    style={{ border: 0 }}
+                  />
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>

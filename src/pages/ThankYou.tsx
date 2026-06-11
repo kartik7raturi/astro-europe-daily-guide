@@ -11,7 +11,7 @@ const ThankYou = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const skipped = searchParams.get("skipped") === "true";
-  const [urls, setUrls] = useState({ vip_url: "/upsell", dashboard_url: "/dashboard" });
+  const [urls, setUrls] = useState({ vip_url: "/vip-upgrade", dashboard_url: "/dashboard" });
 
   useEffect(() => {
     loadSettings();
@@ -26,7 +26,7 @@ const ThankYou = () => {
     if (data?.value) {
       const val = data.value as any;
       setUrls({
-        vip_url: val.thankyou_vip_url || "/upsell",
+        vip_url: val.thankyou_vip_url || "/vip-upgrade",
         dashboard_url: val.thankyou_dashboard_url || "/dashboard",
       });
     }
@@ -78,14 +78,18 @@ const ThankYou = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               )}
-              <Button
-                variant={skipped ? "cosmic" : "outline"}
-                size="lg"
-                className="w-full"
-                onClick={handleSkipToDashboard}
-              >
-                {skipped ? "Go to Dashboard" : "No thanks, go to Dashboard"}
-              </Button>
+              {skipped ? (
+                <Button variant="cosmic" size="lg" className="w-full" onClick={handleSkipToDashboard}>
+                  Go to Dashboard
+                </Button>
+              ) : (
+                <a
+                  href="https://www.jvzoo.com/nothanks/421627"
+                  className="inline-flex items-center justify-center w-full h-11 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium transition-colors"
+                >
+                  No Thanks
+                </a>
+              )}
             </div>
 
             {/* Mandatory notes */}
@@ -95,6 +99,14 @@ const ThankYou = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* JVZoo tracking pixel */}
+        <img
+          src="https://i.jvzoo.com/117121/421627/5"
+          alt=""
+          aria-hidden="true"
+          style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }}
+        />
 
         <SalesPageChrome badgeType="thankyoupage" />
       </div>
