@@ -99,7 +99,7 @@ const InitialPricing = () => {
                 <img
                   src="https://i.jvzoo.com/117121/421627/5"
                   alt="Astrovibe | European Astrology & Daily Guidance"
-                  border={0}
+                  style={{ border: 0 }}
                 />
               </a>
             </div>
