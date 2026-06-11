@@ -11,7 +11,7 @@ const ThankYou = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const skipped = searchParams.get("skipped") === "true";
-  const [urls, setUrls] = useState({ vip_url: "/upsell", dashboard_url: "/dashboard" });
+  const [urls, setUrls] = useState({ vip_url: "/vip-upgrade", dashboard_url: "/dashboard" });
 
   useEffect(() => {
     loadSettings();
@@ -26,7 +26,7 @@ const ThankYou = () => {
     if (data?.value) {
       const val = data.value as any;
       setUrls({
-        vip_url: val.thankyou_vip_url || "/upsell",
+        vip_url: val.thankyou_vip_url || "/vip-upgrade",
         dashboard_url: val.thankyou_dashboard_url || "/dashboard",
       });
     }

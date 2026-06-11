@@ -104,7 +104,6 @@ const App = () => (
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/initial-pricing" element={<InitialPricing />} />
-                <Route path="/upsell" element={<Upsell />} />
                 <Route path="/vip-upgrade" element={<Upsell />} />
                 <Route path="/plr" element={<PLRSales />} />
                 <Route path="/plr-download" element={<PLRDownload />} />
