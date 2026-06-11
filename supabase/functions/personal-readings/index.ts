@@ -58,7 +58,7 @@ serve(async (req) => {
       } else if (question.toLowerCase().includes('career') || question.toLowerCase().includes('work')) {
         return "Mars is strongly positioned in your chart, indicating professional success. Focus on your unique talents and don't be afraid to take calculated risks."
       } else if (question.toLowerCase().includes('health') || question.toLowerCase().includes('wellness')) {
-        return "Your life force is strong, but pay attention to balance. Mercury retrograde suggests taking time for rest and meditation."
+        return "Health-related readings are general wellness reflections only and are not medical advice. This content is not intended to diagnose, treat, cure, mitigate, or prevent any disease. Please consult a licensed health professional for symptoms, treatment decisions, or urgent concerns."
       } else if (question.toLowerCase().includes('money') || question.toLowerCase().includes('finance')) {
         return "Jupiter's blessing brings financial opportunities. Stay grounded and make practical decisions. Avoid impulsive investments."
       } else {

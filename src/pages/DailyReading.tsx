@@ -213,7 +213,7 @@ const DailyReading = () => {
       
       career: `Life Path ${lifePathNumber}: ${lifePathMeaning.traits.split(',').slice(0, 2).join(',')}. These qualities serve you well professionally today. Focus on leveraging your natural strengths for career advancement.`,
       
-      health: `Your body and mind need balance today. Consider mindful practices rooted in Indian wellness traditions. Listen to your body's wisdom and honor its needs.`,
+      health: `For general well-being reflection today, consider gentle mindfulness, rest, and balanced routines. This is not medical advice or a substitute for guidance from a licensed health professional.`,
       
       challenge: dailyGuidance.challenges,
       

@@ -76,15 +76,15 @@ serve(async (req) => {
           timeline: 'Career breakthrough expected within 3-4 months'
         },
         'health': {
-          solution: "Your sixth house of health shows stress-related imbalances. The Moon's current phase suggests focusing on emotional healing will improve physical symptoms. Holistic approaches are favored.",
+          solution: "For health-related concerns, astrology can only offer general self-reflection and supportive lifestyle prompts. This reading is not medical advice and is not intended to diagnose, treat, cure, mitigate, or prevent any disease. Please consult a licensed health professional for symptoms, treatment questions, or urgent concerns.",
           actions: [
-            'Drink water charged under moonlight',
-            'Practice pranayama breathing exercises',
-            'Eat according to your dosha type',
-            'Use healing crystals like amethyst or clear quartz',
-            'Schedule regular healing sessions during waxing moon'
+            'Contact a licensed clinician for medical symptoms or treatment decisions',
+            'Use meditation or gentle breathing as optional relaxation practices only',
+            'Prioritize rest, hydration, and balanced meals as general wellness habits',
+            'Seek emergency help immediately for urgent or severe symptoms',
+            'Keep astrology guidance separate from professional healthcare decisions'
           ],
-          timeline: 'Health improvements within 2-3 months'
+          timeline: 'No medical timeline is provided; follow guidance from a qualified health professional'
         },
         'finance': {
           solution: "Jupiter's transit through your wealth sector is temporarily blocked by Rahu. The cosmic guidance suggests clearing past financial karma through conscious spending and generous giving will unlock abundance.",
