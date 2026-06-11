@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Stars, FileText, Info, AlertTriangle } from "lucide-react";
+import { FileText, Info, AlertTriangle, ShieldCheck } from "lucide-react";
 
 const Terms = () => {
   return (
@@ -49,25 +49,63 @@ const Terms = () => {
             <CardContent className="space-y-4">
               <ul className="space-y-3 text-muted-foreground">
                 <li>
-                  <strong>Entertainment Purpose:</strong> Our readings are for entertainment, 
-                  self-reflection, and spiritual guidance. They should not replace professional 
+                  <strong>Entertainment Purpose:</strong> Our readings are for entertainment,
+                  self-reflection, and spiritual guidance. They should not replace professional
                   advice from qualified practitioners.
                 </li>
                 <li>
-                  <strong>Personal Responsibility:</strong> You maintain full responsibility 
-                  for your life decisions. Our readings are meant to inspire and guide, 
+                  <strong>No Medical Advice:</strong> AstroVibe does not provide medical advice,
+                  diagnosis, treatment plans, prescriptions, emergency care, or therapeutic claims.
+                  If you have a medical concern, consult a licensed health professional.
+                </li>
+                <li>
+                  <strong>Personal Responsibility:</strong> You maintain full responsibility
+                  for your life decisions. Our readings are meant to inspire and guide,
                   not to dictate your choices.
                 </li>
                 <li>
-                  <strong>Cultural Respect:</strong> Our interpretations honor Indian 
-                  astrological traditions while respecting diverse cultural backgrounds 
+                  <strong>Cultural Respect:</strong> Our interpretations honor Indian
+                  astrological traditions while respecting diverse cultural backgrounds
                   within India.
                 </li>
                 <li>
-                  <strong>No Guarantees:</strong> We cannot guarantee specific outcomes 
+                  <strong>No Guarantees:</strong> We cannot guarantee specific outcomes
                   or the accuracy of future predictions, as astrology is an interpretive art.
                 </li>
               </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/80 backdrop-blur-sm border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-green-600" />
+                FDA and Health-Related Content Policy
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-muted-foreground">
+              <p>
+                AstroVibe is a digital astrology, numerology, tarot, and spiritual-entertainment platform.
+                Our content is not reviewed, cleared, authorized, or approved by the U.S. Food and Drug
+                Administration (FDA), and our services are not medical devices, drugs, foods, dietary
+                supplements, cosmetics, biologics, or diagnostic products.
+              </p>
+              <p>
+                Any references to wellness, balance, mindfulness, meditation, rest, self-care, rituals,
+                crystals, colors, or spiritual practices are general lifestyle reflections only. They are
+                not intended to diagnose, treat, cure, mitigate, or prevent any disease or health condition,
+                and they must not be used to make medical decisions or delay professional care.
+              </p>
+              <p>
+                We do not claim FDA approval, clinical accuracy, disease-risk assessment, therapeutic
+                benefit, or equivalence to any FDA-authorized product. Users should seek prompt medical
+                attention for symptoms, emergencies, mental-health crises, pregnancy-related concerns,
+                medication questions, or any condition requiring professional evaluation.
+              </p>
+              <p>
+                If AstroVibe ever offers products that are regulated by FDA, those products must be labeled,
+                marketed, reviewed, and supported under the applicable FDA rules before being sold or promoted.
+              </p>
             </CardContent>
           </Card>
 

@@ -56,6 +56,12 @@ const Footer = () => {
           </div>
           <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} AstroVibe. All rights reserved.</p>
         </div>
+
+        <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+          AstroVibe content is for entertainment and general wellness reflection only. It is not FDA reviewed
+          or approved, and it is not intended to diagnose, treat, cure, mitigate, or prevent any disease or
+          health condition.
+        </p>
       </div>
     </footer>
   );
