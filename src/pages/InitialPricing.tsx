@@ -88,14 +88,21 @@ const InitialPricing = () => {
               </ul>
             </div>
 
-            <Button
-              type="button"
-              variant="cosmic"
-              size="lg"
-              className="w-full text-base md:text-lg font-bold py-6"
-            >
-              Get Instant Access — $19.99
-            </Button>
+            {/* JVZoo Buy Button (tracking image is the button itself) */}
+            <div className="flex justify-center">
+              <a
+                href="https://www.jvzoo.com/b/117121/421627/5"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get Instant Access — $19.99"
+              >
+                <img
+                  src="https://i.jvzoo.com/117121/421627/5"
+                  alt="Astrovibe | European Astrology & Daily Guidance"
+                  border={0}
+                />
+              </a>
+            </div>
 
             {/* 60-day guarantee */}
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
