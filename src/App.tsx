@@ -71,6 +71,7 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import AuthRedirect from "./components/AuthRedirect";
 import FeatureGate from "./components/FeatureGate";
+import TrackingScripts from "./components/TrackingScripts";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <TrackingScripts />
           <div className="min-h-screen flex flex-col">
             <Navigation />
             <main className="flex-1">

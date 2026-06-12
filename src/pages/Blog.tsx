@@ -172,6 +172,40 @@ const Blog = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* JSON-LD BlogPosting schema for each published post */}
+      {posts.map((post) => (
+        <script
+          key={`ld-${post.id}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: post.title,
+              description: post.excerpt,
+              image: post.featured_image ? [post.featured_image] : undefined,
+              datePublished: post.created_at,
+              dateModified: post.created_at,
+              articleSection: post.category,
+              keywords: (post.tags || []).join(", "),
+              author: { "@type": "Organization", name: "Astrovibe" },
+              publisher: {
+                "@type": "Organization",
+                name: "Astrovibe",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://astro-europe-daily-guide.lovable.app/favicon.ico",
+                },
+              },
+              mainEntityOfPage: {
+                "@type": "WebPage",
+                "@id": `https://astro-europe-daily-guide.lovable.app/blog#${post.id}`,
+              },
+            }),
+          }}
+        />
+      ))}
+
       {/* Sponsor Banner */}
       <SponsorBanner page="blog" />
       
