@@ -35,14 +35,24 @@ const ManagePages = () => {
     terms_content: "",
   });
 
+  const [tracking, setTracking] = useState({
+    ga_id: "",
+    gtm_id: "",
+    fb_pixel_id: "",
+    tiktok_pixel_id: "",
+    custom_head: "",
+    custom_body: "",
+  });
+
   useEffect(() => {
     loadSettings();
   }, []);
 
   const loadSettings = async () => {
-    const [funnelRes, contentRes] = await Promise.all([
+    const [funnelRes, contentRes, trackingRes] = await Promise.all([
       supabase.from("platform_settings").select("*").eq("key", "funnel_settings").maybeSingle(),
       supabase.from("platform_settings").select("*").eq("key", "page_content").maybeSingle(),
+      supabase.from("platform_settings").select("*").eq("key", "tracking_settings").maybeSingle(),
     ]);
 
     if (funnelRes.data?.value) {
@@ -69,6 +79,18 @@ const ManagePages = () => {
         cancellation_content: val.cancellation_content || "",
         privacy_content: val.privacy_content || "",
         terms_content: val.terms_content || "",
+      });
+    }
+
+    if (trackingRes.data?.value) {
+      const val = trackingRes.data.value as any;
+      setTracking({
+        ga_id: val.ga_id || "",
+        gtm_id: val.gtm_id || "",
+        fb_pixel_id: val.fb_pixel_id || "",
+        tiktok_pixel_id: val.tiktok_pixel_id || "",
+        custom_head: val.custom_head || "",
+        custom_body: val.custom_body || "",
       });
     }
   };
@@ -99,6 +121,7 @@ const ManagePages = () => {
 
   const saveFunnel = () => saveSetting("funnel_settings", funnel);
   const saveContent = () => saveSetting("page_content", pageContent);
+  const saveTracking = () => saveSetting("tracking_settings", tracking);
 
   // Quick directory of every public page in the funnel for at-a-glance management
   const pageDirectory = [
@@ -125,11 +148,12 @@ const ManagePages = () => {
         </h1>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
             <TabsTrigger value="overview">All Pages</TabsTrigger>
             <TabsTrigger value="funnel">Sales Buttons</TabsTrigger>
             <TabsTrigger value="thankyou">Thank You</TabsTrigger>
             <TabsTrigger value="content">Page Content</TabsTrigger>
+            <TabsTrigger value="tracking">Tracking & Pixels</TabsTrigger>
           </TabsList>
 
           {/* Overview: every public page with edit links */}
@@ -347,6 +371,89 @@ const ManagePages = () => {
 
               <Button onClick={saveContent} disabled={loading} className="gap-2">
                 <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Page Content"}
+              </Button>
+            </div>
+          </TabsContent>
+
+          {/* Tracking & Pixels */}
+          <TabsContent value="tracking">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analytics & Pixels</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Paste the ID for each platform — the matching script is auto-loaded sitewide.
+                    Leave empty to disable.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>Google Analytics 4 — Measurement ID</Label>
+                    <Input
+                      placeholder="G-XXXXXXXXXX"
+                      value={tracking.ga_id}
+                      onChange={(e) => setTracking({ ...tracking, ga_id: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Google Tag Manager — Container ID</Label>
+                    <Input
+                      placeholder="GTM-XXXXXXX"
+                      value={tracking.gtm_id}
+                      onChange={(e) => setTracking({ ...tracking, gtm_id: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Facebook (Meta) Pixel ID</Label>
+                    <Input
+                      placeholder="1234567890"
+                      value={tracking.fb_pixel_id}
+                      onChange={(e) => setTracking({ ...tracking, fb_pixel_id: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>TikTok Pixel ID</Label>
+                    <Input
+                      placeholder="CXXXXXXXXXXXXXXXXX"
+                      value={tracking.tiktok_pixel_id}
+                      onChange={(e) => setTracking({ ...tracking, tiktok_pixel_id: e.target.value })}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Custom Scripts</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Paste raw HTML (script / noscript / img tags). Head HTML is injected into
+                    &lt;head&gt;, body HTML at the end of &lt;body&gt;.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>Custom &lt;head&gt; HTML</Label>
+                    <Textarea
+                      rows={6}
+                      placeholder={'<script>/* your code */</script>'}
+                      value={tracking.custom_head}
+                      onChange={(e) => setTracking({ ...tracking, custom_head: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Custom &lt;body&gt; HTML (footer pixels, etc.)</Label>
+                    <Textarea
+                      rows={6}
+                      placeholder={'<img src="https://example.com/pixel.gif" />'}
+                      value={tracking.custom_body}
+                      onChange={(e) => setTracking({ ...tracking, custom_body: e.target.value })}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button onClick={saveTracking} disabled={loading} className="gap-2">
+                <Save className="h-4 w-4" /> {loading ? "Saving..." : "Save Tracking Settings"}
               </Button>
             </div>
           </TabsContent>
