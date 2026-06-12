@@ -100,10 +100,6 @@ const Upsell = () => {
           </div>
         </div>
 
-        <div className="text-center mb-6">
-          < >
-        </div>
-
         <JVZooDisclaimer />
 
         <SalesPageChrome badgeType="salespage" />
