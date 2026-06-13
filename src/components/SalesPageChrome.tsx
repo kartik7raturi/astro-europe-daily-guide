@@ -4,6 +4,7 @@ import DigistoreBadge from "./DigistoreBadge";
 interface SalesPageChromeProps {
   badgeType?: "salespage" | "thankyoupage";
   showBankNote?: boolean;
+  showFooterLinks?: boolean;
 }
 
 /**
