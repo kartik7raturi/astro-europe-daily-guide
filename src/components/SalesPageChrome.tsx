@@ -24,13 +24,15 @@ const SalesPageChrome = ({ badgeType = "salespage", showBankNote = false, showFo
         </p>
       )}
 
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-        <Link to="/imprint" className="hover:text-primary transition-colors">Imprint</Link>
-        <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
-        <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
-        <Link to="/cancellation-refund" className="hover:text-primary transition-colors">Cancellation & Refund</Link>
-        <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
-      </div>
+      {showFooterLinks && (
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+          <Link to="/imprint" className="hover:text-primary transition-colors">Imprint</Link>
+          <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+          <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
+          <Link to="/cancellation-refund" className="hover:text-primary transition-colors">Cancellation & Refund</Link>
+          <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
+        </div>
+      )}
 
       <p className="text-[11px] text-muted-foreground/80 max-w-2xl mx-auto px-4">
         Powered by JVZoo — secure checkout. 60-day money-back guarantee.
