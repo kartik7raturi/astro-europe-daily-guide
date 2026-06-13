@@ -75,87 +75,96 @@ import TrackingScripts from "./components/TrackingScripts";
 
 const queryClient = new QueryClient();
 
+const Layout = () => {
+  const { pathname } = useLocation();
+  const hideFooter = pathname === "/vip-upgrade";
+
+  return (
+    <AuthProvider>
+      <TrackingScripts />
+      <div className="min-h-screen flex flex-col">
+        <Navigation />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<AuthRedirect><Home /></AuthRedirect>} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/free-report" element={<FreeReport />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/shop/:id" element={<ProductDetail />} />
+            <Route path="/horoscope" element={<HoroscopeForm />} />
+            <Route path="/daily-reading" element={<DailyReading />} />
+            <Route path="/numerology" element={<Numerology />} />
+            <Route path="/astro-calendar" element={<AstroCalendar />} />
+            <Route path="/lucky-elements" element={<LuckyElements />} />
+            <Route path="/consultations" element={<Consultations />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/daily-affirmations" element={<FeatureGate minTier="explorer"><DailyAffirmations /></FeatureGate>} />
+            <Route path="/love-forecasts" element={<FeatureGate minTier="explorer"><LoveForecasts /></FeatureGate>} />
+            <Route path="/crush-analyzer" element={<FeatureGate minTier="explorer"><CrushAnalyzer /></FeatureGate>} />
+            <Route path="/astro-journal" element={<AstroJournal />} />
+            <Route path="/profile-setup" element={<ProfileSetup />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/initial-pricing" element={<InitialPricing />} />
+            <Route path="/vip-upgrade" element={<Upsell />} />
+            <Route path="/plr" element={<PLRSales />} />
+            <Route path="/plr-download" element={<PLRDownload />} />
+            <Route path="/imprint" element={<Imprint />} />
+            <Route path="/ai-chat" element={<FeatureGate minTier="master"><AIChat /></FeatureGate>} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/order-tracking" element={<OrderTracking />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/astrologer-register" element={<AstrologerRegistration />} />
+            <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
+            <Route path="/astrologer/:id" element={<AstrologerProfile />} />
+            <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
+            <Route path="/tarot-reading" element={<FeatureGate minTier="explorer"><TarotReading /></FeatureGate>} />
+            <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/thank-you-vip" element={<ThankYouVip />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/plans" element={<PlansManagement />} />
+            <Route path="/admin/products" element={<ProductsManagement />} />
+            <Route path="/admin/astrologers" element={<AstrologersManagement />} />
+            <Route path="/admin/orders" element={<OrdersManagement />} />
+            <Route path="/admin/coupons" element={<CouponsManagement />} />
+            <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+            <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
+            <Route path="/admin/blog" element={<BlogManagement />} />
+            <Route path="/admin/support" element={<CustomerSupportManagement />} />
+            <Route path="/admin/sponsors" element={<SponsorsManagement />} />
+            <Route path="/admin/updates" element={<UpdatesManagement />} />
+            <Route path="/admin/consultations" element={<ConsultationManagement />} />
+            <Route path="/admin/pages" element={<ManagePages />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/cancellation-refund" element={<CancellationRefund />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/soulmate-analysis" element={<FeatureGate minTier="explorer"><SoulmateAnalysis /></FeatureGate>} />
+            <Route path="/twin-flame" element={<FeatureGate minTier="explorer"><TwinFlameAnalysis /></FeatureGate>} />
+            <Route path="/karmic-bonds" element={<FeatureGate minTier="explorer"><KarmicBonds /></FeatureGate>} />
+            <Route path="/meeting-prediction" element={<FeatureGate minTier="explorer"><MeetingPrediction /></FeatureGate>} />
+            <Route path="/life-career" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
+            <Route path="/life-career-analysis" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        {!hideFooter && <Footer />}
+      </div>
+    </AuthProvider>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <TrackingScripts />
-          <div className="min-h-screen flex flex-col">
-            <Navigation />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<AuthRedirect><Home /></AuthRedirect>} />
-                <Route path="/quiz" element={<Quiz />} />
-                <Route path="/free-report" element={<FreeReport />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/shop/:id" element={<ProductDetail />} />
-                <Route path="/horoscope" element={<HoroscopeForm />} />
-                <Route path="/daily-reading" element={<DailyReading />} />
-                <Route path="/numerology" element={<Numerology />} />
-                <Route path="/astro-calendar" element={<AstroCalendar />} />
-                <Route path="/lucky-elements" element={<LuckyElements />} />
-                <Route path="/consultations" element={<Consultations />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/daily-affirmations" element={<FeatureGate minTier="explorer"><DailyAffirmations /></FeatureGate>} />
-                <Route path="/love-forecasts" element={<FeatureGate minTier="explorer"><LoveForecasts /></FeatureGate>} />
-                <Route path="/crush-analyzer" element={<FeatureGate minTier="explorer"><CrushAnalyzer /></FeatureGate>} />
-                <Route path="/astro-journal" element={<AstroJournal />} />
-                <Route path="/profile-setup" element={<ProfileSetup />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/initial-pricing" element={<InitialPricing />} />
-                <Route path="/vip-upgrade" element={<Upsell />} />
-                <Route path="/plr" element={<PLRSales />} />
-                <Route path="/plr-download" element={<PLRDownload />} />
-                <Route path="/imprint" element={<Imprint />} />
-                <Route path="/ai-chat" element={<FeatureGate minTier="master"><AIChat /></FeatureGate>} />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/order-tracking" element={<OrderTracking />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/astrologer-register" element={<AstrologerRegistration />} />
-                <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
-                <Route path="/astrologer/:id" element={<AstrologerProfile />} />
-                <Route path="/consultation-chat/:bookingId" element={<ConsultationChat />} />
-                <Route path="/tarot-reading" element={<FeatureGate minTier="explorer"><TarotReading /></FeatureGate>} />
-                <Route path="/thank-you" element={<ThankYou />} />
-                <Route path="/thank-you-vip" element={<ThankYouVip />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/plans" element={<PlansManagement />} />
-                <Route path="/admin/products" element={<ProductsManagement />} />
-                <Route path="/admin/astrologers" element={<AstrologersManagement />} />
-                <Route path="/admin/orders" element={<OrdersManagement />} />
-                <Route path="/admin/coupons" element={<CouponsManagement />} />
-                <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
-                <Route path="/admin/combo-offers" element={<ComboOffersManagement />} />
-                <Route path="/admin/blog" element={<BlogManagement />} />
-                <Route path="/admin/support" element={<CustomerSupportManagement />} />
-                <Route path="/admin/sponsors" element={<SponsorsManagement />} />
-                <Route path="/admin/updates" element={<UpdatesManagement />} />
-                <Route path="/admin/consultations" element={<ConsultationManagement />} />
-                <Route path="/admin/pages" element={<ManagePages />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/cancellation-refund" element={<CancellationRefund />} />
-                <Route path="/shipping-policy" element={<ShippingPolicy />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/soulmate-analysis" element={<FeatureGate minTier="explorer"><SoulmateAnalysis /></FeatureGate>} />
-                <Route path="/twin-flame" element={<FeatureGate minTier="explorer"><TwinFlameAnalysis /></FeatureGate>} />
-                <Route path="/karmic-bonds" element={<FeatureGate minTier="explorer"><KarmicBonds /></FeatureGate>} />
-                <Route path="/meeting-prediction" element={<FeatureGate minTier="explorer"><MeetingPrediction /></FeatureGate>} />
-                <Route path="/life-career" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
-                <Route path="/life-career-analysis" element={<FeatureGate minTier="master"><LifeCareerAnalysis /></FeatureGate>} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <Layout />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
