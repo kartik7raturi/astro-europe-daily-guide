@@ -144,7 +144,7 @@ const FreeReport = () => {
         </div>
 
         <div className="text-center">
-          <p className="text-xs text-muted-foreground">🔒 Secure checkout • 30-day money-back guarantee</p>
+          <p className="text-xs text-muted-foreground">🔒 Secure checkout • 60-day money-back guarantee</p>
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@ const PLRSales = () => {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-primary" /> Instant Delivery</span>
-            <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-primary" /> 30-Day Guarantee</span>
+            <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-primary" /> 60-Day Guarantee</span>
             <span className="flex items-center gap-1"><Sparkles className="w-4 h-4 text-primary" /> Lifetime Updates</span>
           </div>
         </div>
@@ -175,7 +175,7 @@ const PLRSales = () => {
             <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
               <Shield className="h-5 w-5 text-green-600" />
               <p className="text-xs text-green-700 dark:text-green-400 font-medium">
-                30-Day Money-Back Guarantee
+                60-Day Money-Back Guarantee
               </p>
             </div>
 
