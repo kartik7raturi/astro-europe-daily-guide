@@ -11,7 +11,7 @@ interface SalesPageChromeProps {
  * Shared footer for sales / thank-you pages: inline Digistore badge,
  * imprint + legal links, optional bank-statement disclosure.
  */
-const SalesPageChrome = ({ badgeType = "salespage", showBankNote = false }: SalesPageChromeProps) => {
+const SalesPageChrome = ({ badgeType = "salespage", showBankNote = false, showFooterLinks = true }: SalesPageChromeProps) => {
   return (
     <div className="mt-12 pt-8 border-t border-border/40 space-y-6 text-center">
       <div className="flex justify-center">
