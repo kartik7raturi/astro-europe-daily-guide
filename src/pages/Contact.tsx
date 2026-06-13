@@ -158,7 +158,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-1">Can I get a refund?</h4>
-                  <p className="text-muted-foreground text-sm">Yes, we offer a 30-day money-back guarantee on all purchases. Contact us for details.</p>
+                  <p className="text-muted-foreground text-sm">Yes, we offer a 60-day money-back guarantee on all purchases. Contact us for details.</p>
                 </div>
               </CardContent>
             </Card>
