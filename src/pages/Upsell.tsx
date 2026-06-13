@@ -102,7 +102,7 @@ const Upsell = () => {
 
         <JVZooDisclaimer />
 
-        <SalesPageChrome badgeType="salespage" />
+        <SalesPageChrome badgeType="salespage" showFooterLinks={false} />
       </div>
     </div>
   );
